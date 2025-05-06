@@ -5,74 +5,74 @@ namespace DataLayer;
 
 public class User : BaseEntity
 {
-    #region Identity
+	#region Identity
 
-    public string Username { get; set; }
+	public string Username { get; set; }
 
-    public string Mobile { get; set; }
-    public bool IsMobileComfirmed { get; set; }
+	public string Mobile { get; set; }
+	public bool IsMobileComfirmed { get; set; }
 
-    public string Email { get; set; }
+	public string Email { get; set; }
 
-    #endregion
+	#endregion
 
-    #region Login
+	#region Login
 
-    public string PasswordHash { get; set; }
+	public string PasswordHash { get; set; }
 
-    public int FailedLoginCount { get; set; }
-    public DateTime? LockoutEndTime { get; set; }
+	public int FailedLoginCount { get; set; }
+	public DateTime? LockoutEndTime { get; set; }
 
-    public DateTime? LastLoginDate { get; set; }
+	public DateTime? LastLoginDate { get; set; }
 
-    #endregion
+	#endregion
 
-    #region Management
+	#region Management
 
-    public string SecurityStamp { get; set; }
-    public string ConcurrencyStamp { get; set; }
-    public bool IsLockedOut { get; set; }
-    public bool IsActive { get; set; }
-    public string? RefreshToken { get; set; }
-    public DateTime RefreshTokenExpiryTime { get; set; }
-    #endregion
+	public string SecurityStamp { get; set; }
+	public string ConcurrencyStamp { get; set; }
+	public bool IsLockedOut { get; set; }
+	public bool IsActive { get; set; }
+	public string? RefreshToken { get; set; }
+	public DateTime RefreshTokenExpiryTime { get; set; }
+	#endregion
 
-    #region Navigations
-    public ICollection<UserRole> UserRoles { get; set; }
-    public ICollection<Basket> Baskets { get; set; }
-    public ICollection<Collection> Collections { get; set; }
-    #endregion
+	#region Navigations
+	public ICollection<UserRole> UserRoles { get; set; }
+	public ICollection<Basket> Baskets { get; set; }
+	public ICollection<Collection> Collections { get; set; }
+	#endregion
 }
 
 public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
-    {
-        builder.HasKey(x => x.Id);
+	public void Configure(EntityTypeBuilder<User> builder)
+	{
+		builder.HasKey(x => x.Id);
 
-        builder.HasIndex(b => b.Username).IsUnique();
-        builder.Property(x => x.Slug).IsRequired();
-        builder.HasIndex(x => x.Slug).IsUnique();
-        #region Mappings
+		builder.HasIndex(b => b.Username).IsUnique();
+		builder.Property(x => x.Slug).IsRequired();
+		builder.HasIndex(x => x.Slug).IsUnique();
+		#region Mappings
 
-        builder.Property(b => b.Mobile)
-            .IsRequired();
+		builder.Property(b => b.Mobile)
+			.IsRequired();
 
-        #endregion
+		#endregion
 
-        #region Navigations
+		#region Navigations
 
-        builder
-            .HasMany(x => x.UserRoles)
-            .WithOne(x => x.User)
-            .HasForeignKey(x => x.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+		builder
+			.HasMany(x => x.UserRoles)
+			.WithOne(x => x.User)
+			.HasForeignKey(x => x.UserId)
+			.OnDelete(DeleteBehavior.Cascade);
 
-        builder
-            .HasMany(x => x.Collections)
-            .WithOne(x => x.Owner)
-            .HasForeignKey(x => x.OwnerId)
-            .OnDelete(DeleteBehavior.Cascade);
-        #endregion
-    }
+		builder
+			.HasMany(x => x.Collections)
+			.WithOne(x => x.Owner)
+			.HasForeignKey(x => x.OwnerId)
+			.OnDelete(DeleteBehavior.Cascade);
+		#endregion
+	}
 }

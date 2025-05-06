@@ -4,17 +4,17 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace DataLayer;
 public class Otp : BaseEntity
 {
-    public int OtpCode { get; set; }
-    public string Phone { get; set; }
-    public DateTime ExpireDate { get; set; } = DateTime.Now.AddMinutes(2);
+	public int OtpCode { get; set; }
+	public string Phone { get; set; }
+	public DateTime ExpireDate { get; set; } = DateTime.Now.AddMinutes(2);
 }
 public class OtpConfiguration : IEntityTypeConfiguration<Otp>
 {
-    public void Configure(EntityTypeBuilder<Otp> builder)
-    {
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Phone).IsRequired();
-        builder.Property(x => x.Slug).IsRequired();
-        builder.HasIndex(x => x.Slug).IsUnique();
-    }
+	public void Configure(EntityTypeBuilder<Otp> builder)
+	{
+		builder.HasKey(x => x.Id);
+		builder.Property(x => x.Phone).IsRequired();
+		builder.Property(x => x.Slug).IsRequired();
+		builder.HasIndex(x => x.Slug).IsUnique();
+	}
 }

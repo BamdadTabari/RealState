@@ -6,7 +6,7 @@ public enum RealStateTypeEnum
 	[Display(Name = "رهن")]
 	Mortgage = 0,
 	[Display(Name = "اجاره")]
-	Rent = 1,
+	Rental = 1,
 	[Display(Name = "فروش")]
 	Sell = 2,
 }

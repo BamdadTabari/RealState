@@ -7,27 +7,27 @@ public static class RoleSeed
 	[
 		new()
 		{
-			Id = 1,
+			id = 1,
 			Title = "Admin",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = DateTime.Now,
-			Slug = "Admin_Role"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = DateTime.Now,
+			slug = "Admin_Role"
 		},
 		 new()
 		{
-			Id = 2,
+			id = 2,
 			Title = "Customer",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			Slug = "Customer_Role"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			slug = "Customer_Role"
 		},
 		 new()
 		{
-			Id = 3,
+			id = 3,
 			Title = "SaleMan",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			Slug = "SaleMan_Role"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			slug = "SaleMan_Role"
 		}
 	];
 }

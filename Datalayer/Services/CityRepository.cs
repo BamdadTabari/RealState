@@ -22,7 +22,7 @@ public class CityRepository : Repository<City>, ICityRepository
 	{
 		try
 		{
-			return await _queryable.AsNoTracking().Include(x => x.Province).SingleOrDefaultAsync(x => x.Slug == slug);
+			return await _queryable.AsNoTracking().Include(x => x.Province).SingleOrDefaultAsync(x => x.slug == slug);
 		}
 		catch
 		{
@@ -34,7 +34,7 @@ public class CityRepository : Repository<City>, ICityRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.Province).SingleOrDefaultAsync(x => x.Id == id);
+			return await _queryable.Include(x => x.Province).SingleOrDefaultAsync(x => x.id == id);
 		}
 		catch
 		{

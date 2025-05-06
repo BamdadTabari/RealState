@@ -18,7 +18,7 @@ public class JwtTokenService
 	{
 		var claims = new List<Claim>
 		{
-			new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+			new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
 			new Claim(ClaimTypes.Name, user.Username),
 			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // JWT ID برای امنیت بیشتر
         };
@@ -48,7 +48,7 @@ public class JwtTokenService
 		return Convert.ToBase64String(randomBytes);
 	}
 
-	public string? GetUserIdFromClaims(ClaimsPrincipal user)
+	public string? GetUseridFromClaims(ClaimsPrincipal user)
 	{
 		return user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 	}

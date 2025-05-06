@@ -23,7 +23,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.User).AsNoTracking().SingleOrDefaultAsync(x => x.Slug == slug);
+			return await _queryable.Include(x => x.User).AsNoTracking().SingleOrDefaultAsync(x => x.slug == slug);
 		}
 		catch
 		{

@@ -25,7 +25,7 @@ public class BlogRepository : Repository<Blog>, IBlogRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.BlogCategory).AsNoTracking().SingleOrDefaultAsync(x => x.Slug == slug);
+			return await _queryable.Include(x => x.BlogCategory).AsNoTracking().SingleOrDefaultAsync(x => x.slug == slug);
 		}
 		catch
 		{
@@ -37,7 +37,7 @@ public class BlogRepository : Repository<Blog>, IBlogRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.BlogCategory).SingleOrDefaultAsync(x => x.Id == id);
+			return await _queryable.Include(x => x.BlogCategory).SingleOrDefaultAsync(x => x.id == id);
 		}
 		catch
 		{

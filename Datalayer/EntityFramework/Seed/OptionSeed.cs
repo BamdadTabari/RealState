@@ -5,68 +5,68 @@ public static class OptionSeed
 	[
 	new()
 		{
-			Id = 1,
+			id = 1,
 			OptionKey = "AdminMobile",
 			OptionValue = "09301724389",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			Slug = "AdminMobile"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			slug = "AdminMobile"
 		},
 		 new()
 		{
-			Id = 2,
+			id = 2,
 			OptionKey = "Telegram",
 			OptionValue = "https://t.me/your_username",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			Slug = "Telegram"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			slug = "Telegram"
 		},
 		 new()
 		{
-			Id = 3,
+			id = 3,
 			OptionKey = "Whatsapp",
 			OptionValue = "https://wa.me/989123456789",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			Slug = "Whatsapp"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			slug = "Whatsapp"
 		},
 		 new()
 		{
-			Id = 4,
+			id = 4,
 			OptionKey = "Instagram",
 			OptionValue = "https://www.instagram.com/your_username",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			Slug = "Instagram"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			slug = "Instagram"
 		},
 		 new()
 		{
-			Id = 5,
+			id = 5,
 			OptionKey = "SendSmsToUser",
 			OptionValue = "true",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			Slug = "SendSmsToUser"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			slug = "SendSmsToUser"
 		}
 		 ,
 		 new()
 		{
-			Id = 6,
+			id = 6,
 			OptionKey = "SendEmailToUser",
 			OptionValue = "true",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			Slug = "SendEmailToUser"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			slug = "SendEmailToUser"
 
 		},
 		 new()
 		{
-			Id = 7,
+			id = 7,
 			OptionKey = "ReserveTimeOutInMinute",
 			OptionValue = "10",
-			CreatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			UpdatedAt = new DateTime(2025, 1, 1, 12, 0, 0),
-			Slug = "ReserveTimeOutInMinute"
+			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
+			slug = "ReserveTimeOutInMinute"
 		}
 	];
 }

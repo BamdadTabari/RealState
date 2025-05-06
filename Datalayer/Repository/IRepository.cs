@@ -19,7 +19,7 @@ public interface IRepository<TEntity> where TEntity : class, IBaseEntity
 	Task AddAsync(TEntity entity);
 	Task AddRangeAsync(IEnumerable<TEntity> entities);
 
-	Task<TEntity> AddAsyncReturnId(TEntity entity);
+	Task<TEntity> AddAsyncReturnid(TEntity entity);
 }
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IBaseEntity
@@ -92,7 +92,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, I
 	}
 
 
-	public async Task<TEntity> AddAsyncReturnId(TEntity entity)
+	public async Task<TEntity> AddAsyncReturnid(TEntity entity)
 	{
 		await DbContext.Set<TEntity>().AddAsync(entity);
 		return entity;

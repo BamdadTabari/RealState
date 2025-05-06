@@ -4,9 +4,9 @@ namespace DataLayer;
 
 public interface IUserRoleRepo : IRepository<UserRole>
 {
-	IEnumerable<UserRole> GetUserRolesByUserId(long userId);
-	Task<bool> HasPermissionAsync(long userId, string permissionName);
-	//Task<PaginatedList<UserRole>> GetByRoleId(int roleId);
+	IEnumerable<UserRole> GetUserRolesByUserid(long userid);
+	Task<bool> HasPermissionAsync(long userid, string permissionName);
+	//Task<PaginatedList<UserRole>> GetByRoleid(int roleid);
 }
 public class UserRoleRepo : Repository<UserRole>, IUserRoleRepo
 {
@@ -18,11 +18,11 @@ public class UserRoleRepo : Repository<UserRole>, IUserRoleRepo
 		_queryable = DbContext.Set<UserRole>();
 	}
 
-	//public Task<PaginatedList<UserRole>> GetByRoleId(int roleId)
+	//public Task<PaginatedList<UserRole>> GetByRoleid(int roleid)
 	//{
 	//    try
 	//    {
-	//        var query = _queryable.Where(x => x.Id == filter.LastId).AsNoTracking().ApplyFilter(filter).ApplySort(filter.SortBy);
+	//        var query = _queryable.Where(x => x.id == filter.Lastid).AsNoTracking().ApplyFilter(filter).ApplySort(filter.SortBy);
 	//        var dataTotalCount = _queryable.Count();
 	//        return new PaginatedList<PostComment>([.. query], dataTotalCount, filter.Page, filter.PageSize);
 	//    }
@@ -33,11 +33,11 @@ public class UserRoleRepo : Repository<UserRole>, IUserRoleRepo
 	//    }
 	//}
 
-	public IEnumerable<UserRole> GetUserRolesByUserId(long userId)
+	public IEnumerable<UserRole> GetUserRolesByUserid(long userid)
 	{
 		try
 		{
-			return _queryable.Include(i => i.Role).Where(x => x.UserId == userId);
+			return _queryable.Include(i => i.Role).Where(x => x.Userid == userid);
 		}
 		catch
 		{
@@ -45,10 +45,10 @@ public class UserRoleRepo : Repository<UserRole>, IUserRoleRepo
 		}
 	}
 
-	public async Task<bool> HasPermissionAsync(long userId, string permissionName)
+	public async Task<bool> HasPermissionAsync(long userid, string permissionName)
 	{
 		return await _queryable
-			.Where(ur => ur.UserId == userId)
+			.Where(ur => ur.Userid == userid)
 			.SelectMany(ur => ur.Role.RolePermissions)
 			.AnyAsync(rp => rp.Permission.Name == permissionName);
 	}

@@ -6,7 +6,7 @@ public interface IRoleRepo : IRepository<Role>
 {
 	Task<Role> GetRole(string title);
 	Task<Role> GetRole(long id);
-	Task<Role> GetRoleBySlug(string slug);
+	Task<Role> GetRoleByslug(string slug);
 	Task<bool> AnyExist(string title);
 	Task<List<Role>> GetAll();
 	PaginatedList<Role> GetPaginated(DefaultPaginationFilter filter);
@@ -75,7 +75,7 @@ public class RoleRepo : Repository<Role>, IRoleRepo
 	{
 		try
 		{
-			return await _queryable.Include(x => x.RolePermissions).SingleOrDefaultAsync(x => x.Id == id) ?? new Role();
+			return await _queryable.Include(x => x.RolePermissions).SingleOrDefaultAsync(x => x.id == id) ?? new Role();
 		}
 		catch
 		{
@@ -83,11 +83,11 @@ public class RoleRepo : Repository<Role>, IRoleRepo
 		}
 	}
 
-	public async Task<Role> GetRoleBySlug(string slug)
+	public async Task<Role> GetRoleByslug(string slug)
 	{
 		try
 		{
-			return await _queryable.Include(x => x.RolePermissions).SingleOrDefaultAsync(x => x.Slug == slug) ?? new Role();
+			return await _queryable.Include(x => x.RolePermissions).SingleOrDefaultAsync(x => x.slug == slug) ?? new Role();
 		}
 		catch
 		{

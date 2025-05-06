@@ -22,7 +22,7 @@ public class ContactRepository : Repository<Contact>, IContactRepository
 	{
 		try
 		{
-			return await _queryable.AsNoTracking().SingleOrDefaultAsync(x => x.Slug == slug);
+			return await _queryable.AsNoTracking().SingleOrDefaultAsync(x => x.slug == slug);
 		}
 		catch
 		{
@@ -34,7 +34,7 @@ public class ContactRepository : Repository<Contact>, IContactRepository
 	{
 		try
 		{
-			return await _queryable.SingleOrDefaultAsync(x => x.Id == id);
+			return await _queryable.SingleOrDefaultAsync(x => x.id == id);
 		}
 		catch
 		{

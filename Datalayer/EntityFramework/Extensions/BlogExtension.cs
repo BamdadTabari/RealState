@@ -8,12 +8,12 @@ public static class BlogExtension
 	{
 
 		if (!string.IsNullOrEmpty(filter.Keyword))
-			query = query.Where(x => x.Name.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-			x.Slug.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase)
-			|| x.ShortDescription.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase));
+			query = query.Where(x => x.name.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase) ||
+			x.slug.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase)
+			|| x.short_description.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase));
 
 		if (filter.BoolFilter != null)
-			query = query.Where(x => x.ShowBlog == filter.BoolFilter);
+			query = query.Where(x => x.show_blog == filter.BoolFilter);
 
 		return query;
 	}
@@ -23,11 +23,11 @@ public static class BlogExtension
 	{
 		return sortBy switch
 		{
-			SortByEnum.CreationDate => query.OrderBy(x => x.CreatedAt),
-			SortByEnum.CreationDateDescending => query.OrderByDescending(x => x.CreatedAt),
-			SortByEnum.UpdateDate => query.OrderBy(x => x.UpdatedAt),
-			SortByEnum.UpdateDateDescending => query.OrderByDescending(x => x.UpdatedAt),
-			_ => query.OrderByDescending(x => x.Id)
+			SortByEnum.CreationDate => query.OrderBy(x => x.created_at),
+			SortByEnum.CreationDateDescending => query.OrderByDescending(x => x.created_at),
+			SortByEnum.updated_ate => query.OrderBy(x => x.updated_at),
+			SortByEnum.updated_ateDescending => query.OrderByDescending(x => x.updated_at),
+			_ => query.OrderByDescending(x => x.id)
 		};
 	}
 }

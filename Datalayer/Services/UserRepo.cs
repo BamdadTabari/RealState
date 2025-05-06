@@ -6,7 +6,7 @@ public interface IUserRepo : IRepository<User>
 	Task<User?> GetUser(string usernameOrEmail);
 	Task<User?> Get(string slug);
 	Task<User?> GetUserByPhone(string phone);
-	Task<User?> GetUser(long Id);
+	Task<User?> GetUser(long id);
 	Task<bool> AnyExistUserName(string username);
 	Task<bool> AnyExistEmail(string email);
 	PaginatedList<User> GetPaginated(DefaultPaginationFilter filter);
@@ -59,7 +59,7 @@ public class UserRepo : Repository<User>, IUserRepo
 	{
 		try
 		{
-			return await _queryable.SingleOrDefaultAsync(x => x.Slug == slug);
+			return await _queryable.SingleOrDefaultAsync(x => x.slug == slug);
 		}
 		catch
 		{
@@ -99,11 +99,11 @@ public class UserRepo : Repository<User>, IUserRepo
 		}
 	}
 
-	public async Task<User?> GetUser(long Id)
+	public async Task<User?> GetUser(long id)
 	{
 		try
 		{
-			return await _queryable.SingleOrDefaultAsync(x => x.Id == Id);
+			return await _queryable.SingleOrDefaultAsync(x => x.id == id);
 		}
 		catch
 		{

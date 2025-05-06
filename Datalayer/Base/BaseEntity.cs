@@ -5,10 +5,10 @@ public interface IBaseEntity { }
 
 public class BaseEntity : IBaseEntity
 {
-	public long Id { get; set; }
-	public DateTime CreatedAt { get; set; }
-	public DateTime UpdatedAt { get; set; }
+	public long id { get; set; }
+	public DateTime created_at { get; set; }
+	public DateTime updated_at { get; set; }
 
 	[MaxLength(1000)]
-	public string Slug { get; set; }
+	public string slug { get; set; }
 }

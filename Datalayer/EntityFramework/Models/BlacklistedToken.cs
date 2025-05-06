@@ -4,19 +4,21 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace DataLayer;
 public class BlacklistedToken : BaseEntity
 {
-	public string Token { get; set; } // The JWT token string
-	public DateTime ExpiryDate { get; set; } // The expiration date of the token
-	public DateTime BlacklistedOn { get; set; } = DateTime.UtcNow; // When the token was blacklisted
+	public string token { get; set; } // The JWT token string
+	public DateTime expiry_date { get; set; } // The expiration date of the token
+	public DateTime black_listed_on { get; set; } = DateTime.UtcNow; // When the token was blacklisted
 }
 
 public class BlacklistedTokenConfiguration : IEntityTypeConfiguration<BlacklistedToken>
 {
 	public void Configure(EntityTypeBuilder<BlacklistedToken> builder)
 	{
-		builder.Property(x => x.Token).IsRequired();
-		builder.Property(x => x.ExpiryDate).IsRequired();
-		builder.Property(x => x.BlacklistedOn).IsRequired();
-		builder.Property(x => x.Slug).IsRequired();
-		builder.HasIndex(x => x.Slug).IsUnique();
+		builder.Property(x => x.token).IsRequired();
+		builder.Property(x => x.expiry_date).IsRequired();
+		builder.Property(x => x.black_listed_on).IsRequired();
+
+		builder.HasKey(x => x.id);
+		builder.Property(x => x.slug).IsRequired();
+		builder.HasIndex(x => x.slug).IsUnique();
 	}
 }

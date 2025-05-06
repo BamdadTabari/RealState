@@ -5,7 +5,7 @@ VisualStudioVersion = 17.14.36025.13 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RealState", "RealState.csproj", "{DADC1C30-4E28-4981-8291-66FBE03F4189}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Datalayer", "..\Datalayer\Datalayer.csproj", "{D21B58DC-1497-446B-A002-68B4639642FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLayer", "..\Datalayer\DataLayer.csproj", "{D21B58DC-1497-446B-A002-68B4639642FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

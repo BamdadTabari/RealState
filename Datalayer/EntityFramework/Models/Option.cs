@@ -4,17 +4,17 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace DataLayer;
 public class Option : BaseEntity
 {
-	public string OptionKey { get; set; }
-	public string OptionValue { get; set; }
+	public string optin_key { get; set; }
+	public string option_value { get; set; }
 }
 public class OptionConfiguration : IEntityTypeConfiguration<Option>
 {
 	public void Configure(EntityTypeBuilder<Option> builder)
 	{
-		builder.HasKey(x => x.Id);
-		builder.Property(x => x.OptionKey).IsRequired();
-		builder.Property(x => x.OptionValue).IsRequired();
-		builder.Property(x => x.Slug).IsRequired();
-		builder.HasIndex(x => x.Slug).IsUnique();
+		builder.HasKey(x => x.id);
+		builder.Property(x => x.optin_key).IsRequired();
+		builder.Property(x => x.option_value).IsRequired();
+		builder.Property(x => x.slug).IsRequired();
+		builder.HasIndex(x => x.slug).IsUnique();
 	}
 }

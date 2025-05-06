@@ -5,41 +5,26 @@ namespace DataLayer;
 
 public class Province : BaseEntity
 {
-	public string Name { get; set; }
+	public string name { get; set; }
 
-	public ICollection<City> Cities { get; set; }
-	public ICollection<ProvinceNewsletter> ProvinceNewsletters { get; set; }
-	public ICollection<Newsletter> Newsletters { get; set; }
+	public ICollection<City> cities { get; set; }
 }
 
 public class ProvinceEntityConfiguration : IEntityTypeConfiguration<Province>
 {
 	public void Configure(EntityTypeBuilder<Province> builder)
 	{
-		builder.HasKey(x => x.Id);
+		builder.HasKey(x => x.id);
 
-		builder.Property(x => x.Name).IsRequired();
-		builder.Property(x => x.Slug).IsRequired();
-		builder.HasIndex(x => x.Slug).IsUnique();
+		builder.Property(x => x.name).IsRequired();
+		builder.Property(x => x.slug).IsRequired();
+		builder.HasIndex(x => x.slug).IsUnique();
 
 		// Cascade فقط روی شهرها (Cities)
 		builder
-			.HasMany(x => x.Cities)
-			.WithOne(x => x.Province)
-			.HasForeignKey(x => x.ProvinceId)
+			.HasMany(x => x.cities)
+			.WithOne(x => x.province)
+			.HasForeignKey(x => x.province_id)
 			.OnDelete(DeleteBehavior.Cascade);
-
-		// Restrict برای جلوگیری از multiple cascade paths
-		builder
-			.HasMany(x => x.ProvinceNewsletters)
-			.WithOne(x => x.Province)
-			.HasForeignKey(x => x.ProvinceId)
-			.OnDelete(DeleteBehavior.Restrict);
-
-		builder
-			.HasMany(x => x.Newsletters)
-			.WithOne(x => x.Province)
-			.HasForeignKey(x => x.ProvinceId)
-			.OnDelete(DeleteBehavior.Restrict);
 	}
 }

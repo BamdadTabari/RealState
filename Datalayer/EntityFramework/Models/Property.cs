@@ -5,6 +5,12 @@ namespace DataLayer;
 public class Property : BaseEntity
 {
 	public string name { get; set; }
+	public string description { get; set; }
+	public string code { get; set; }
+
+	public List<string> gallery { get; set; }
+
+	public AdStatusEnum state_enum { get; set; }
 	public string address { get; set; }
 	public TypeEnum type_enum { get; set; }
 	public string city_province_full_name { get; set; }
@@ -39,7 +45,6 @@ public class Property : BaseEntity
 	public long situation_id { get; set; }
 	public PropertySituation situation { get; set; }
 
-	public Ad ad { get; set; }
 }
 
 public class PropertyConfiguration : IEntityTypeConfiguration<Property>

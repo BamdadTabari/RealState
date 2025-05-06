@@ -22,7 +22,7 @@ public class CityRepository : Repository<City>, ICityRepository
 	{
 		try
 		{
-			return await _queryable.AsNoTracking().Include(x => x.Province).SingleOrDefaultAsync(x => x.slug == slug);
+			return await _queryable.AsNoTracking().Include(x => x.province).SingleOrDefaultAsync(x => x.slug == slug);
 		}
 		catch
 		{
@@ -34,7 +34,7 @@ public class CityRepository : Repository<City>, ICityRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.Province).SingleOrDefaultAsync(x => x.id == id);
+			return await _queryable.Include(x => x.province).SingleOrDefaultAsync(x => x.id == id);
 		}
 		catch
 		{
@@ -46,7 +46,7 @@ public class CityRepository : Repository<City>, ICityRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.Province).ToListAsync();
+			return await _queryable.Include(x => x.province).ToListAsync();
 		}
 		catch
 		{
@@ -58,7 +58,7 @@ public class CityRepository : Repository<City>, ICityRepository
 	{
 		try
 		{
-			var query = _queryable.Include(x => x.Province).AsNoTracking().Skip((filter.Page - 1) * filter.PageSize)
+			var query = _queryable.Include(x => x.province).AsNoTracking().Skip((filter.Page - 1) * filter.PageSize)
 						.Take(filter.PageSize)
 						.ApplyFilter(filter).ApplySort(filter.SortBy);
 			var dataTotalCount = _queryable.Count();

@@ -5,7 +5,6 @@ namespace DataLayer;
 public interface IUserRoleRepo : IRepository<UserRole>
 {
 	IEnumerable<UserRole> GetUserRolesByUserid(long userid);
-	Task<bool> HasPermissionAsync(long userid, string permissionName);
 	//Task<PaginatedList<UserRole>> GetByRoleid(int roleid);
 }
 public class UserRoleRepo : Repository<UserRole>, IUserRoleRepo
@@ -37,19 +36,11 @@ public class UserRoleRepo : Repository<UserRole>, IUserRoleRepo
 	{
 		try
 		{
-			return _queryable.Include(i => i.Role).Where(x => x.Userid == userid);
+			return _queryable.Include(i => i.role).Where(x => x.user_id == userid);
 		}
 		catch
 		{
 			return new List<UserRole>().AsEnumerable();
 		}
-	}
-
-	public async Task<bool> HasPermissionAsync(long userid, string permissionName)
-	{
-		return await _queryable
-			.Where(ur => ur.Userid == userid)
-			.SelectMany(ur => ur.Role.RolePermissions)
-			.AnyAsync(rp => rp.Permission.Name == permissionName);
 	}
 }

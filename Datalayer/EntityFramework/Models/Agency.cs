@@ -13,7 +13,6 @@ public class Agency : BaseEntity
 	public long city_id { get; set; }
 	public City  city { get; set; }
 
-	public long user_id { get; set; }
 	public User user { get; set; }
 }
 

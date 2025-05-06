@@ -21,7 +21,7 @@ public class TokenBlacklistRepo : Repository<BlacklistedToken>, ITokenBlacklistR
 	{
 		try
 		{
-			return await _queryable.AnyAsync(x => x.Token == token && x.ExpiryDate > DateTime.UtcNow);
+			return await _queryable.AnyAsync(x => x.token == token && x.expiry_date > DateTime.UtcNow);
 		}
 		catch
 		{
@@ -34,7 +34,7 @@ public class TokenBlacklistRepo : Repository<BlacklistedToken>, ITokenBlacklistR
 
 		try
 		{
-			return await _queryable.Where(t => t.ExpiryDate <= DateTime.UtcNow).ToListAsync();
+			return await _queryable.Where(t => t.expiry_date <= DateTime.UtcNow).ToListAsync();
 
 		}
 		catch

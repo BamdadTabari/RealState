@@ -19,7 +19,7 @@ public class JwtTokenService
 		var claims = new List<Claim>
 		{
 			new Claim(ClaimTypes.NameIdentifier, user.id.ToString()),
-			new Claim(ClaimTypes.Name, user.Username),
+			new Claim(ClaimTypes.Name, user.user_name),
 			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // JWT ID برای امنیت بیشتر
         };
 

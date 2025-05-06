@@ -5,8 +5,8 @@ namespace DataLayer;
 public class Property : BaseEntity
 {
 	public string name { get; set; }
-	public string description { get; set; }
-	public RealStateTypeEnum type_enum { get; set; }
+	public string address { get; set; }
+	public TypeEnum type_enum { get; set; }
 	public string city_province_full_name { get; set; }
 	
 	public long city_id { get; set; }
@@ -22,11 +22,11 @@ public class Property : BaseEntity
 	/// <summary>
 	/// rahn
 	/// </summary>
-	public decimal mortgage_price { get; set; }
+	public decimal? mortgage_price { get; set; }
 	/// <summary>
 	/// ejare
 	/// </summary>
-	public decimal rent_price { get; set; }
+	public decimal? rent_price { get; set; }
 
 	public int bed_room_count { get; set; }
 
@@ -51,15 +51,12 @@ public class PropertyConfiguration : IEntityTypeConfiguration<Property>
 		builder.HasIndex(x => x.slug).IsUnique();
 
 		builder.Property(x => x.name).IsRequired();
-		builder.Property(x => x.description).IsRequired();
 		builder.Property(x => x.type_enum).IsRequired();
 		builder.Property(x => x.city_province_full_name).IsRequired();
 		builder.Property(x => x.city_id).IsRequired();
 		builder.Property(x => x.meterage).IsRequired();
 		builder.Property(x => x.category_id).IsRequired();
 		builder.Property(x => x.sell_price).IsRequired();
-		builder.Property(x => x.mortgage_price).IsRequired();
-		builder.Property(x => x.rent_price).IsRequired();
 		builder.Property(x => x.bed_room_count).IsRequired();
 		builder.Property(x => x.property_age).IsRequired();
 		builder.Property(x => x.property_floor).IsRequired();

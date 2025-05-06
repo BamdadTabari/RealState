@@ -6,7 +6,7 @@ public static class ProvinceExtension
 	{
 
 		if (!string.IsNullOrEmpty(filter.Keyword))
-			query = query.Where(x => x.Name.ToLower().Contains(filter.Keyword.ToLower().Trim())
+			query = query.Where(x => x.name.ToLower().Contains(filter.Keyword.ToLower().Trim())
 			|| x.slug.ToLower().Contains(filter.Keyword.ToLower().Trim()));
 
 		return query;

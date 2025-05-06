@@ -6,7 +6,7 @@ public interface IRoleRepo : IRepository<Role>
 {
 	Task<Role> GetRole(string title);
 	Task<Role> GetRole(long id);
-	Task<Role> GetRoleByslug(string slug);
+	Task<Role> GetRoleBySlug(string slug);
 	Task<bool> AnyExist(string title);
 	Task<List<Role>> GetAll();
 	PaginatedList<Role> GetPaginated(DefaultPaginationFilter filter);
@@ -25,7 +25,7 @@ public class RoleRepo : Repository<Role>, IRoleRepo
 	{
 		try
 		{
-			return await _queryable.Include(x => x.RolePermissions).AnyAsync(x => x.Title == title);
+			return await _queryable.AnyAsync(x => x.title == title);
 		}
 		catch
 		{
@@ -37,7 +37,7 @@ public class RoleRepo : Repository<Role>, IRoleRepo
 	{
 		try
 		{
-			return await _queryable.Include(x => x.RolePermissions).ToListAsync();
+			return await _queryable.ToListAsync();
 		}
 		catch
 		{
@@ -49,7 +49,7 @@ public class RoleRepo : Repository<Role>, IRoleRepo
 	{
 		try
 		{
-			var query = _queryable.Include(x => x.RolePermissions).Skip((filter.Page - 1) * filter.PageSize)
+			var query = _queryable.Skip((filter.Page - 1) * filter.PageSize)
 						.Take(filter.PageSize).AsNoTracking().ApplyFilter(filter).ApplySort(filter.SortBy);
 			var dataTotalCount = _queryable.Count();
 			return new PaginatedList<Role>([.. query], dataTotalCount, filter.Page, filter.PageSize);
@@ -64,7 +64,7 @@ public class RoleRepo : Repository<Role>, IRoleRepo
 	{
 		try
 		{
-			return await _queryable.Include(x => x.RolePermissions).SingleOrDefaultAsync(x => x.Title == title) ?? new Role();
+			return await _queryable.SingleOrDefaultAsync(x => x.title == title) ?? new Role();
 		}
 		catch
 		{
@@ -75,7 +75,7 @@ public class RoleRepo : Repository<Role>, IRoleRepo
 	{
 		try
 		{
-			return await _queryable.Include(x => x.RolePermissions).SingleOrDefaultAsync(x => x.id == id) ?? new Role();
+			return await _queryable.SingleOrDefaultAsync(x => x.id == id) ?? new Role();
 		}
 		catch
 		{
@@ -83,11 +83,11 @@ public class RoleRepo : Repository<Role>, IRoleRepo
 		}
 	}
 
-	public async Task<Role> GetRoleByslug(string slug)
+	public async Task<Role> GetRoleBySlug(string slug)
 	{
 		try
 		{
-			return await _queryable.Include(x => x.RolePermissions).SingleOrDefaultAsync(x => x.slug == slug) ?? new Role();
+			return await _queryable.SingleOrDefaultAsync(x => x.slug == slug) ?? new Role();
 		}
 		catch
 		{

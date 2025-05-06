@@ -7,40 +7,39 @@ public class User : BaseEntity
 {
 	#region identity
 
-	public string Username { get; set; }
+	public string user_name { get; set; }
 
-	public string Mobile { get; set; }
-	public bool IsMobileComfirmed { get; set; }
+	public string mobile { get; set; }
+	public bool is_mobile_confirmed { get; set; }
 
-	public string Email { get; set; }
+	public string email { get; set; }
 
 	#endregion
 
 	#region Login
 
-	public string PasswordHash { get; set; }
+	public string password_hash { get; set; }
 
-	public int FailedLoginCount { get; set; }
-	public DateTime? LockoutEndTime { get; set; }
+	public int failed_login_count { get; set; }
+	public DateTime? lock_out_end_time { get; set; }
 
-	public DateTime? LastLoginDate { get; set; }
+	public DateTime? last_login_date_time { get; set; }
 
 	#endregion
 
 	#region Management
 
-	public string SecurityStamp { get; set; }
-	public string ConcurrencyStamp { get; set; }
-	public bool IsLockedOut { get; set; }
-	public bool IsActive { get; set; }
-	public string? RefreshToken { get; set; }
-	public DateTime RefreshTokenExpiryTime { get; set; }
+	public string security_stamp { get; set; }
+	public string concurrency_stamp { get; set; }
+	public bool is_locked_out { get; set; }
+	public bool is_active { get; set; }
+	public string? refresh_token { get; set; }
+	public DateTime refresh_token_expiry_time { get; set; }
 	#endregion
 
 	#region Navigations
-	public ICollection<UserRole> UserRoles { get; set; }
-	public long? Agencyid { get; set; }
-	public Agency Agency { get; set; }
+	public ICollection<UserRole> user_roles { get; set; }
+	public Agency agency { get; set; }
 	#endregion
 }
 
@@ -50,12 +49,12 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 	{
 		builder.HasKey(x => x.id);
 
-		builder.HasIndex(b => b.Username).IsUnique();
+		builder.HasIndex(b => b.user_name).IsUnique();
 		builder.Property(x => x.slug).IsRequired();
 		builder.HasIndex(x => x.slug).IsUnique();
 		#region Mappings
 
-		builder.Property(b => b.Mobile)
+		builder.Property(b => b.mobile)
 			.IsRequired();
 
 		#endregion
@@ -63,16 +62,14 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 		#region Navigations
 
 		builder
-			.HasMany(x => x.UserRoles)
-			.WithOne(x => x.User)
-			.HasForeignKey(x => x.Userid)
+			.HasMany(x => x.user_roles)
+			.WithOne(x => x.user)
+			.HasForeignKey(x => x.user_id)
 			.OnDelete(DeleteBehavior.Cascade);
 
 		builder
-			.HasOne(x => x.Agency)
-			.WithOne(x => x.User)
-			.HasForeignKey<Agency>(x => x.Userid)
-			.OnDelete(DeleteBehavior.Cascade);
+			.HasOne(x => x.agency)
+			.WithOne(x => x.user);
 
 		#endregion
 	}

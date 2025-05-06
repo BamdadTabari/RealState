@@ -23,7 +23,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.User).AsNoTracking().SingleOrDefaultAsync(x => x.slug == slug);
+			return await _queryable.Include(x => x.user).AsNoTracking().SingleOrDefaultAsync(x => x.slug == slug);
 		}
 		catch
 		{
@@ -35,7 +35,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.User).AsNoTracking().ToListAsync();
+			return await _queryable.Include(x => x.user).AsNoTracking().ToListAsync();
 		}
 		catch
 		{
@@ -47,7 +47,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.User).SingleOrDefaultAsync(x => x.Authority == authority);
+			return await _queryable.Include(x => x.user).SingleOrDefaultAsync(x => x.authority == authority);
 		}
 		catch
 		{
@@ -59,7 +59,7 @@ public class OrderRepository : Repository<Order>, IOrderRepository
 	{
 		try
 		{
-			var query = _queryable.Include(x => x.User).AsNoTracking().Skip((filter.Page - 1) * filter.PageSize)
+			var query = _queryable.Include(x => x.user).AsNoTracking().Skip((filter.Page - 1) * filter.PageSize)
 						.Take(filter.PageSize)
 						.ApplyFilter(filter).ApplySort(filter.SortBy);
 			var dataTotalCount = _queryable.Count();

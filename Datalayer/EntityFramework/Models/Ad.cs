@@ -6,8 +6,11 @@ public class Ad : BaseEntity
 {
 	public string name { get; set; }
 	public string description { get; set; }
+	public string code { get; set; }
 
-	public AdStateEnum state_enum { get; set; }
+	public List<string> gallery { get; set; }
+
+	public AdStatusEnum state_enum { get; set; }
 
 	public Property property { get; set; }
 }
@@ -26,6 +29,5 @@ public class AdConfiguration : IEntityTypeConfiguration<Ad>
 		builder.
 			HasOne(x => x.property)
 			.WithOne(x => x.ad);
-
 	}
 }

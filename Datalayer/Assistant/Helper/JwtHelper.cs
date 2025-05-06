@@ -24,7 +24,7 @@ public static class JwtHelper
 		var claims = new List<Claim>
 	{
 		new Claim(ClaimTypes.NameIdentifier, user.id.ToString()), // ✅ مهم: برای استفاده در فیلترها
-        new Claim(ClaimTypes.Name, user.Username.ToLower()),
+        new Claim(ClaimTypes.Name, user.user_name.ToLower()),
 		new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // اختیاری: برای امنیت بیشتر
     };
 

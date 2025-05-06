@@ -59,7 +59,7 @@ public class OptionRepository : Repository<Option>, IOptionRepository
 	{
 		try
 		{
-			return await _queryable.SingleOrDefaultAsync(x => x.OptionKey == optionKey);
+			return await _queryable.SingleOrDefaultAsync(x => x.option_key == optionKey);
 		}
 		catch
 		{

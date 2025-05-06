@@ -25,7 +25,7 @@ public class BlogRepository : Repository<Blog>, IBlogRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.BlogCategory).AsNoTracking().SingleOrDefaultAsync(x => x.slug == slug);
+			return await _queryable.Include(x => x.blog_category).AsNoTracking().SingleOrDefaultAsync(x => x.slug == slug);
 		}
 		catch
 		{
@@ -37,7 +37,7 @@ public class BlogRepository : Repository<Blog>, IBlogRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.BlogCategory).SingleOrDefaultAsync(x => x.id == id);
+			return await _queryable.Include(x => x.blog_category).SingleOrDefaultAsync(x => x.id == id);
 		}
 		catch
 		{
@@ -49,7 +49,7 @@ public class BlogRepository : Repository<Blog>, IBlogRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.BlogCategory).ToListAsync();
+			return await _queryable.Include(x => x.blog_category).ToListAsync();
 		}
 		catch
 		{
@@ -60,8 +60,8 @@ public class BlogRepository : Repository<Blog>, IBlogRepository
 	public async Task<List<Blog>> GetBlogs(int count)
 	{
 		return await _queryable.AsNoTracking()
-			.Include(x => x.BlogCategory)
-			.Where(x => x.ShowBlog)
+			.Include(x => x.blog_category)
+			.Where(x => x.show_blog)
 			.Skip(0)
 			.Take(count)
 			.ToListAsync();
@@ -71,7 +71,7 @@ public class BlogRepository : Repository<Blog>, IBlogRepository
 	{
 		try
 		{
-			return await _queryable.AsNoTracking().Where(x => x.ShowBlog).Skip(0).Take(take).ToListAsync();
+			return await _queryable.AsNoTracking().Where(x => x.show_blog).Skip(0).Take(take).ToListAsync();
 		}
 		catch
 		{
@@ -83,7 +83,7 @@ public class BlogRepository : Repository<Blog>, IBlogRepository
 	{
 		try
 		{
-			var query = _queryable.Include(x => x.BlogCategory).AsNoTracking().Skip((filter.Page - 1) * filter.PageSize)
+			var query = _queryable.Include(x => x.blog_category).AsNoTracking().Skip((filter.Page - 1) * filter.PageSize)
 						.Take(filter.PageSize)
 						.ApplyFilter(filter).ApplySort(filter.SortBy);
 			var dataTotalCount = _queryable.Count();

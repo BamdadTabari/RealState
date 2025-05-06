@@ -30,7 +30,7 @@ public class UserRepo : Repository<User>, IUserRepo
 	{
 		try
 		{
-			return await _queryable.AnyAsync(x => x.Email == email);
+			return await _queryable.AnyAsync(x => x.email == email);
 		}
 		catch
 		{
@@ -47,7 +47,7 @@ public class UserRepo : Repository<User>, IUserRepo
 	{
 		try
 		{
-			return await _queryable.AnyAsync(x => x.Username == username);
+			return await _queryable.AnyAsync(x => x.user_name == username);
 		}
 		catch
 		{
@@ -91,7 +91,7 @@ public class UserRepo : Repository<User>, IUserRepo
 	{
 		try
 		{
-			return await _queryable.FirstOrDefaultAsync(x => x.Username == usernameOrEmail || x.Email == usernameOrEmail);
+			return await _queryable.FirstOrDefaultAsync(x => x.user_name == usernameOrEmail || x.email == usernameOrEmail);
 		}
 		catch
 		{
@@ -115,7 +115,7 @@ public class UserRepo : Repository<User>, IUserRepo
 	{
 		try
 		{
-			return await _queryable.FirstOrDefaultAsync(x => x.Mobile == phone);
+			return await _queryable.FirstOrDefaultAsync(x => x.mobile == phone);
 		}
 		catch
 		{

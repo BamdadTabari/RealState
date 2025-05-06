@@ -5,11 +5,11 @@ namespace DataLayer;
 
 public class Role : BaseEntity
 {
-	public string Title { get; set; }
+	public string title { get; set; }
 
 	#region Navigations
 
-	public ICollection<UserRole> UserRoles { get; set; }
+	public ICollection<UserRole> user_roles { get; set; }
 
 	#endregion
 }
@@ -21,15 +21,15 @@ public class RoleEntityConfiguration : IEntityTypeConfiguration<Role>
 		builder.Property(x => x.slug).IsRequired();
 		builder.HasIndex(x => x.slug).IsUnique();
 		#region Mapping
-		builder.Property(b => b.Title)
+		builder.Property(b => b.title)
 			.IsRequired();
 		#endregion
 		#region Navigations
 
 		builder
-			.HasMany(x => x.UserRoles)
-			.WithOne(x => x.Role)
-			.HasForeignKey(x => x.Roleid)
+			.HasMany(x => x.user_roles)
+			.WithOne(x => x.role)
+			.HasForeignKey(x => x.role_id)
 			// just for now, at this time I choose the "DeleteBehavior.Restrict" ,
 			// because there is not any logic selected yet, so I just select the easy way
 			.OnDelete(DeleteBehavior.Restrict);

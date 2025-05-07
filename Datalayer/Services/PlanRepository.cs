@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer;
-
 public interface IPlanRepository : IRepository<Plan>
 {
 	Task<Plan?> Get(string slug);
@@ -61,7 +60,6 @@ public class PlanRepository : Repository<Plan>, IPlanRepository
 	public async Task<List<Plan>> GetPlans(int count)
 	{
 		return await _queryable.AsNoTracking()
-			.Where(x => x.show_blog)
 			.Skip(0)
 			.Take(count)
 			.ToListAsync();

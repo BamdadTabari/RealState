@@ -12,7 +12,13 @@ public interface IUnitOfWork : IDisposable
 	IRoleRepo RoleRepository { get; }
 	ICityRepository CityRepository { get; }
 	IOptionRepository OptionRepository { get; }
-
+	IAgencyRepository AgencyRepository { get; }
+	IPlanRepository PlanRepository { get; }
+	IPropertyCategoryRepository PropertyCategoryRepository { get; }
+	IPropertyFacilityRepository PropertyFacilityRepository { get; }
+	IPropertyFacilityPropertyRepository PropertyFacilityPropertyRepository { get; }
+	IPropertyRepository PropertyRepository { get; }
+	IPropertySituationRepository PropertySituationRepository { get; }
 	Task<bool> CommitAsync();
 }
 
@@ -33,7 +39,13 @@ public class UnitOfWork : IUnitOfWork
 		RoleRepository = new RoleRepo(_context);
 		CityRepository = new CityRepository(_context);
 		OptionRepository = new OptionRepository(_context);
-
+		AgencyRepository = new AgencyRepository(_context);
+		PlanRepository = new PlanRepository(_context);
+		PropertyCategoryRepository = new PropertyCategoryRepository(_context);
+		PropertyFacilityRepository = new PropertyFacilityRepository(_context);
+		PropertyFacilityPropertyRepository = new PropertyFacilityPropertyRepository(_context);
+		PropertyRepository = new PropertyRepository(_context);
+		PropertySituationRepository = new PropertySituationRepository(_context);
 	}
 
 	public IBlogCategoryRepository BlogCategoryRepository { get; }
@@ -47,6 +59,13 @@ public class UnitOfWork : IUnitOfWork
 	public IRoleRepo RoleRepository { get; }
 	public ICityRepository CityRepository { get; set; }
 	public IOptionRepository OptionRepository { get; set; }
+	public IAgencyRepository AgencyRepository { get; set; }
+	public IPlanRepository PlanRepository { get; set; }
+	public IPropertyCategoryRepository PropertyCategoryRepository { get; set; }
+	public IPropertyFacilityRepository PropertyFacilityRepository { get; set; }
+	public IPropertyFacilityPropertyRepository PropertyFacilityPropertyRepository { get; set; }
+	public IPropertyRepository PropertyRepository { get; set; }
+	public IPropertySituationRepository PropertySituationRepository { get; set; }
 	public async Task<bool> CommitAsync() => await _context.SaveChangesAsync() > 0;
 
 	// dispose and add to garbage collector

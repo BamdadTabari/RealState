@@ -52,6 +52,7 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 		builder.HasIndex(b => b.user_name).IsUnique();
 		builder.Property(x => x.slug).IsRequired();
 		builder.HasIndex(x => x.slug).IsUnique();
+		
 		#region Mappings
 
 		builder.Property(b => b.mobile)

@@ -1,7 +1,7 @@
 ﻿namespace DataLayer;
-public static class slugHelper
+public static class SlugHelper
 {
-	public static string Generateslug(string title)
+	public static string GenerateSlug(string title)
 	{
 		return title.ToLower()
 					.Replace(" ", "-")  // Replace spaces with hyphens

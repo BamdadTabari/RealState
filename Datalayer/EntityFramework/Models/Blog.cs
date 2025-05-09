@@ -6,7 +6,7 @@ namespace DataLayer;
 public class Blog : BaseEntity
 {
 	public string name { get; set; }
-	public string short_description { get; set; }
+	public string description { get; set; }
 	public string image { get; set; }
 	public string image_alt { get; set; }
 	public string blog_text { get; set; }
@@ -22,14 +22,13 @@ public class BlogConfiguration : IEntityTypeConfiguration<Blog>
 	public void Configure(EntityTypeBuilder<Blog> builder)
 	{
 		builder.HasKey(x => x.id);
-		builder.Property(x => x.short_description).IsRequired();
+		builder.Property(x => x.description).IsRequired();
 		builder.Property(x => x.name).IsRequired();
 		builder.Property(x => x.slug).IsRequired();
 		builder.Property(x => x.image).IsRequired();
 		builder.Property(x => x.blog_text).IsRequired();
 		builder.Property(x => x.keywords).IsRequired();
 		builder.HasIndex(x => x.slug).IsUnique();
-		builder.HasIndex(x => x.short_description);
 
 		builder.HasOne(x => x.blog_category)
 			.WithMany(x => x.blogs)

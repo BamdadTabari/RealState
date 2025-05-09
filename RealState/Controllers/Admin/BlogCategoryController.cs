@@ -56,7 +56,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
                 image = y.image,
                 keyWords = y.keywords,
                 name = y.name,
-                short_description = y.short_description,
+                description = y.description,
                 show_blog = y.show_blog,
             }
             ).ToList()
@@ -92,7 +92,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 				image = y.image,
 				keyWords = y.keywords,
 				name = y.name,
-				short_description = y.short_description,
+				description = y.description,
 				show_blog = y.show_blog,
 			}
 			).ToList()
@@ -128,7 +128,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 				image = y.image,
 				keyWords = y.keywords,
 				name = y.name,
-				short_description = y.short_description,
+				description = y.description,
 				show_blog = y.show_blog,
 			}
 			).ToList()

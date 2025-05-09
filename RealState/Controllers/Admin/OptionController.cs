@@ -1,7 +1,6 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
-using RaelState.Assistant;
 using RaelState.Models;
 
 namespace RaelState.Controllers.Admin;
@@ -13,7 +12,6 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpGet]
     [Route("home")]
-    [HasPermission("Option.Index")]
     public async Task<IActionResult> Index(string? searchTerm,
         SortByEnum sortBy = SortByEnum.CreationDate,
         int page = 1,
@@ -31,7 +29,6 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpGet]
     [Route("get-all-cities")]
-    [HasPermission("Option.GetAll")]
     public async Task<IActionResult> GetAll()
     {
         var data = await _unitOfWork.OptionRepository.GetAll();
@@ -39,18 +36,17 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
             return Ok(new List<OptionDto>());
         return Ok(data.Select(x => new OptionDto()
         {
-            Id = x.Id,
-            CreatedAt = x.CreatedAt,
-            UpdatedAt = x.UpdatedAt,
-            Slug = x.Slug,
-            OptionKey = x.OptionKey,
-            OptionValue = x.OptionValue,
+            id = x.id,
+            created_at = x.created_at,
+            updated_at = x.updated_at,
+            slug = x.slug,
+            option_key = x.option_key,
+            option_value = x.option_value,
         }).ToList());
     }
 
     [HttpGet]
     [Route("option-detail/{slug}")]
-    [HasPermission("Option.Detail")]
     public async Task<IActionResult> Detail([FromRoute] string slug)
     {
         var entity = await _unitOfWork.OptionRepository.Get(slug);
@@ -58,19 +54,18 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
             return NotFound();
         return Ok(new OptionDto()
         {
-            Id = entity.Id,
-            CreatedAt = entity.CreatedAt,
-            UpdatedAt = entity.UpdatedAt,
-            Slug = slug,
-            OptionKey = entity.OptionKey,
-            OptionValue = entity.OptionValue,
+            id = entity.id,
+            created_at = entity.created_at,
+            updated_at = entity.updated_at,
+            slug = entity.slug,
+            option_key = entity.option_key,
+            option_value = entity.option_value,
         });
     }
 
 
     [HttpGet]
     [Route("get-option/{id}")]
-    [HasPermission("Option.Get")]
     public async Task<IActionResult> Get([FromRoute] long id)
     {
         var entity = await _unitOfWork.OptionRepository.Get(id);
@@ -78,18 +73,17 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
             return NotFound();
         return Ok(new OptionDto()
         {
-            Id = entity.Id,
-            CreatedAt = entity.CreatedAt,
-            UpdatedAt = entity.UpdatedAt,
-            Slug = entity.Slug,
-            OptionKey = entity.OptionKey,
-            OptionValue = entity.OptionValue,
-        });
+			id = entity.id,
+			created_at = entity.created_at,
+			updated_at = entity.updated_at,
+			slug = entity.slug,
+			option_key = entity.option_key,
+			option_value = entity.option_value,
+		});
     }
 
     [HttpPost]
     [Route("option-delete/{id}")]
-    [HasPermission("Option.Delete")]
     public async Task<IActionResult> Delete([FromRoute] long id)
     {
         var entity = await _unitOfWork.OptionRepository.Get(id);
@@ -102,7 +96,6 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("create-option")]
-    [HasPermission("Option.Create")]
     public async Task<IActionResult> Create([FromForm] OptionDto src)
     {
         if (!ModelState.IsValid)
@@ -112,13 +105,13 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
                 .Select(e => e.ErrorMessage));
             return BadRequest(error);
         }
-        if (await _unitOfWork.OptionRepository.ExistsAsync(x => x.OptionKey == src.OptionKey))
+        if (await _unitOfWork.OptionRepository.ExistsAsync(x => x.option_key == src.option_key))
         {
             var error = "مقدار کلید تکراریست لطفا تغییر دهید.";
             return BadRequest(error);
         }
-        var slug = src.Slug ?? SlugHelper.GenerateSlug(src.OptionKey);
-        if (await _unitOfWork.OptionRepository.ExistsAsync(x => x.Slug == slug))
+        var slug = src.slug ?? SlugHelper.GenerateSlug(src.option_key);
+        if (await _unitOfWork.OptionRepository.ExistsAsync(x => x.slug == slug))
         {
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
             return BadRequest(error);
@@ -126,11 +119,11 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
         await _unitOfWork.OptionRepository.AddAsync(new Option()
         {
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            Slug = slug,
-            OptionKey = src.OptionKey,
-            OptionValue = src.OptionValue
+            created_at = DateTime.UtcNow,
+            updated_at = DateTime.UtcNow,
+            slug = slug,
+            option_key = src.option_key,
+            option_value = src.option_value,
         });
         await _unitOfWork.CommitAsync();
         return Ok();
@@ -138,7 +131,6 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("edit-option")]
-    [HasPermission("Option.Edit")]
     public async Task<IActionResult> Edit([FromForm] OptionDto src)
     {
         if (!ModelState.IsValid)
@@ -148,26 +140,26 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
                 .Select(e => e.ErrorMessage));
             return BadRequest(error);
         }
-        var entity = await _unitOfWork.OptionRepository.Get(src.Id);
+        var entity = await _unitOfWork.OptionRepository.Get(src.id);
         if (entity == null)
             return NotFound();
 
-        if (await _unitOfWork.OptionRepository.ExistsAsync(x => x.OptionKey == src.OptionKey && entity.OptionKey != src.OptionKey))
+        if (await _unitOfWork.OptionRepository.ExistsAsync(x => x.option_key == src.option_key && entity.option_key != src.option_key))
         {
             var error = "مقدار کلید تکراریست لطفا تغییر دهید.";
             return BadRequest(error);
         }
-        var slug = src.Slug ?? SlugHelper.GenerateSlug(src.OptionKey);
-        if (await _unitOfWork.OptionRepository.ExistsAsync(x => x.Slug == slug && entity.Slug != slug))
+        var slug = src.slug ?? SlugHelper.GenerateSlug(src.option_key);
+        if (await _unitOfWork.OptionRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
         {
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
             return BadRequest(error);
         }
 
-        entity.Slug = slug;
-        entity.UpdatedAt = DateTime.UtcNow;
-        entity.OptionValue = src.OptionValue;
-        entity.OptionKey = src.OptionKey;
+        entity.slug = slug;
+        entity.updated_at = DateTime.UtcNow;
+        entity.option_value = src.option_value;
+        entity.option_key = src.option_key;
 
         _unitOfWork.OptionRepository.Update(entity);
         await _unitOfWork.CommitAsync();

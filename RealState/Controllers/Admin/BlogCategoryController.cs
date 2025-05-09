@@ -144,7 +144,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
             return NotFound();
         _unitOfWork.BlogCategoryRepository.Remove(entity);
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -179,7 +179,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
             updated_at = DateTime.UtcNow,
         });
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return Created();
     }
 
     [HttpPost]
@@ -215,6 +215,6 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         entity.updated_at = DateTime.UtcNow;
         _unitOfWork.BlogCategoryRepository.Update(entity);
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return NoContent();
     }
 }

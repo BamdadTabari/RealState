@@ -97,7 +97,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         });
 
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return Created();
     }
 
     private static List<string> ExtractImageSources(string html)
@@ -198,7 +198,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         entity.keywords = src.keyWords;
         _unitOfWork.BlogRepository.Update(entity);
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -225,7 +225,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         }
         _unitOfWork.BlogRepository.Remove(entity);
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return NoContent();
     }
 
     [HttpGet]
@@ -271,7 +271,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         _unitOfWork.BlogRepository.Update(entity);
         await _unitOfWork.CommitAsync();
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]

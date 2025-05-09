@@ -159,7 +159,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			return NotFound();
 		_unitOfWork.CityRepository.Remove(entity);
 		await _unitOfWork.CommitAsync();
-		return Ok();
+		return NoContent();
 	}
 
 	[HttpPost]
@@ -194,7 +194,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			province_id = src.province_id,
 		});
 		await _unitOfWork.CommitAsync();
-		return Ok();
+		return NoContent();
 	}
 
 	[HttpPost]
@@ -232,6 +232,6 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 		_unitOfWork.CityRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
-		return Ok();
+		return NoContent();
 	}
 }

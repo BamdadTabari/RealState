@@ -90,7 +90,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
             return NotFound();
         _unitOfWork.RoleRepository.Remove(entity);
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -124,7 +124,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
             title = src.title,
         });
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return Created();
     }
 
     [HttpPost]
@@ -160,6 +160,6 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
         
         _unitOfWork.RoleRepository.Update(entity);
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return NoContent();
     }
 }

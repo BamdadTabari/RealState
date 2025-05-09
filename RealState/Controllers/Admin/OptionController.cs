@@ -91,7 +91,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
             return NotFound();
         _unitOfWork.OptionRepository.Remove(entity);
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]
@@ -126,7 +126,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
             option_value = src.option_value,
         });
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return Created();
     }
 
     [HttpPost]
@@ -163,6 +163,6 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
         _unitOfWork.OptionRepository.Update(entity);
         await _unitOfWork.CommitAsync();
-        return Ok();
+        return NoContent();
     }
 }

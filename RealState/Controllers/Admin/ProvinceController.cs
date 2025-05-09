@@ -119,7 +119,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 			return NotFound();
 		_unitOfWork.ProvinceRepository.Remove(entity);
 		await _unitOfWork.CommitAsync();
-		return Ok();
+		return NoContent();
 	}
 
 	[HttpPost]
@@ -153,7 +153,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 			name = src.name,
 		});
 		await _unitOfWork.CommitAsync();
-		return Ok();
+		return Created();
 	}
 
 	[HttpPost]
@@ -189,6 +189,6 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 		
 		_unitOfWork.ProvinceRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
-		return Ok();
+		return NoContent();
 	}
 }

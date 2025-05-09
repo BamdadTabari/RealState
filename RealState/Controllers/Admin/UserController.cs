@@ -80,7 +80,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 			user_id = user.id,
 		});
 		await _unitOfWork.CommitAsync();
-		return Ok();
+		return Created();
 	}
 
 	[HttpPost]
@@ -116,7 +116,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 		entity.is_active = src.is_active;
 		_unitOfWork.UserRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
-		return Ok();
+		return NoContent();
 	}
 
 	[HttpPost]
@@ -128,8 +128,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 			return NotFound("کاربر با این ایدی وجود ندارد");
 		_unitOfWork.UserRepository.Remove(entity);
 		await _unitOfWork.CommitAsync();
-		_unitOfWork.Dispose();
-		return RedirectToAction("Index", "User", new { Area = "Admin" });
+		return NoContent();
 	}
 
 	[HttpGet]
@@ -176,6 +175,6 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
 		_unitOfWork.Dispose();
-		return RedirectToAction("Detail", "User", new { Area = "Admin", slug = user.slug });
+		return NoContent();
 	}
 }

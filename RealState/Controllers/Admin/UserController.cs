@@ -31,7 +31,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 
 	[HttpPost]
 	[Route("create-user")]
-	public async Task<IActionResult> Create(AdminUserForRegistrationCommand src)
+	public async Task<IActionResult> Create([FromForm] AdminUserForRegistrationCommand src)
 	{
 		if (!ModelState.IsValid)
 		{
@@ -85,7 +85,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 
 	[HttpPost]
 	[Route("update-user")]
-	public async Task<IActionResult> Edit(UserDto src)
+	public async Task<IActionResult> Edit([FromForm]UserDto src)
 	{
 		if (!ModelState.IsValid)
 		{

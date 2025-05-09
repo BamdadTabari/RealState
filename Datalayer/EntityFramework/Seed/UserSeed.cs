@@ -13,9 +13,9 @@ public static class UserSeed
 			is_locked_out = false,
 			mobile = "09309309393",
 			user_name = "admin-user",
-			password_hash = PasswordHasher.Hash("QAZqaz!@#123"),
-			concurrency_stamp = StampGenerator.CreateSecurityStamp(32),
-			security_stamp = StampGenerator.CreateSecurityStamp(32),
+			password_hash = "omTtMfA5EEJCzjH5t/Q67cRXK5TRwerSqN7sJSm41No=.FRLmTm9jwMcEFnjpjgivJw==", // QAZqaz!@#123
+			concurrency_stamp = "X3JO2EOCURAEBU6HHY6OBYEDD2877FXU",
+			security_stamp = "098NTB7E5LFFXREHBSEHDKLI0DOBIKST",
 			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
 			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
 			slug= "Admin-User",

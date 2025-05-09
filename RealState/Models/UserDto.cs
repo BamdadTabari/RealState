@@ -42,6 +42,8 @@ public class UserDto : BaseDto
 	public string? refresh_token { get; set; }
 	public DateTime refresh_token_expiry_time { get; set; }
 
+	#endregion
+
 	#region Navigations
 	public ICollection<UserRoleDto>? user_roles { get; set; }
 	public AgencyDto agency { get; set; }

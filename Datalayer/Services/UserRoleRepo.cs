@@ -36,7 +36,7 @@ public class UserRoleRepo : Repository<UserRole>, IUserRoleRepo
 	{
 		try
 		{
-			return _queryable.Include(i => i.role).Where(x => x.user_id == userid);
+			return _queryable.Include(i => i.role).Where(x => x.user_id == userId);
 		}
 		catch
 		{

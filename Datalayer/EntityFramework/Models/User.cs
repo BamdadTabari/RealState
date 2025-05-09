@@ -39,6 +39,8 @@ public class User : BaseEntity
 
 	#region Navigations
 	public ICollection<UserRole> user_roles { get; set; }
+
+	public  long agency_id { get; set; }
 	public Agency agency { get; set; }
 	#endregion
 }
@@ -70,8 +72,9 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 
 		builder
 			.HasOne(x => x.agency)
-			.WithOne(x => x.user);
-
+			.WithOne(x => x.user)
+			.HasForeignKey<User>(x => x.agency_id)
+			.OnDelete(DeleteBehavior.Cascade);
 		#endregion
 	}
 }

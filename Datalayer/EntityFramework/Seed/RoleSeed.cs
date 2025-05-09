@@ -10,7 +10,7 @@ public static class RoleSeed
 			id = 1,
 			title = "Admin",
 			created_at = new DateTime(2025, 1, 1, 12, 0, 0),
-			updated_at = DateTime.Now,
+			updated_at = new DateTime(2025, 1, 1, 12, 0, 0),
 			slug = "Admin_Role"
 		},
 		 new()

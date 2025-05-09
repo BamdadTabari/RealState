@@ -40,7 +40,7 @@ public class User : BaseEntity
 	#region Navigations
 	public ICollection<UserRole> user_roles { get; set; }
 
-	public  long agency_id { get; set; }
+	public long? agency_id { get; set; }
 	public Agency agency { get; set; }
 	#endregion
 }

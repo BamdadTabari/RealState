@@ -13,7 +13,6 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpGet]
     [Route("home")]
-    [HasPermission("Role.Index")]
     public async Task<IActionResult> Index(string? searchTerm,
         SortByEnum sortBy = SortByEnum.CreationDate,
         int page = 1,
@@ -31,7 +30,6 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpGet]
     [Route("get-all-roles")]
-    [HasPermission("Role.GetAll")]
     public async Task<IActionResult> GetAll()
     {
         var data = await _unitOfWork.RoleRepository.GetAll();
@@ -39,27 +37,16 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
             return Ok(new List<RoleDto>());
         return Ok(data.Select(x => new RoleDto()
         {
-            Id = x.Id,
-            CreatedAt = x.CreatedAt,
-            UpdatedAt = x.UpdatedAt,
-            Slug = x.Slug,
-            Title = x.Title,
-            RolePermissions = x.RolePermissions == null ? new List<RolePermissionDto>():
-            x.RolePermissions.Select(rp => new RolePermissionDto()
-            {
-                Id =rp.Id,
-                CreatedAt = rp.CreatedAt,
-                UpdatedAt =rp.UpdatedAt,
-                Slug = rp.Slug,
-                PermissionId = rp.PermissionId,
-                RoleId = rp.RoleId,
-            }).ToList()
+            id = x.id,
+            created_at = x.created_at,
+            updated_at = x.updated_at,
+            slug = x.slug,
+            title = x.title,
         }).ToList());
     }
 
     [HttpGet]
     [Route("role-detail/{slug}")]
-    [HasPermission("Role.Detail")]
     public async Task<IActionResult> Detail([FromRoute] string slug)
     {
         var entity = await _unitOfWork.RoleRepository.GetRoleBySlug(slug);
@@ -68,28 +55,17 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
         return Ok(new RoleDto()
         {
 
-            Id = entity.Id,
-            CreatedAt = entity.CreatedAt,
-            UpdatedAt = entity.UpdatedAt,
-            Slug = entity.Slug,
-            Title = entity.Title,
-            RolePermissions = entity.RolePermissions == null ? new List<RolePermissionDto>() :
-            entity.RolePermissions.Select(rp => new RolePermissionDto()
-            {
-                Id = rp.Id,
-                CreatedAt = rp.CreatedAt,
-                UpdatedAt = rp.UpdatedAt,
-                Slug = rp.Slug,
-                PermissionId = rp.PermissionId,
-                RoleId = rp.RoleId,
-            }).ToList()
+            id = entity.id,
+            created_at = entity.created_at,
+            updated_at = entity.updated_at,
+            slug = entity.slug,
+            title = entity.title
         });
     }
 
 
     [HttpGet]
     [Route("get-role/{id}")]
-    [HasPermission("Role.Get")]
     public async Task<IActionResult> Get([FromRoute] long id)
     {
         var entity = await _unitOfWork.RoleRepository.GetRole(id);
@@ -97,27 +73,16 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
             return NotFound();
         return Ok(new RoleDto()
         {
-            Id = entity.Id,
-            CreatedAt = entity.CreatedAt,
-            UpdatedAt = entity.UpdatedAt,
-            Slug = entity.Slug,
-            Title = entity.Title,
-            RolePermissions = entity.RolePermissions == null ? new List<RolePermissionDto>() :
-            entity.RolePermissions.Select(rp => new RolePermissionDto()
-            {
-                Id = rp.Id,
-                CreatedAt = rp.CreatedAt,
-                UpdatedAt = rp.UpdatedAt,
-                Slug = rp.Slug,
-                PermissionId = rp.PermissionId,
-                RoleId = rp.RoleId,
-            }).ToList()
+            id = entity.id,
+            created_at = entity.created_at,
+            updated_at = entity.updated_at,
+            slug = entity.slug,
+            title = entity.title
         });
     }
 
     [HttpPost]
     [Route("role-delete/{id}")]
-    [HasPermission("Role.Delete")]
     public async Task<IActionResult> Delete([FromRoute] long id)
     {
         var entity = await _unitOfWork.RoleRepository.GetRole(id);
@@ -130,7 +95,6 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("create-role")]
-    [HasPermission("Role.Create")]
     public async Task<IActionResult> Create([FromForm] RoleDto src)
     {
         if (!ModelState.IsValid)
@@ -140,13 +104,13 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
                 .Select(e => e.ErrorMessage));
             return BadRequest(error);
         }
-        if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.Title == src.Title))
+        if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.title == src.title))
         {
             var error = "مقدار نام تکراریست لطفا تغییر دهید.";
             return BadRequest(error);
         }
-        var slug = src.Slug ?? SlugHelper.GenerateSlug(src.Title);
-        if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.Slug == slug))
+        var slug = src.slug ?? SlugHelper.GenerateSlug(src.title);
+        if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.slug == slug))
         {
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
             return BadRequest(error);
@@ -154,10 +118,10 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 
         await _unitOfWork.RoleRepository.AddAsync(new Role()
         {
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
-            Slug = slug,
-            Title = src.Title,
+            created_at = DateTime.UtcNow,
+            updated_at = DateTime.UtcNow,
+            slug = slug,
+            title = src.title,
         });
         await _unitOfWork.CommitAsync();
         return Ok();
@@ -165,7 +129,6 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("edit-role")]
-    [HasPermission("Role.Edit")]
     public async Task<IActionResult> Edit([FromForm] RoleDto src)
     {
         if (!ModelState.IsValid)
@@ -175,25 +138,25 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
                 .Select(e => e.ErrorMessage));
             return BadRequest(error);
         }
-        var entity = await _unitOfWork.RoleRepository.GetRole(src.Id);
+        var entity = await _unitOfWork.RoleRepository.GetRole(src.id);
         if (entity == null)
             return NotFound();
 
-        if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.Title == src.Title && entity.Title != src.Title))
+        if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.title == src.title && entity.title != src.title))
         {
             var error = "مقدار نام تکراریست لطفا تغییر دهید.";
             return BadRequest(error);
         }
-        var slug = src.Slug ?? SlugHelper.GenerateSlug(src.Title);
-        if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.Slug == slug && entity.Slug != slug))
+        var slug = src.slug ?? SlugHelper.GenerateSlug(src.title);
+        if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
         {
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
             return BadRequest(error);
         }
 
-        entity.Slug = slug;
-        entity.UpdatedAt = DateTime.UtcNow;
-        entity.Title = src.Title;
+        entity.slug = slug;
+        entity.updated_at = DateTime.UtcNow;
+        entity.title = src.title;
         
         _unitOfWork.RoleRepository.Update(entity);
         await _unitOfWork.CommitAsync();

@@ -4,7 +4,7 @@ namespace DataLayer;
 
 public interface IUserRoleRepo : IRepository<UserRole>
 {
-	IEnumerable<UserRole> GetUserRolesByUserid(long userid);
+	IEnumerable<UserRole> GetUserRolesByUserId(long userId);
 	//Task<PaginatedList<UserRole>> GetByRoleid(int roleid);
 }
 public class UserRoleRepo : Repository<UserRole>, IUserRoleRepo
@@ -32,7 +32,7 @@ public class UserRoleRepo : Repository<UserRole>, IUserRoleRepo
 	//    }
 	//}
 
-	public IEnumerable<UserRole> GetUserRolesByUserid(long userid)
+	public IEnumerable<UserRole> GetUserRolesByUserId(long userId)
 	{
 		try
 		{

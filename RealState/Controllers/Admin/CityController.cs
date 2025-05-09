@@ -3,6 +3,7 @@ using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Assistant;
 using RaelState.Models;
+using RealState.Models;
 
 namespace RaelState.Controllers.Admin;
 [Route("api/city")]
@@ -13,7 +14,6 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpGet]
 	[Route("home")]
-	[HasPermission("City.Index")]
 	public async Task<IActionResult> Index(string? searchTerm,
 		SortByEnum sortBy = SortByEnum.CreationDate,
 		int page = 1,
@@ -31,7 +31,6 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpGet]
 	[Route("get-all-cities")]
-	[HasPermission("City.GetAll")]
 	public async Task<IActionResult> GetAll()
 	{
 		var data = await _unitOfWork.CityRepository.GetAll();
@@ -39,26 +38,39 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			return Ok(new List<CityDto>());
 		return Ok(data.Select(x => new CityDto()
 		{
-			Id = x.Id,
-			CreatedAt = x.CreatedAt,
-			UpdatedAt = x.UpdatedAt,
-			Slug = x.Slug,
-			Name = x.Name,
-			ProvinceId = x.ProvinceId,
-			Province = new ProvinceDto()
+			id = x.id,
+			created_at = x.created_at,
+			updated_at = x.updated_at,
+			slug = x.slug,
+			name = x.name,
+			province_id = x.province_id,
+			province = new ProvinceDto()
 			{
-				Name = x.Province.Name,
-				Id = x.Province.Id,
-				CreatedAt = x.Province.CreatedAt,
-				UpdatedAt = x.Province.UpdatedAt,
-				Slug = x.Province.Slug,
-			}
+				name = x.province.name,
+				id = x.province.id,
+				created_at = x.province.created_at,
+				updated_at = x.province.updated_at,
+				slug = x.province.slug,
+			},
+			agency_list = x.agency_list == null ? new List<AgencyDto>():
+			x.agency_list.Select(y => new AgencyDto()
+			{
+				id = y.id,
+				created_at = y.created_at,
+				updated_at = y.updated_at,
+				slug = y.slug,
+				agency_name = y.agency_name,
+				city_id = y.city_id,
+				city_province_full_name = y.city_province_full_name,
+				full_name = y.full_name,
+				mobile = y.mobile,
+				phone = y.phone,
+			}).ToList()
 		}).ToList());
 	}
 
 	[HttpGet]
 	[Route("city-detail/{slug}")]
-	[HasPermission("City.Detail")]
 	public async Task<IActionResult> Detail([FromRoute] string slug)
 	{
 		var entity = await _unitOfWork.CityRepository.Get(slug);
@@ -66,27 +78,40 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			return NotFound();
 		return Ok(new CityDto()
 		{
-			Id = entity.Id,
-			CreatedAt = entity.CreatedAt,
-			UpdatedAt = entity.UpdatedAt,
-			Slug = entity.Slug,
-			Name = entity.Name,
-			ProvinceId = entity.ProvinceId,
-			Province = new ProvinceDto()
+			id = entity.id,
+			created_at = entity.created_at,
+			updated_at = entity.updated_at,
+			slug = entity.slug,
+			name = entity.name,
+			province_id = entity.province_id,
+			province = new ProvinceDto()
 			{
-				Id = entity.Province.Id,
-				Name = entity.Province.Name,
-				CreatedAt = entity.Province.CreatedAt,
-				UpdatedAt = entity.Province.UpdatedAt,
-				Slug = entity.Province.Slug
-			}
+				name = entity.province.name,
+				id = entity.province.id,
+				created_at = entity.province.created_at,
+				updated_at = entity.province.updated_at,
+				slug = entity.province.slug,
+			},
+			agency_list = entity.agency_list == null ? new List<AgencyDto>() :
+			entity.agency_list.Select(y => new AgencyDto()
+			{
+				id = y.id,
+				created_at = y.created_at,
+				updated_at = y.updated_at,
+				slug = y.slug,
+				agency_name = y.agency_name,
+				city_id = y.city_id,
+				city_province_full_name = y.city_province_full_name,
+				full_name = y.full_name,
+				mobile = y.mobile,
+				phone = y.phone,
+			}).ToList()
 		});
 	}
 
 
 	[HttpGet]
 	[Route("get-city/{id}")]
-	[HasPermission("City.Get")]
 	public async Task<IActionResult> Get([FromRoute] long id)
 	{
 		var entity = await _unitOfWork.CityRepository.Get(id);
@@ -94,26 +119,39 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			return NotFound();
 		return Ok(new CityDto()
 		{
-			Id = entity.Id,
-			CreatedAt = entity.CreatedAt,
-			UpdatedAt = entity.UpdatedAt,
-			Slug = entity.Slug,
-			Name = entity.Name,
-			ProvinceId = entity.ProvinceId,
-			Province = new ProvinceDto()
+			id = entity.id,
+			created_at = entity.created_at,
+			updated_at = entity.updated_at,
+			slug = entity.slug,
+			name = entity.name,
+			province_id = entity.province_id,
+			province = new ProvinceDto()
 			{
-				Id = entity.Province.Id,
-				Name = entity.Province.Name,
-				CreatedAt = entity.Province.CreatedAt,
-				UpdatedAt = entity.Province.UpdatedAt,
-				Slug = entity.Province.Slug
-			}
+				name = entity.province.name,
+				id = entity.province.id,
+				created_at = entity.province.created_at,
+				updated_at = entity.province.updated_at,
+				slug = entity.province.slug,
+			},
+			agency_list = entity.agency_list == null ? new List<AgencyDto>() :
+			entity.agency_list.Select(y => new AgencyDto()
+			{
+				id = y.id,
+				created_at = y.created_at,
+				updated_at = y.updated_at,
+				slug = y.slug,
+				agency_name = y.agency_name,
+				city_id = y.city_id,
+				city_province_full_name = y.city_province_full_name,
+				full_name = y.full_name,
+				mobile = y.mobile,
+				phone = y.phone,
+			}).ToList()
 		});
 	}
 
 	[HttpPost]
 	[Route("city-delete/{id}")]
-	[HasPermission("City.Delete")]
 	public async Task<IActionResult> Delete([FromRoute] long id)
 	{
 		var entity = await _unitOfWork.CityRepository.Get(id);
@@ -126,7 +164,6 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpPost]
 	[Route("create-city")]
-	[HasPermission("City.Create")]
 	public async Task<IActionResult> Create([FromForm] CityDto src)
 	{
 		if (!ModelState.IsValid)
@@ -136,13 +173,13 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 				.Select(e => e.ErrorMessage));
 			return BadRequest(error);
 		}
-		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.Name == src.Name && x.ProvinceId == src.ProvinceId))
+		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.name == src.name && x.province_id == src.province_id))
 		{
 			var error = "مقدار نام شهر تکراریست لطفا تغییر دهید.";
 			return BadRequest(error);
 		}
-		var slug = src.Slug ?? SlugHelper.GenerateSlug(src.Name + src.ProvinceId);
-		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.Slug == slug))
+		var slug = src.slug ?? SlugHelper.GenerateSlug(src.name + src.province_id);
+		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
 			return BadRequest(error);
@@ -150,11 +187,11 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 		await _unitOfWork.CityRepository.AddAsync(new City()
 		{
-			CreatedAt = DateTime.UtcNow,
-			UpdatedAt = DateTime.UtcNow,
-			Slug = slug,
-			Name = src.Name,
-			ProvinceId = src.ProvinceId,
+			created_at = DateTime.UtcNow,
+			updated_at = DateTime.UtcNow,
+			slug = slug,
+			name = src.name,
+			province_id = src.province_id,
 		});
 		await _unitOfWork.CommitAsync();
 		return Ok();
@@ -162,7 +199,6 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpPost]
 	[Route("edit-city")]
-	[HasPermission("City.Edit")]
 	public async Task<IActionResult> Edit([FromForm] CityDto src)
 	{
 		if (!ModelState.IsValid)
@@ -172,27 +208,27 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 				.Select(e => e.ErrorMessage));
 			return BadRequest(error);
 		}
-		var entity = await _unitOfWork.CityRepository.Get(src.Id);
+		var entity = await _unitOfWork.CityRepository.Get(src.id);
 		if (entity == null)
 			return NotFound();
 
-		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.Name == src.Name && entity.Name != src.Name
-		&& x.ProvinceId == src.ProvinceId))
+		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.name == src.name && entity.name != src.name
+		&& x.province_id == src.province_id))
 		{
 			var error = "مقدار نام شهر تکراریست لطفا تغییر دهید.";
 			return BadRequest(error);
 		}
-		var slug = src.Slug ?? SlugHelper.GenerateSlug(src.Name + src.ProvinceId);
-		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.Slug == slug && entity.Slug != slug))
+		var slug = src.slug ?? SlugHelper.GenerateSlug(src.name + src.province_id);
+		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
 			return BadRequest(error);
 		}
 
-		entity.Slug = slug;
-		entity.UpdatedAt = DateTime.UtcNow;
-		entity.Name = src.Name;
-		entity.ProvinceId = src.ProvinceId;
+		entity.slug = slug;
+		entity.updated_at = DateTime.UtcNow;
+		entity.name = src.name;
+		entity.province_id = src.province_id;
 
 		_unitOfWork.CityRepository.Update(entity);
 		await _unitOfWork.CommitAsync();

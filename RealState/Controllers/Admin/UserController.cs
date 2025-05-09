@@ -1,9 +1,8 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
-using RaelState.Assistant;
 using RaelState.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using RealState.Models;
 
 namespace RaelState.Controllers.Admin;
 [Route("api/user")]
@@ -16,7 +15,6 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 
 	[HttpGet]
 	[Route("home")]
-	[HasPermission("User.Index")]
 	public IActionResult Index(string searchTerm, bool? boolFilter, SortByEnum sortBy = SortByEnum.CreationDate, int page = 1, int pageSize = 10)
 	{
 		// Set up filter object
@@ -33,7 +31,6 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 
 	[HttpPost]
 	[Route("create-user")]
-	[HasPermission("User.Create")]
 	public async Task<IActionResult> Create(AdminUserForRegistrationCommand src)
 	{
 		if (!ModelState.IsValid)
@@ -43,44 +40,44 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 				   .Select(e => e.ErrorMessage));
 			return BadRequest(error);
 		}
-		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.Username == src.UserName))
+		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.user_name == src.user_name))
 		{
 			var error = "کاربر با این نام وجود دارد";
 			return BadRequest(error);
 		}
-		var slug = src.Slug ?? SlugHelper.GenerateSlug(src.UserName);
-		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.Slug == slug))
+		var slug = src.slug ?? SlugHelper.GenerateSlug(src.user_name);
+		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "کاربر با این نامک وجود دارد";
 			return BadRequest(error);
 		}
 		User user = new()
 		{
-			UpdatedAt = DateTime.Now,
-			CreatedAt = DateTime.Now,
-			Username = src.UserName,
-			Email = src.Email,
-			ConcurrencyStamp = StampGenerator.CreateSecurityStamp(32),
-			SecurityStamp = StampGenerator.CreateSecurityStamp(32),
-			FailedLoginCount = 0,
-			IsActive = src.IsActive,
-			IsLockedOut = false,
-			IsMobileComfirmed = true,
-			LastLoginDate = DateTime.Now,
-			PasswordHash = PasswordHasher.Hash(src.Password),
-			Mobile = src.PhoneNumber,
-			Slug = slug
+			updated_at = DateTime.Now,
+			created_at = DateTime.Now,
+			user_name = src.user_name,
+			email = src.email,
+			concurrency_stamp = StampGenerator.CreateSecurityStamp(32),
+			security_stamp = StampGenerator.CreateSecurityStamp(32),
+			failed_login_count = 0,
+			is_active = src.is_active,
+			is_locked_out = false,
+			is_mobile_confirmed = true,
+			last_login_date_time = DateTime.Now,
+			password_hash = PasswordHasher.Hash(src.password),
+			mobile = src.phone_number,
+			slug = slug
 		};
 		await _unitOfWork.UserRepository.AddAsync(user);
 		await _unitOfWork.CommitAsync();
 		var role = await _unitOfWork.RoleRepository.GetRole("Admin");
 		await _unitOfWork.UserRoleRepository.AddAsync(new UserRole()
 		{
-			CreatedAt = DateTime.Now,
-			UpdatedAt = DateTime.Now,
-			RoleId = role.Id,
-			Slug = $"Admin_{slug}",
-			UserId = user.Id,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
+			role_id = role.id,
+			slug = $"Admin_{slug}",
+			user_id = user.id,
 		});
 		await _unitOfWork.CommitAsync();
 		return Ok();
@@ -88,7 +85,6 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 
 	[HttpPost]
 	[Route("update-user")]
-	[HasPermission("User.Edit")]
 	public async Task<IActionResult> Edit(UserDto src)
 	{
 		if (!ModelState.IsValid)
@@ -98,26 +94,26 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 			   .Select(e => e.ErrorMessage));
 			return BadRequest(error);
 		}
-		var entity = await _unitOfWork.UserRepository.GetUser(src.Id);
+		var entity = await _unitOfWork.UserRepository.GetUser(src.id);
 		if (entity == null)
 			return NotFound("کاربر با این ایدی وجود ندارد");
-		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.Username == src.Username) && entity.Username != src.Username)
+		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.user_name == src.user_name) && entity.user_name != src.user_name)
 		{
 			var error = "کاربر با این نام وجود دارد";
 			return BadRequest(error);
 		}
-		var slug = src.Slug ?? SlugHelper.GenerateSlug(src.Username);
-		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.Slug == slug) && entity.Slug != slug)
+		var slug = src.slug ?? SlugHelper.GenerateSlug(src.user_name);
+		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug) && entity.slug != slug)
 		{
 			var error = "کاربر با این نامک وجود دارد";
 			return BadRequest(error);
 		}
-		entity.Slug = slug;
-		entity.Username = src.Username;
-		entity.PasswordHash = PasswordHasher.Hash(src.Password);
-		entity.UpdatedAt = DateTime.Now;
-		entity.Email = src.Email;
-		entity.IsActive = src.IsActive;
+		entity.slug = slug;
+		entity.user_name = src.user_name;
+		entity.password_hash = PasswordHasher.Hash(src.password);
+		entity.updated_at = DateTime.Now;
+		entity.email = src.email;
+		entity.is_active = src.is_active;
 		_unitOfWork.UserRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
 		return Ok();
@@ -125,7 +121,6 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 
 	[HttpPost]
 	[Route("delete-user/{id}")]
-	[HasPermission("User.Delete")]
 	public async Task<IActionResult> Delete([FromRoute]int id)
 	{
 		var entity = await _unitOfWork.UserRepository.GetUser(id);
@@ -139,7 +134,6 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 
 	[HttpGet]
 	[Route("detail-user")]
-	[HasPermission("User.Detail")]
 	public async Task<IActionResult> Detail(string slug)
 	{
 		var entity = await _unitOfWork.UserRepository.Get(slug);
@@ -147,42 +141,41 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 			return NotFound("کاربر با این slug وجود ندارد");
 		return Ok(new UserDto()
 		{
-			Id = entity.Id,
-			CreatedAt = entity.CreatedAt,
-			UpdatedAt = entity.UpdatedAt,
-			Slug = slug,
-			Mobile = entity.Mobile,
-			IsMobileConfirmed = entity.IsMobileComfirmed,
-			IsActive = entity.IsActive,
-			FailedLoginCount = entity.FailedLoginCount,
-			Email = entity.Email,
-			LastLoginDate = entity.LastLoginDate,
-			Username = entity.Username,
-			UserRoles = entity.UserRoles == null ? [] :
-			entity.UserRoles.Select(y => new UserRoleDto()
+			id = entity.id,
+			created_at = entity.created_at,
+			updated_at = entity.updated_at,
+			slug = slug,
+			mobile = entity.mobile,
+			is_mobile_confirmed = entity.is_mobile_confirmed,
+			is_active = entity.is_active,
+			failed_login_count = entity.failed_login_count,
+			email = entity.email,
+			last_login_date_time = entity.last_login_date_time,
+			user_name = entity.user_name,
+			user_roles = entity.user_roles == null ? [] :
+			entity.user_roles.Select(y => new UserRoleDto()
 			{
-				Id = y.Id,
-				CreatedAt = y.CreatedAt,
-				UpdatedAt = y.UpdatedAt,
-				Slug = y.Slug,
-				RoleId = y.RoleId,
-				UserId = y.UserId
+				id = y.id,
+				created_at = y.created_at,
+				updated_at = y.updated_at,
+				slug = y.slug,
+				role_id = y.role_id,
+				user_id = y.user_id
 			}).ToList(),
 		});
 	}
 
 	[HttpPost]
 	[Route("activate-and-deactive-user")]
-	[HasPermission("User.CheckActive")]
 	public async Task<IActionResult> CheckActive(int id)
 	{
 		var user = await _unitOfWork.UserRepository.GetUser(id);
 		if (user == null)
 			return NotFound("کاربر با این ایدی وجود ندارد");
-		user.IsActive = !user.IsActive;
+		user.is_active = !user.is_active;
 		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
 		_unitOfWork.Dispose();
-		return RedirectToAction("Detail", "User", new { Area = "Admin", slug = user.Slug });
+		return RedirectToAction("Detail", "User", new { Area = "Admin", slug = user.slug });
 	}
 }

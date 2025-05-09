@@ -125,7 +125,7 @@ builder.Services.AddSignalR();
 var app = builder.Build();
 
 // Middlewares
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -138,16 +138,16 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
+//if (app.Environment.IsDevelopment())
+//{
+app.UseSwagger();
+app.UseSwaggerUI();
 	//app.UseSwaggerUI(options =>
 	//{
 	//	options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
 	//	options.InjectJavascript("/swagger/swagger-authtoken.js");
 	//});
-}
+//}
 
 app.MapControllers();
 app.Run();

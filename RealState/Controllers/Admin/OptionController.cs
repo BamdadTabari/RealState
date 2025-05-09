@@ -28,7 +28,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpGet]
-    [Route("get-all-cities")]
+    [Route("get-all-options")]
     public async Task<IActionResult> GetAll()
     {
         var data = await _unitOfWork.OptionRepository.GetAll();

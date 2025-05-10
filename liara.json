@@ -1,7 +1,9 @@
 {
-  "port": 80,
-
-  "dotnet": {
-    "version": 10
-  }
+"app":"amajpanah"
+"port":3000
+"build":{
+"location":"iran"
+}
+"disks":[
+]
 }

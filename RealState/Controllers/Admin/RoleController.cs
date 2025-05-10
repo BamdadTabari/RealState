@@ -45,9 +45,9 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 			return NotFound(new ResponseDto<List<RoleDto>>()
 			{
 				data = new List<RoleDto>(),
-				is_success = false,
+				is_success = true,
 				message = "مقدار نقش در دیتابیس وجود ندارد.",
-				response_code = 404
+				response_code = 200
 			});
 		return Ok(new ResponseDto<List<RoleDto>>()
         {

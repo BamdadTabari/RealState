@@ -42,12 +42,12 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		var data = await _unitOfWork.CityRepository.GetAll();
 		if (data.Count() == 0)
-			return NotFound(new ResponseDto<List<CityDto>>()
+			return Ok(new ResponseDto<List<CityDto>>()
 			{
 				data = new List<CityDto>(),
-				is_success = false,
+				is_success = true,
 				message = "مقدار شهر در دیتابیس وجود ندارد.",
-				response_code = 404
+				response_code = 200
 			});
 		return Ok(new ResponseDto<List<CityDto>>()
 		{

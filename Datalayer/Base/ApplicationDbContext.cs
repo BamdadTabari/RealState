@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DataLayer.EntityFramework.Seed;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 namespace DataLayer;
@@ -17,7 +18,8 @@ public class ApplicationDbContext : DbContext
 		modelBuilder.Entity<Role>().HasData(RoleSeed.All);
 		modelBuilder.Entity<User>().HasData(UserSeed.All);
 		modelBuilder.Entity<Option>().HasData(OptionSeed.All);
-
+		modelBuilder.Entity<Province>().HasData(ProvinceSeed.All);
+		modelBuilder.Entity<City>().HasData(CitySeed.All);
 		// Creating Model
 		base.OnModelCreating(modelBuilder);
 	}

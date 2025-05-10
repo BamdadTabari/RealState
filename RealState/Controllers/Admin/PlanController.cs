@@ -43,12 +43,12 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		var data = await _unitOfWork.PlanRepository.GetAll();
 		if (data.Count() == 0)
-			return NotFound(new ResponseDto<List<PlanDto>>()
+			return Ok(new ResponseDto<List<PlanDto>>()
 			{
 				data = new List<PlanDto>(),
-				is_success = false,
+				is_success = true,
 				message = "مقدار پلن در دیتابیس وجود ندارد.",
-				response_code = 404
+				response_code = 200
 			});
 		return Ok(new ResponseDto<List<PlanDto>>()
 		{

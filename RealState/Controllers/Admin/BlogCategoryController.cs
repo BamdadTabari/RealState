@@ -44,12 +44,12 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
     {
         var data = await _unitOfWork.BlogCategoryRepository.GetAll();
         if (data.Count() == 0)
-		    return NotFound(new ResponseDto<List<BlogCategoryDto>> ()
+		    return Ok(new ResponseDto<List<BlogCategoryDto>> ()
 		    {
 			    data = new List<BlogCategoryDto>(),
-			    is_success = false,
+			    is_success = true,
 			    message = "هیچ مقداری در دیتابیس وجود ندارد",
-			    response_code = 404
+			    response_code = 200
 		    });
 		return Ok(new ResponseDto<List<BlogCategoryDto>>()
 		{

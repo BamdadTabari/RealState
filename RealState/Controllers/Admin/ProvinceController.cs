@@ -42,12 +42,12 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		var data = await _unitOfWork.ProvinceRepository.GetAll();
 		if (data.Count() == 0)
-			return NotFound(new ResponseDto<List<ProvinceDto>>()
+			return Ok(new ResponseDto<List<ProvinceDto>>()
 			{
 				data = new List<ProvinceDto>(),
-				is_success = false,
+				is_success = true,
 				message = "مقدار استان در دیتابیس وجود ندارد.",
-				response_code = 404
+				response_code = 200
 			});
 		return Ok(new ResponseDto<List<ProvinceDto>>()
 		{

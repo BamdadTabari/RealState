@@ -43,12 +43,12 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
     {
         var data = await _unitOfWork.OptionRepository.GetAll();
         if (data.Count() == 0)
-			return NotFound(new ResponseDto<List<OptionDto>>()
+			return Ok(new ResponseDto<List<OptionDto>>()
 			{
 				data = new List<OptionDto>(),
-				is_success = false,
+				is_success = true,
 				message = "مقدار آپشن در دیتابیس وجود ندارد.",
-				response_code = 404
+				response_code = 200
 			});
 		return Ok(new ResponseDto<List<OptionDto>>()
         {

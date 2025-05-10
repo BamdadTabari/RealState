@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Assistant;
 using RaelState.Models;
@@ -17,7 +18,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
     private readonly JwtTokenService _tokenService = jwtTokenService;
 
     [HttpPost]
-    [Route("login")]
+    [Route("username")]
     public async Task<IActionResult> Login([FromForm] AdminLoginDto loginDto)
     {
         if (!ModelState.IsValid)
@@ -108,7 +109,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         {
             data = new LoginResponseDto()
             {
-                token = token,
+                access_token = token,
                 refresh_token = refreshToken,
                 expire_in = Config.AccessTokenLifetime.TotalMinutes
             },
@@ -121,7 +122,8 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
     [HttpPost]
     [Route("logout")]
-    public async Task<IActionResult> Logout()
+	[Authorize(Roles = "Admin,MainAdmin")]
+	public async Task<IActionResult> Logout()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
@@ -178,7 +180,8 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
     [HttpPost]
     [Route("refresh-token")]
-    public async Task<IActionResult> Refresh([FromForm] TokenRequestDto request)
+	[Authorize(Roles = "Admin,MainAdmin")]
+	public async Task<IActionResult> Refresh([FromForm] TokenRequestDto request)
     {
         // 1. اعتبارسنجی توکن
         if (!JwtHelper.Validate(request.token))
@@ -225,7 +228,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         {
             data = new LoginResponseDto()
             {
-				token = token,
+				access_token = token,
 				refresh_token = refreshToken,
                 expire_in = Config.AccessTokenLifetime.TotalMinutes,
 			},
@@ -237,6 +240,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
     [HttpGet]
     [Route("profile")]
+    [Authorize(Roles = "Admin,MainAdmin")]
     public async Task<IActionResult> GetUserProfile()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

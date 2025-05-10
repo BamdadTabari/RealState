@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
 using RealState.Models;
@@ -8,6 +9,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace RealState.Controllers.Admin;
 [Route("api/plan")]
 [ApiController]
+[Authorize(Roles = "Admin,MainAdmin")]
 public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;

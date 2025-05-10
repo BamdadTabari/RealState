@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
 using RealState.Models;
@@ -7,6 +8,7 @@ using RealState.Models;
 namespace RaelState.Controllers.Admin;
 [Route("api/user")]
 [ApiController]
+[Authorize(Roles = "Admin,MainAdmin")]
 public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;

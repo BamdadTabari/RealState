@@ -15,14 +15,14 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 
 	[HttpGet]
 	[Route("list")]
-	public IActionResult Index(string? searchTerm, bool? boolFilter, SortByEnum sortBy = SortByEnum.CreationDate, int page = 1, int pageSize = 10)
+	public IActionResult Index(string? searchTerm, bool? isActive, SortByEnum sortBy = SortByEnum.CreationDate, int page = 1, int pageSize = 10)
 	{
 		// Set up filter object
 		var filter = new DefaultPaginationFilter(page, pageSize)
 		{
 			Keyword = searchTerm,
 			SortBy = sortBy,
-			BoolFilter = boolFilter
+			BoolFilter = isActive
 		};
 		var data = _unitOfWork.UserRepository.GetPaginated(filter);
 		_unitOfWork.Dispose();
@@ -45,7 +45,13 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 			var error = string.Join(" | ", ModelState.Values
 				   .SelectMany(v => v.Errors)
 				   .Select(e => e.ErrorMessage));
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<BlogCategoryDto>()
+			{
+				data = new BlogCategoryDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.user_name == src.user_name))
 		{
@@ -117,7 +123,13 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 			var error = string.Join(" | ", ModelState.Values
 			   .SelectMany(v => v.Errors)
 			   .Select(e => e.ErrorMessage));
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<BlogCategoryDto>()
+			{
+				data = new BlogCategoryDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		var entity = await _unitOfWork.UserRepository.GetUser(src.id);
 		if (entity == null)
@@ -187,7 +199,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 		{
 			data = new UserDto(),
 			is_success = true,
-			message = "کاربر با این ایدی وجود ندارد",
+			message = "عملیات انجام شد",
 			response_code = 204
 		});
 	}

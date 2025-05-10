@@ -1,9 +1,11 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
 using RaelState.Assistant;
 using RaelState.Models;
+using RealState.Models;
+using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RaelState.Controllers.Admin;
 [Route("api/blog")]
@@ -25,9 +27,15 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             Keyword = searchTerm,
             SortBy = sortBy,
         };
-        var data = _unitOfWork.BlogCategoryRepository.GetPaginated(filter);
-        return Ok(data);
-    }
+        var data = _unitOfWork.BlogRepository.GetPaginated(filter);
+		return Ok(new ResponseDto<PaginatedList<Blog>>()
+		{
+			data = data,
+			is_success = true,
+			message = "",
+			response_code = 200
+		});
+	}
 
     [HttpPost]
     [Route("create")]
@@ -38,29 +46,59 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             var error = string.Join(" | ", ModelState.Values
                    .SelectMany(v => v.Errors)
                    .Select(e => e.ErrorMessage));
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         if (src.blog_text == "<p><br></p>")
         {
             var error = "لطفا مقدار متن خبر را وارد کنید";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         if (src.image_file == null)
         {
             var error = "لطفا تصویر شاخص را انتخاب کنید";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.name))
         {
             var error = "بلاگ با این نام وجود دارد";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
         if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.slug == slug))
         {
             var error = "بلاگ با این نامک وجود دارد";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
 
         // Define the directory for uploads 
         var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
@@ -97,8 +135,14 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         });
 
         await _unitOfWork.CommitAsync();
-        return Created();
-    }
+		return Ok(new ResponseDto<BlogDto>()
+		{
+			data = new BlogDto(),
+			is_success = true,
+			message = "بلاگ با موفقیت ایجاد شد",
+			response_code = 201
+		});
+	}
 
     private static List<string> ExtractImageSources(string html)
     {
@@ -117,27 +161,51 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             var error = string.Join(" | ", ModelState.Values
                    .SelectMany(v => v.Errors)
                    .Select(e => e.ErrorMessage));
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         if (src.blog_text == "<p><br></p>")
         {
             var error = "لطفا مقدار متن خبر را وارد کنید";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         var entity = await _unitOfWork.BlogRepository.Get(src.id);
         if (entity == null)
             return NotFound();
         if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.name) && entity.name != src.name)
         {
             var error = "بلاگ با این نام وجود دارد";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
         if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.slug == slug) && entity.slug != slug)
         {
             var error = "بلاگ با این نامک وجود دارد";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
 
 
         if (src.image_file != null)
@@ -172,9 +240,15 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 
         var blog = await _unitOfWork.BlogRepository.Get(src.id);
         if (blog == null)
-            return NotFound();
+			return NotFound(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = "بلاگ با این ایدی پیدا نشد.",
+				response_code = 404
+			});
 
-        var oldImages = ExtractImageSources(blog.blog_text);
+		var oldImages = ExtractImageSources(blog.blog_text);
         var newImages = ExtractImageSources(src.blog_text);
 
         var imagesToDelete = oldImages.Except(newImages).ToList();
@@ -198,8 +272,14 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         entity.keywords = src.keyWords;
         _unitOfWork.BlogRepository.Update(entity);
         await _unitOfWork.CommitAsync();
-        return NoContent();
-    }
+		return Ok(new ResponseDto<BlogDto>()
+		{
+			data = new BlogDto(),
+			is_success = false,
+			message = "بلاگ با موفقیت ویرایش شد.",
+			response_code = 204
+		});
+	}
 
     [HttpPost]
     [Route("delete/{id}")]
@@ -207,8 +287,14 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
     {
         var entity = await _unitOfWork.BlogRepository.Get(id);
         if (entity == null)
-            return NotFound();
-        if (System.IO.File.Exists(entity.image))
+			return NotFound(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = "بلاگ با این ایدی پیدا نشد.",
+				response_code = 404
+			});
+		if (System.IO.File.Exists(entity.image))
         {
             System.IO.File.Delete(entity.image);
         }
@@ -225,40 +311,59 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         }
         _unitOfWork.BlogRepository.Remove(entity);
         await _unitOfWork.CommitAsync();
-        return NoContent();
-    }
+		return Ok(new ResponseDto<BlogDto>()
+		{
+			data = new BlogDto(),
+			is_success = true,
+			message = "بلاگ با موفقیت حذف شد.",
+			response_code = 204
+		});
+	}
 
     [HttpGet]
     [Route("read/{slug}")]
     public async Task<IActionResult> Detail([FromRoute] string slug)
     {
         var entity = await _unitOfWork.BlogRepository.Get(slug);
-        if (entity == null) return NotFound();
+        if (entity == null)
+			return NotFound(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = "بلاگ با این slug پیدا نشد.",
+				response_code = 404
+			});
 
-        return Ok(new BlogDto()
+		return Ok(new ResponseDto<BlogDto>()
         {
-            id = entity.id,
-            created_at = entity.created_at,
-            updated_at = entity.updated_at,
-            slug = slug,
-            name = entity.name,
-            blog_category_id = entity.blog_category_id,
-            blog_text = entity.blog_text,
-            image = entity.image,
-            image_alt = entity.image_alt,
-            description = entity.description,
-            show_blog = entity.show_blog,
-            keyWords = entity.keywords,
-            blog_category = new BlogCategoryDto()
-            {
-                created_at = entity.blog_category.created_at,
-                updated_at = entity.blog_category.updated_at,
-                slug = entity.blog_category.slug,
-                description = entity.blog_category.description,
-                name = entity.blog_category.name,
-                id = entity.blog_category.id,
-            }
-        });
+            data = new BlogDto()
+			{
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = slug,
+				name = entity.name,
+				blog_category_id = entity.blog_category_id,
+				blog_text = entity.blog_text,
+				image = entity.image,
+				image_alt = entity.image_alt,
+				description = entity.description,
+				show_blog = entity.show_blog,
+				keyWords = entity.keywords,
+				blog_category = new BlogCategoryDto()
+				{
+					created_at = entity.blog_category.created_at,
+					updated_at = entity.blog_category.updated_at,
+					slug = entity.blog_category.slug,
+					description = entity.blog_category.description,
+					name = entity.blog_category.name,
+					id = entity.blog_category.id,
+				}
+			},
+            is_success = true,
+            message = "",
+            response_code = 200
+		});
     }
 
     [HttpPost]
@@ -266,13 +371,26 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
     public async Task<IActionResult> CheckShowBlog([FromRoute] long id)
     {
         var entity = await _unitOfWork.BlogRepository.Get(id);
-        if (entity == null) return NotFound();
-        entity.show_blog = !entity.show_blog;
+        if (entity == null)
+			return NotFound(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = "بلاگ با این ایدی پیدا نشد.",
+				response_code = 404
+			});
+		entity.show_blog = !entity.show_blog;
         _unitOfWork.BlogRepository.Update(entity);
         await _unitOfWork.CommitAsync();
 
-        return NoContent();
-    }
+		return Ok(new ResponseDto<BlogDto>()
+		{
+			data = new BlogDto(),
+			is_success = true,
+			message = "وضعیت بلاگ تغییر کرد",
+			response_code = 404
+		});
+	}
 
     [HttpPost]
     [Route("upload-image")]

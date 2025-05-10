@@ -1,9 +1,11 @@
 ﻿using DataLayer;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using RaelState.Assistant;
-using RealState;
 using RaelState.Models;
+using RealState;
+using RealState.Models;
+using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RaelState.Controllers;
 [Route("api/login")]
@@ -23,19 +25,36 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
             var error = string.Join(" | ", ModelState.Values
                 .SelectMany(v => v.Errors)
                 .Select(e => e.ErrorMessage));
-            return BadRequest(error);
+            return BadRequest(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
         }
 
         var user = await _unitOfWork.UserRepository.GetUser(loginDto.user_name_or_email);
         if (user == null || !user.is_active)
-            return BadRequest("کاربر پیدا نشد یا تایید نشده.");
+		    return BadRequest(new ResponseDto<UserDto>()
+		    {
+			    data = new UserDto(),
+			    is_success = false,
+			    message = "کاربر پیدا نشد یا تایید نشده.",
+			    response_code = 400
+		    });
 
-        // بررسی قفل شدن کاربر
-        if (user.is_locked_out && user.lock_out_end_time > DateTime.UtcNow)
-            return Unauthorized("اکانت شما موقتاً قفل شده است.");
-
-        // بررسی رمز عبور
-        if (!PasswordHasher.Check(user.password_hash, loginDto.password))
+		// بررسی قفل شدن کاربر
+		if (user.is_locked_out && user.lock_out_end_time > DateTime.UtcNow)
+		    return Unauthorized(new ResponseDto<UserDto>()
+		    {
+			    data = new UserDto(),
+			    is_success = false,
+			    message = "اکانت شما موقتاً قفل شده است.",
+			    response_code = 401
+		    });
+		// بررسی رمز عبور
+		if (!PasswordHasher.Check(user.password_hash, loginDto.password))
         {
             user.failed_login_count++;
             if (user.failed_login_count >= 5)
@@ -47,8 +66,14 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
             _unitOfWork.UserRepository.Update(user);
             await _unitOfWork.CommitAsync();
 
-            return Unauthorized("رمز عبور اشتباه است.");
-        }
+			return Unauthorized(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = "رمز عبور اشتباه است.",
+				response_code = 401
+			});
+		}
 
         // موفقیت در ورود
         user.failed_login_count = 0;
@@ -79,11 +104,17 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
         Response.Cookies.Append("jwt", token, cookieOptions);
 
-        return Ok(new
+        return Ok(new ResponseDto<LoginResponseDto>()
         {
-            token = token,
-            refresh_token = refreshToken,
-            expire_in = Config.AccessTokenLifetime.TotalMinutes
+            data = new LoginResponseDto()
+            {
+                token = token,
+                refresh_token = refreshToken,
+                expire_in = Config.AccessTokenLifetime.TotalMinutes
+            },
+            is_success = true,
+            message = "ورود با موفقیت انجام شد",
+            response_code = 200
         });
     }
 
@@ -94,15 +125,33 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
-            return BadRequest("کاربر پیدا نشد");
-        var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
+			return NotFound(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = "کاربر پیدا نشد",
+				response_code = 404
+			});
+		var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
         if (user == null)
-            return NotFound("کاربر پیدا نشد.");
-        var token = Request.Cookies["jwt"];
+			return NotFound(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = "کاربر پیدا نشد",
+				response_code = 404
+			});
+		var token = Request.Cookies["jwt"];
         if (string.IsNullOrWhiteSpace(token))
-            return BadRequest("Token is required");
+			return BadRequest(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = "داشتن توکن الزامی است",
+				response_code = 400
+			});
 
-        var expiryMinutes = _tokenService.GetTokenExpiryMinutes(token);
+		var expiryMinutes = _tokenService.GetTokenExpiryMinutes(token);
         await _unitOfWork.TokenBlacklistRepository.AddAsync(new BlacklistedToken
         {
             token = token,
@@ -118,7 +167,13 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         _unitOfWork.UserRepository.Update(user);
         await _unitOfWork.CommitAsync();
 
-        return Ok("با موفقیت خارج شدید.");
+        return Ok(new ResponseDto<UserDto>()
+        {
+            data = new UserDto(),
+            is_success = true,
+            response_code = 204,
+            message = "با موفقیت خارج شدید."
+		});
     }
 
     [HttpPost]
@@ -127,18 +182,30 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
     {
         // 1. اعتبارسنجی توکن
         if (!JwtHelper.Validate(request.token))
-            return BadRequest("Invalid token");
+		    return BadRequest(new ResponseDto<UserDto>()
+		    {
+			    data = new UserDto(),
+			    is_success = false,
+			    message = "Invalid token",
+			    response_code = 400
+		    });
 
-        // 2. دریافت اطلاعات کاربر از توکن
-        var username = JwtHelper.GetUsername(request.token);
+		// 2. دریافت اطلاعات کاربر از توکن
+		var username = JwtHelper.GetUsername(request.token);
         var user = await _unitOfWork.UserRepository.Get(username);
 
         // 3. بررسی صحت توکن و تاریخ انقضای Refresh Token
         if (user == null || user.refresh_token != request.refresh_token || user.refresh_token_expiry_time < DateTime.UtcNow)
-            return Unauthorized("Invalid refresh token or expired.");
+		    return Unauthorized(new ResponseDto<UserDto>()
+		    {
+			    data = new UserDto(),
+			    is_success = false,
+			    message = "Invalid refresh token or expired.",
+			    response_code = 400
+		    });
 
-        // 4. تولید توکن جدید
-        var role = _unitOfWork.UserRoleRepository.GetUserRolesByUserId(user.id);
+		// 4. تولید توکن جدید
+		var role = _unitOfWork.UserRoleRepository.GetUserRolesByUserId(user.id);
 		var token = "";
 		do
 		{
@@ -154,10 +221,17 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         await _unitOfWork.CommitAsync();
 
         // 6. بازگشت توکن‌ها به کاربر
-        return Ok(new
+        return Ok(new ResponseDto<LoginResponseDto>()
         {
-            tooken = token,
-            refresh_token = refreshToken,
+            data = new LoginResponseDto()
+            {
+				token = token,
+				refresh_token = refreshToken,
+                expire_in = Config.AccessTokenLifetime.TotalMinutes,
+			},
+            is_success = true,
+            message = "",
+            response_code = 200
         });
     }
 
@@ -167,8 +241,28 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (userId == null)
-            return BadRequest("کاربر پیدا نشد");
-        var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
-        return Ok(user);
+		    return NotFound(new ResponseDto<UserDto>()
+		    {
+			    data = new UserDto(),
+			    is_success = false,
+			    message = "کاربر پیدا نشد",
+			    response_code = 404
+		    });
+		var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
+		if (user == null)
+			return NotFound(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = "کاربر پیدا نشد",
+				response_code = 404
+			});
+		return Ok(new ResponseDto<User>()
+        {
+            data = user,
+            is_success = true,
+            message = "",
+            response_code = 200
+		});
     }
 }

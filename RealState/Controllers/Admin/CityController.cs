@@ -1,10 +1,8 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
-using RaelState.Assistant;
 using RaelState.Models;
 using RealState.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RaelState.Controllers.Admin;
 [Route("api/city")]

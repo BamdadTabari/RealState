@@ -1,7 +1,9 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
+using RaelState.Models;
 using RealState.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RealState.Controllers.Admin;
 [Route("api/plan")]
@@ -24,7 +26,13 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 			SortBy = sortBy,
 		};
 		var data = _unitOfWork.PlanRepository.GetPaginated(filter);
-		return Ok(data);
+		return Ok(new ResponseDto<PaginatedList<Plan>>()
+		{
+			data = data,
+			is_success = true,
+			message = "",
+			response_code = 200
+		});
 	}
 
 	[HttpGet]
@@ -33,19 +41,31 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		var data = await _unitOfWork.PlanRepository.GetAll();
 		if (data.Count() == 0)
-			return Ok(new List<PlanDto>());
-		return Ok(data.Select(x => new PlanDto()
+			return NotFound(new ResponseDto<List<PlanDto>>()
+			{
+				data = new List<PlanDto>(),
+				is_success = false,
+				message = "مقدار پلن در دیتابیس وجود ندارد.",
+				response_code = 404
+			});
+		return Ok(new ResponseDto<List<PlanDto>>()
 		{
-			id = x.id,
-			created_at = x.created_at,
-			updated_at = x.updated_at,
-			slug = x.slug,
-			name = x.name,
-			description = x.description,
-			price = x.price,
-			plan_months = x.plan_months,
-			property_count = x.property_count
-		}).ToList());
+			data = data.Select(x => new PlanDto()
+			{
+				id = x.id,
+				created_at = x.created_at,
+				updated_at = x.updated_at,
+				slug = x.slug,
+				name = x.name,
+				description = x.description,
+				price = x.price,
+				plan_months = x.plan_months,
+				property_count = x.property_count
+			}).ToList(),
+			is_success=true,
+			message = "",
+			response_code =200
+		});
 	}
 
 	[HttpGet]
@@ -54,18 +74,30 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		var entity = await _unitOfWork.PlanRepository.Get(slug);
 		if (entity == null)
-			return NotFound();
-		return Ok(new PlanDto()
+			return NotFound(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = "پلن با این slug پیدا نشد",
+				response_code = 404
+			});
+		return Ok(new ResponseDto<PlanDto>()
 		{
-			id = entity.id,
-			created_at = entity.created_at,
-			updated_at = entity.updated_at,
-			slug = entity.slug,
-			name = entity.name,
-			description = entity.description,
-			price = entity.price,
-			plan_months = entity.plan_months,
-			property_count = entity.property_count
+			data = new PlanDto()
+			{
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				name = entity.name,
+				description = entity.description,
+				price = entity.price,
+				plan_months = entity.plan_months,
+				property_count = entity.property_count
+			},
+			is_success = true,
+			message = "",
+			response_code = 200
 		});
 	}
 
@@ -76,18 +108,30 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		var entity = await _unitOfWork.PlanRepository.Get(id);
 		if (entity == null)
-			return NotFound();
-		return Ok(new PlanDto()
+			return NotFound(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = "پلن با این ایدی پیدا نشد",
+				response_code = 404
+			});
+		return Ok(new ResponseDto<PlanDto>()
 		{
-			id = entity.id,
-			created_at = entity.created_at,
-			updated_at = entity.updated_at,
-			slug = entity.slug,
-			name = entity.name,
-			description = entity.description,
-			price = entity.price,
-			plan_months = entity.plan_months,
-			property_count = entity.property_count
+			data = new PlanDto()
+			{
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				name = entity.name,
+				description = entity.description,
+				price = entity.price,
+				plan_months = entity.plan_months,
+				property_count = entity.property_count
+			},
+			is_success=true,
+			message = "",
+			response_code = 200
 		});
 	}
 
@@ -97,10 +141,22 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		var entity = await _unitOfWork.PlanRepository.Get(id);
 		if (entity == null)
-			return NotFound();
+			return NotFound(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = "پلن با این ایدی پیدا نشد",
+				response_code = 404
+			});
 		_unitOfWork.PlanRepository.Remove(entity);
 		await _unitOfWork.CommitAsync();
-		return NoContent();
+		return Ok(new ResponseDto<PlanDto>()
+		{
+			data = new PlanDto(),
+			is_success = true,
+			message = "پلن با موفقیت حذف شد",
+			response_code = 204
+		});
 	}
 
 	[HttpPost]
@@ -112,18 +168,36 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = string.Join(" | ", ModelState.Values
 				.SelectMany(v => v.Errors)
 				.Select(e => e.ErrorMessage));
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		if (await _unitOfWork.PlanRepository.ExistsAsync(x => x.name == src.name))
 		{
 			var error = "مقدار نام تکراریست لطفا تغییر دهید.";
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
 		if (await _unitOfWork.PlanRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 
 		await _unitOfWork.PlanRepository.AddAsync(new Plan()
@@ -138,7 +212,13 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 			description = src.description
 		});
 		await _unitOfWork.CommitAsync();
-		return NoContent();
+		return Ok(new ResponseDto<PlanDto>()
+		{
+			data = new PlanDto(),
+			is_success = true,
+			message = "پلن با موفقیت ایجاد شد.",
+			response_code = 201
+		});
 	}
 
 	[HttpPost]
@@ -150,22 +230,46 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = string.Join(" | ", ModelState.Values
 				.SelectMany(v => v.Errors)
 				.Select(e => e.ErrorMessage));
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		var entity = await _unitOfWork.PlanRepository.Get(src.id);
 		if (entity == null)
-			return NotFound();
+			return NotFound(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = "پلن با این ایدی پیدا نشد",
+				response_code = 404
+			});
 
 		if (await _unitOfWork.PlanRepository.ExistsAsync(x => x.name == src.name && entity.name != src.name))
 		{
 			var error = "مقدار نام تکراریست لطفا تغییر دهید.";
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
 		if (await _unitOfWork.PlanRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<PlanDto>()
+			{
+				data = new PlanDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 
 		entity.slug = slug;
@@ -178,6 +282,12 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 
 		_unitOfWork.PlanRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
-		return NoContent();
+		return Ok(new ResponseDto<PlanDto>()
+		{
+			data = new PlanDto(),
+			is_success = true,
+			message = "پلن با موفقیت ویرایش شد.",
+			response_code = 204
+		});
 	}
 }

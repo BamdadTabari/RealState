@@ -12,7 +12,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     [HttpGet]
-    [Route("home")]
+    [Route("list")]
     public async Task<IActionResult> Index(string? searchTerm,
         SortByEnum sortBy = SortByEnum.CreationDate,
         int page = 1,
@@ -29,7 +29,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpGet]
-    [Route("get-all-roles")]
+    [Route("all")]
     public async Task<IActionResult> GetAll()
     {
         var data = await _unitOfWork.RoleRepository.GetAll();
@@ -46,7 +46,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpGet]
-    [Route("role-detail/{slug}")]
+    [Route("read/{slug}")]
     public async Task<IActionResult> Detail([FromRoute] string slug)
     {
         var entity = await _unitOfWork.RoleRepository.GetRoleBySlug(slug);
@@ -65,7 +65,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 
 
     [HttpGet]
-    [Route("get-role/{id}")]
+    [Route("get/{id}")]
     public async Task<IActionResult> Get([FromRoute] long id)
     {
         var entity = await _unitOfWork.RoleRepository.GetRole(id);
@@ -82,7 +82,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("role-delete/{id}")]
+    [Route("delete/{id}")]
     public async Task<IActionResult> Delete([FromRoute] long id)
     {
         var entity = await _unitOfWork.RoleRepository.GetRole(id);
@@ -94,7 +94,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("create-role")]
+    [Route("create")]
     public async Task<IActionResult> Create([FromForm] RoleDto src)
     {
         if (!ModelState.IsValid)
@@ -128,7 +128,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("edit-role")]
+    [Route("edit")]
     public async Task<IActionResult> Edit([FromForm] RoleDto src)
     {
         if (!ModelState.IsValid)

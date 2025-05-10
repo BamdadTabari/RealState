@@ -11,7 +11,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
 	[HttpGet]
-	[Route("home")]
+	[Route("list")]
 	public async Task<IActionResult> Index(string? searchTerm,
 		SortByEnum sortBy = SortByEnum.CreationDate,
 		int page = 1,
@@ -28,7 +28,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpGet]
-	[Route("get-all-plans")]
+	[Route("all")]
 	public async Task<IActionResult> GetAll()
 	{
 		var data = await _unitOfWork.PlanRepository.GetAll();
@@ -49,7 +49,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpGet]
-	[Route("city-detail/{slug}")]
+	[Route("read/{slug}")]
 	public async Task<IActionResult> Detail([FromRoute] string slug)
 	{
 		var entity = await _unitOfWork.PlanRepository.Get(slug);
@@ -71,7 +71,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 
 
 	[HttpGet]
-	[Route("get-city/{id}")]
+	[Route("get/{id}")]
 	public async Task<IActionResult> Get([FromRoute] long id)
 	{
 		var entity = await _unitOfWork.PlanRepository.Get(id);
@@ -92,7 +92,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("city-delete/{id}")]
+	[Route("delete/{id}")]
 	public async Task<IActionResult> Delete([FromRoute] long id)
 	{
 		var entity = await _unitOfWork.PlanRepository.Get(id);
@@ -104,7 +104,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("create-city")]
+	[Route("create")]
 	public async Task<IActionResult> Create([FromForm] PlanDto src)
 	{
 		if (!ModelState.IsValid)
@@ -142,7 +142,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("edit-city")]
+	[Route("edit")]
 	public async Task<IActionResult> Edit([FromForm] PlanDto src)
 	{
 		if (!ModelState.IsValid)

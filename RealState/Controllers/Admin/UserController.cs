@@ -15,7 +15,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 
 	[HttpGet]
 	[Route("list")]
-	public IActionResult Index(string searchTerm, bool? boolFilter, SortByEnum sortBy = SortByEnum.CreationDate, int page = 1, int pageSize = 10)
+	public IActionResult Index(string? searchTerm, bool? boolFilter, SortByEnum sortBy = SortByEnum.CreationDate, int page = 1, int pageSize = 10)
 	{
 		// Set up filter object
 		var filter = new DefaultPaginationFilter(page, pageSize)

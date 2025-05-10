@@ -12,7 +12,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
 	[HttpGet]
-	[Route("home")]
+	[Route("list")]
 	public async Task<IActionResult> Index(string? searchTerm,
 		SortByEnum sortBy = SortByEnum.CreationDate,
 		int page = 1,
@@ -29,7 +29,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpGet]
-	[Route("get-all-provinces")]
+	[Route("all")]
 	public async Task<IActionResult> GetAll()
 	{
 		var data = await _unitOfWork.ProvinceRepository.GetAll();
@@ -56,7 +56,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpGet]
-	[Route("province-detail/{slug}")]
+	[Route("read/{slug}")]
 	public async Task<IActionResult> Detail([FromRoute] string slug)
 	{
 		var entity = await _unitOfWork.ProvinceRepository.Get(slug);
@@ -84,7 +84,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 
 
 	[HttpGet]
-	[Route("get-province/{id}")]
+	[Route("get/{id}")]
 	public async Task<IActionResult> Get([FromRoute] long id)
 	{
 		var entity = await _unitOfWork.ProvinceRepository.Get(id);
@@ -111,7 +111,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("province-delete/{id}")]
+	[Route("delete/{id}")]
 	public async Task<IActionResult> Delete([FromRoute] long id)
 	{
 		var entity = await _unitOfWork.ProvinceRepository.Get(id);
@@ -123,7 +123,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("create-province")]
+	[Route("create")]
 	public async Task<IActionResult> Create([FromForm] ProvinceDto src)
 	{
 		if (!ModelState.IsValid)
@@ -157,7 +157,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("edit-province")]
+	[Route("edit")]
 	public async Task<IActionResult> Edit([FromForm] ProvinceDto src)
 	{
 		if (!ModelState.IsValid)

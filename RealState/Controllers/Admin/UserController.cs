@@ -27,7 +27,14 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 		};
 		var data = _unitOfWork.UserRepository.GetPaginated(filter);
 		_unitOfWork.Dispose();
-		return Ok(data);
+		
+		return Ok(new ResponseDto<PaginatedList<User>>()
+		{
+			data = data,
+			is_success = true,
+			message = "",
+			response_code = 200
+		});
 	}
 
 	[HttpPost]

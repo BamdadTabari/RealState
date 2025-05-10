@@ -3,6 +3,7 @@ using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Assistant;
 using RaelState.Models;
+using RealState.Models;
 
 namespace RaelState.Controllers;
 [Route("api/blog-category")]
@@ -25,8 +26,14 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
             SortBy = sortBy,
         };
         var data = _unitOfWork.BlogCategoryRepository.GetPaginated(filter);
-        return Ok(data);
-    }
+		return Ok(new ResponseDto<PaginatedList<BlogCategory>>()
+		{
+			data = data,
+			is_success = true,
+			message = "",
+			response_code = 200
+		});
+	}
 
     [HttpGet]
     [Route("get-all-blog-categories")]

@@ -1,7 +1,6 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
-using RaelState.Assistant;
 using RaelState.Models;
 using RealState.Models;
 using System.Text.RegularExpressions;
@@ -275,7 +274,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 		return Ok(new ResponseDto<BlogDto>()
 		{
 			data = new BlogDto(),
-			is_success = false,
+			is_success = true,
 			message = "بلاگ با موفقیت ویرایش شد.",
 			response_code = 204
 		});

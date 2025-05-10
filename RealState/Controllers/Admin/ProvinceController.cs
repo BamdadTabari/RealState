@@ -119,7 +119,13 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		var entity = await _unitOfWork.ProvinceRepository.Get(id);
 		if (entity == null)
-			return NotFound();
+			return NotFound(new ResponseDto<ProvinceDto>()
+			{
+				data = new ProvinceDto(),
+				is_success = false,
+				message = "استان با این ایدی پیدا نشد",
+				response_code = 404
+			});
 		return Ok(new ProvinceDto()
 		{
 			id = entity.id,

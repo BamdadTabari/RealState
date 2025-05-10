@@ -3,6 +3,7 @@ using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Assistant;
 using RaelState.Models;
+using RealState.Models;
 
 namespace RaelState.Controllers;
 [Route("api/role")]
@@ -25,8 +26,14 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
             SortBy = sortBy,
         };
         var data = _unitOfWork.RoleRepository.GetPaginated(filter);
-        return Ok(data);
-    }
+		return Ok(new ResponseDto<PaginatedList<Role>>()
+		{
+			data = data,
+			is_success = true,
+			message = "",
+			response_code = 200
+		});
+	}
 
     [HttpGet]
     [Route("all")]
@@ -34,15 +41,24 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     {
         var data = await _unitOfWork.RoleRepository.GetAll();
         if (data.Count() == 0)
-            return Ok(new List<RoleDto>());
-        return Ok(data.Select(x => new RoleDto()
+			return NotFound(new ResponseDto<List<RoleDto>>()
+			{
+				data = new List<RoleDto>(),
+				is_success = false,
+				message = "مقدار نقش در دیتابیس وجود ندارد.",
+				response_code = 404
+			});
+		return Ok(new ResponseDto<List<RoleDto>>()
         {
-            id = x.id,
-            created_at = x.created_at,
-            updated_at = x.updated_at,
-            slug = x.slug,
-            title = x.title,
-        }).ToList());
+            data = data.Select(x => new RoleDto()
+			{
+				id = x.id,
+				created_at = x.created_at,
+				updated_at = x.updated_at,
+				slug = x.slug,
+				title = x.title,
+			}).ToList()
+		});
     }
 
     [HttpGet]
@@ -51,16 +67,28 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     {
         var entity = await _unitOfWork.RoleRepository.GetRoleBySlug(slug);
         if (entity == null)
-            return NotFound();
-        return Ok(new RoleDto()
+			return NotFound(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = "نقش با این slug پیدا نشد",
+				response_code = 404
+			});
+		return Ok(new ResponseDto<RoleDto>()
         {
+            data = new RoleDto()
+			{
 
-            id = entity.id,
-            created_at = entity.created_at,
-            updated_at = entity.updated_at,
-            slug = entity.slug,
-            title = entity.title
-        });
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				title = entity.title
+			},
+            is_success = true,
+            message = "",
+            response_code = 200
+		});
     }
 
 
@@ -70,15 +98,27 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     {
         var entity = await _unitOfWork.RoleRepository.GetRole(id);
         if (entity == null)
-            return NotFound();
-        return Ok(new RoleDto()
+			return NotFound(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = "نقش با این ایدی پیدا نشد",
+				response_code = 404
+			});
+		return Ok(new ResponseDto<RoleDto>()
         {
-            id = entity.id,
-            created_at = entity.created_at,
-            updated_at = entity.updated_at,
-            slug = entity.slug,
-            title = entity.title
-        });
+            data = new RoleDto()
+			{
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				title = entity.title
+			},
+            is_success=true,
+            message = "",
+            response_code = 200
+		});
     }
 
     [HttpPost]
@@ -87,11 +127,23 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     {
         var entity = await _unitOfWork.RoleRepository.GetRole(id);
         if (entity == null)
-            return NotFound();
-        _unitOfWork.RoleRepository.Remove(entity);
+			return NotFound(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = "نقش با این ایدی پیدا نشد",
+				response_code = 404
+			});
+		_unitOfWork.RoleRepository.Remove(entity);
         await _unitOfWork.CommitAsync();
-        return NoContent();
-    }
+		return Ok(new ResponseDto<RoleDto>()
+		{
+			data = new RoleDto(),
+			is_success = true,
+			message = "نقش با موفقیت حذف شد",
+			response_code = 204
+		});
+	}
 
     [HttpPost]
     [Route("create")]
@@ -102,19 +154,37 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
             var error = string.Join(" | ", ModelState.Values
                 .SelectMany(v => v.Errors)
                 .Select(e => e.ErrorMessage));
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.title == src.title))
         {
             var error = "مقدار نام تکراریست لطفا تغییر دهید.";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         var slug = src.slug ?? SlugHelper.GenerateSlug(src.title);
         if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.slug == slug))
         {
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
 
         await _unitOfWork.RoleRepository.AddAsync(new Role()
         {
@@ -124,8 +194,14 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
             title = src.title,
         });
         await _unitOfWork.CommitAsync();
-        return Created();
-    }
+		return Ok(new ResponseDto<RoleDto>()
+		{
+			data = new RoleDto(),
+			is_success = true,
+			message = "نقش با موفقیت ایجاد شد.",
+			response_code = 201
+		});
+	}
 
     [HttpPost]
     [Route("edit")]
@@ -136,23 +212,47 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
             var error = string.Join(" | ", ModelState.Values
                 .SelectMany(v => v.Errors)
                 .Select(e => e.ErrorMessage));
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         var entity = await _unitOfWork.RoleRepository.GetRole(src.id);
         if (entity == null)
-            return NotFound();
+			return NotFound(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = "نقش با این ایدی پیدا نشد",
+				response_code = 404
+			});
 
-        if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.title == src.title && entity.title != src.title))
+		if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.title == src.title && entity.title != src.title))
         {
             var error = "مقدار نام تکراریست لطفا تغییر دهید.";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
         var slug = src.slug ?? SlugHelper.GenerateSlug(src.title);
         if (await _unitOfWork.RoleRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
         {
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-            return BadRequest(error);
-        }
+			return BadRequest(new ResponseDto<RoleDto>()
+			{
+				data = new RoleDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
 
         entity.slug = slug;
         entity.updated_at = DateTime.UtcNow;
@@ -160,6 +260,12 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
         
         _unitOfWork.RoleRepository.Update(entity);
         await _unitOfWork.CommitAsync();
-        return NoContent();
-    }
+		return Ok(new ResponseDto<RoleDto>()
+		{
+			data = new RoleDto(),
+			is_success = true,
+			message = "نقش با موفقیت ویرایش شد.",
+			response_code = 204
+		});
+	}
 }

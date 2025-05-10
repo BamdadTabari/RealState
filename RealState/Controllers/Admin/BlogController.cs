@@ -388,7 +388,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 			data = new BlogDto(),
 			is_success = true,
 			message = "وضعیت بلاگ تغییر کرد",
-			response_code = 404
+			response_code = 204
 		});
 	}
 
@@ -397,14 +397,26 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
     public async Task<IActionResult> UploadImage(IFormFile file)
     {
         if (file == null || file.Length == 0)
-            return BadRequest("No file provided");
+			return BadRequest(new ResponseDto<BlogDto>()
+			{
+				data = new BlogDto(),
+				is_success = false,
+				message = "فایلی وجود ندارد",
+				response_code = 400
+			});
 
-        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+		var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
         var ext = Path.GetExtension(file.FileName).ToLower();
         if (!allowedExtensions.Contains(ext))
-            return BadRequest("نوع فایل نامعتبر است");
+		    return BadRequest(new ResponseDto<BlogDto>()
+		    {
+			    data = new BlogDto(),
+			    is_success = false,
+			    message = "نوع فایل نامعتبر است",
+			    response_code = 400
+		    });
 
-        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "images");
+		var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "images");
         if (!Directory.Exists(uploadsFolder))
             Directory.CreateDirectory(uploadsFolder);
 
@@ -417,6 +429,12 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         }
 
         var fileUrl = Url.Content(filePath);
-        return Ok(new { url = fileUrl });
+        return Ok(new ResponseDto<string>()
+        {
+            data = fileUrl,
+            is_success = true,
+            message = "" ,
+            response_code = 200
+        });
     }
 }

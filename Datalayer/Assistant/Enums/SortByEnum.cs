@@ -3,6 +3,6 @@ public enum SortByEnum
 {
 	CreationDate = 1,
 	CreationDateDescending = 2,
-	updated_At = 3,
-	updated_AtDescending = 4,
+	updated_ate = 3,
+	updated_ateDescending = 4,
 }

@@ -13,7 +13,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     [HttpGet]
-    [Route("home")]
+    [Route("list")]
     public async Task<IActionResult> Index(string? searchTerm,
         SortByEnum sortBy = SortByEnum.CreationDate,
         int page = 1,
@@ -36,43 +36,54 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
     [HttpGet]
-    [Route("get-all-blog-categories")]
+    [Route("all")]
     public async Task<IActionResult> GetAll()
     {
         var data = await _unitOfWork.BlogCategoryRepository.GetAll();
         if (data.Count() == 0)
-            return Ok(new List<BlogCategoryDto>());
-        return Ok(data.Select(x => new BlogCategoryDto()
-        {
-            id = x.id,
-            name = x.name,
-            description = x.description,
-            created_at = x.created_at,
-            updated_at = x.updated_at,
-            slug = x.slug,
-            blogs = x.blogs == null ?[]:
-            x.blogs.Select(y => new BlogDto() 
-            {
-                id = y.id,
-                created_at = y.created_at,
-                updated_at = y.updated_at,
-                slug = y.slug,
-                blog_category_id = y.blog_category_id,
-                blog_text = y.blog_text,
-                image_alt = y.image_alt,
-                image = y.image,
-                keyWords = y.keywords,
-                name = y.name,
-                description = y.description,
-                show_blog = y.show_blog,
-            }
-            ).ToList()
-
-        }).ToList());
+		    return NotFound(new ResponseDto<List<BlogCategoryDto>> ()
+		    {
+			    data = new List<BlogCategoryDto>(),
+			    is_success = false,
+			    message = "هیچ مقداری در دیتابیس وجود ندارد",
+			    response_code = 404
+		    });
+		return Ok(new ResponseDto<List<BlogCategoryDto>>()
+		{
+			data = data.Select(x => new BlogCategoryDto()
+			{
+				id = x.id,
+				name = x.name,
+				description = x.description,
+				created_at = x.created_at,
+				updated_at = x.updated_at,
+				slug = x.slug,
+				blogs = x.blogs == null ? [] :
+			x.blogs.Select(y => new BlogDto()
+			{
+				id = y.id,
+				created_at = y.created_at,
+				updated_at = y.updated_at,
+				slug = y.slug,
+				blog_category_id = y.blog_category_id,
+				blog_text = y.blog_text,
+				image_alt = y.image_alt,
+				image = y.image,
+				keyWords = y.keywords,
+				name = y.name,
+				description = y.description,
+				show_blog = y.show_blog,
+			}
+			).ToList()
+			}).ToList(),
+			is_success = false,
+			message = "هیچ مقداری در دیتابیس وجود ندارد",
+			response_code = 404
+		});
     }
 
     [HttpGet]
-    [Route("category-detail/{slug}")]
+    [Route("read/{slug}")]
     public async Task<IActionResult> Detail([FromRoute] string slug)
     {
         var entity = await _unitOfWork.BlogCategoryRepository.Get(slug);
@@ -108,7 +119,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 
 
     [HttpGet]
-    [Route("get-category/{id}")]
+    [Route("get/{id}")]
     public async Task<IActionResult> Get([FromRoute] long id)
     {
         var entity = await _unitOfWork.BlogCategoryRepository.Get(id);
@@ -143,7 +154,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("category-delete/{id}")]
+    [Route("delete/{id}")]
     public async Task<IActionResult> Delete([FromRoute] long id)
     {
         var entity = await _unitOfWork.BlogCategoryRepository.Get(id);
@@ -155,7 +166,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("create-blog-category")]
+    [Route("create")]
     public async Task<IActionResult> Create([FromForm] BlogCategoryDto src)
     {
         if (!ModelState.IsValid)
@@ -190,7 +201,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("edit-blog-category")]
+    [Route("edit")]
     public async Task<IActionResult> Edit([FromForm] BlogCategoryDto src)
     {
         if (!ModelState.IsValid)

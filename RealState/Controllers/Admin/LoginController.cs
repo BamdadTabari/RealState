@@ -14,17 +14,8 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
     public static readonly SecurityTokenConfig Config = new();
     private readonly JwtTokenService _tokenService = jwtTokenService;
 
-    [HttpGet("whoami")]
-    public IActionResult WhoAmI()
-    {
-        return Ok(new
-        {
-            IsAuthenticated = User.Identity.IsAuthenticated,
-            Claims = User.Claims.Select(c => new { c.Type, c.Value })
-        });
-    }
     [HttpPost]
-    [Route("admin-login")]
+    [Route("login")]
     public async Task<IActionResult> Login([FromForm] AdminLoginDto loginDto)
     {
         if (!ModelState.IsValid)
@@ -98,7 +89,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
 
     [HttpPost]
-    [Route("admin-logout")]
+    [Route("logout")]
     public async Task<IActionResult> Logout()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -131,7 +122,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
     }
 
     [HttpPost]
-    [Route("admin-refresh-token")]
+    [Route("refresh-token")]
     public async Task<IActionResult> Refresh([FromForm] TokenRequestDto request)
     {
         // 1. اعتبارسنجی توکن
@@ -171,7 +162,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
     }
 
     [HttpGet]
-    [Route("admin-profile")]
+    [Route("profile")]
     public async Task<IActionResult> GetUserProfile()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);

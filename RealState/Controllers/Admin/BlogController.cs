@@ -13,7 +13,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     [HttpGet]
-    [Route("home")]
+    [Route("list")]
     public async Task<IActionResult> Index(string? searchTerm,
         SortByEnum sortBy = SortByEnum.CreationDate,
         int page = 1,
@@ -30,7 +30,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("create-blog")]
+    [Route("create")]
     public async Task<IActionResult> Create([FromForm] BlogDto src)
     {
         if (!ModelState.IsValid)
@@ -109,7 +109,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 
 
     [HttpPost]
-    [Route("blog-edit")]
+    [Route("edit")]
     public async Task<IActionResult> Edit([FromForm] BlogDto src)
     {
         if (!ModelState.IsValid)
@@ -202,7 +202,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("delete-blog/{id}")]
+    [Route("delete/{id}")]
     public async Task<IActionResult> Delete([FromRoute] long id)
     {
         var entity = await _unitOfWork.BlogRepository.Get(id);
@@ -229,7 +229,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpGet]
-    [Route("blog-detail/{slug}")]
+    [Route("read/{slug}")]
     public async Task<IActionResult> Detail([FromRoute] string slug)
     {
         var entity = await _unitOfWork.BlogRepository.Get(slug);
@@ -262,7 +262,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("check-show-blog/{id}")]
+    [Route("check-show/{id}")]
     public async Task<IActionResult> CheckShowBlog([FromRoute] long id)
     {
         var entity = await _unitOfWork.BlogRepository.Get(id);

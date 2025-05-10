@@ -12,10 +12,9 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 	public static readonly SecurityTokenConfig Config = new();
-	private readonly JwtTokenService _tokenService = jwtTokenService;
 
 	[HttpGet]
-	[Route("home")]
+	[Route("list")]
 	public IActionResult Index(string searchTerm, bool? boolFilter, SortByEnum sortBy = SortByEnum.CreationDate, int page = 1, int pageSize = 10)
 	{
 		// Set up filter object
@@ -38,7 +37,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 	}
 
 	[HttpPost]
-	[Route("create-user")]
+	[Route("create")]
 	public async Task<IActionResult> Create([FromForm] AdminUserForRegistrationCommand src)
 	{
 		if (!ModelState.IsValid)
@@ -110,7 +109,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 	}
 
 	[HttpPost]
-	[Route("update-user")]
+	[Route("edit")]
 	public async Task<IActionResult> Edit([FromForm]UserDto src)
 	{
 		if (!ModelState.IsValid)
@@ -170,7 +169,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 	}
 
 	[HttpPost]
-	[Route("delete-user/{id}")]
+	[Route("delete/{id}")]
 	public async Task<IActionResult> Delete([FromRoute]int id)
 	{
 		var entity = await _unitOfWork.UserRepository.GetUser(id);
@@ -194,7 +193,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 	}
 
 	[HttpGet]
-	[Route("detail-user")]
+	[Route("read")]
 	public async Task<IActionResult> Detail(string slug)
 	{
 		var entity = await _unitOfWork.UserRepository.Get(slug);
@@ -239,7 +238,7 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 	}
 
 	[HttpPost]
-	[Route("activate-and-deactive-user")]
+	[Route("activate")]
 	public async Task<IActionResult> CheckActive(int id)
 	{
 		var user = await _unitOfWork.UserRepository.GetUser(id);

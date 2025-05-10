@@ -13,16 +13,16 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpGet]
 	[Route("list")]
-	public async Task<IActionResult> Index(string? searchTerm,
-		SortByEnum sortBy = SortByEnum.CreationDate,
+	public async Task<IActionResult> Index(string? search_term,
+		SortByEnum sort_by = SortByEnum.CreationDate,
 		int page = 1,
-		int pageSize = 10)
+		int page_size = 10)
 	{
 		// Set up filter object
-		var filter = new DefaultPaginationFilter(page, pageSize)
+		var filter = new DefaultPaginationFilter(page, page_size)
 		{
-			Keyword = searchTerm,
-			SortBy = sortBy,
+			Keyword = search_term,
+			SortBy = sort_by,
 		};
 		var data = _unitOfWork.CityRepository.GetPaginated(filter);
 		return Ok(new ResponseDto<PaginatedList<City>>()

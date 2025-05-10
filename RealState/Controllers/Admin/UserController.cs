@@ -3,26 +3,26 @@ using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
 using RealState.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RaelState.Controllers.Admin;
 [Route("api/user")]
 [ApiController]
-public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenService) : ControllerBase
+public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 	public static readonly SecurityTokenConfig Config = new();
 
 	[HttpGet]
 	[Route("list")]
-	public IActionResult Index(string? searchTerm, bool? isActive, SortByEnum sortBy = SortByEnum.CreationDate, int page = 1, int pageSize = 10)
+	public IActionResult Index(string? search_term, bool? is_active, 
+		SortByEnum sort_by = SortByEnum.CreationDate, int page = 1, int page_size = 10)
 	{
 		// Set up filter object
-		var filter = new DefaultPaginationFilter(page, pageSize)
+		var filter = new DefaultPaginationFilter(page, page_size)
 		{
-			Keyword = searchTerm,
-			SortBy = sortBy,
-			BoolFilter = isActive
+			Keyword = search_term,
+			SortBy = sort_by,
+			BoolFilter = is_active
 		};
 		var data = _unitOfWork.UserRepository.GetPaginated(filter);
 		_unitOfWork.Dispose();

@@ -71,7 +71,7 @@ public class UserRepo : Repository<User>, IUserRepo
 	{
 		try
 		{
-			var query = _queryable.Skip((filter.Page - 1) * filter.PageSize)
+			var query = _queryable.Where(x=>x.is_delete_able == true).Skip((filter.Page - 1) * filter.PageSize)
 						.Take(filter.PageSize).AsNoTracking().ApplyFilter(filter).ApplySort(filter.SortBy);
 			var dataTotalCount = _queryable.Count();
 			return new PaginatedList<User>([.. query], dataTotalCount, filter.Page, filter.PageSize);

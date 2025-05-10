@@ -11,6 +11,7 @@ public static class UserSeed
 			email = "info@avatick.com",
 			failed_login_count = 0,
 			is_locked_out = false,
+			is_delete_able = false,
 			mobile = "09309309393",
 			user_name = "admin-user",
 			password_hash = "omTtMfA5EEJCzjH5t/Q67cRXK5TRwerSqN7sJSm41No=.FRLmTm9jwMcEFnjpjgivJw==", // QAZqaz!@#123

@@ -207,7 +207,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpGet]
-	[Route("read")]
+	[Route("read/{slug}")]
 	public async Task<IActionResult> Detail(string slug)
 	{
 		var entity = await _unitOfWork.UserRepository.Get(slug);

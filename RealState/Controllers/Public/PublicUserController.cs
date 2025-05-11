@@ -83,6 +83,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 
 	[AllowAnonymous]
 	[HttpPost]
+	[Route("verify-phone")]
 	public async Task<IActionResult> VerifyPhone(VerifyPhoneDto src)
 	{
 		if (!ModelState.IsValid)
@@ -180,7 +181,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 	}
 
 	[HttpPost]
-	[ValidateAntiForgeryToken]
+	[Route("register")]
 	public async Task<IActionResult> Register([FromForm] UserForRegistrationCommand request)
 	{
 		if (!ModelState.IsValid)
@@ -299,6 +300,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 
 	[AllowAnonymous]
 	[HttpPost]
+	[Route("verify-phone-register")]
 	public async Task<IActionResult> VerifyPhoneRegister(VerifyPhoneDto src)
 	{
 		if (!ModelState.IsValid)

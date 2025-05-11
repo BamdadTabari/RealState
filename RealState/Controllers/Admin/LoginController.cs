@@ -28,7 +28,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
                 .Select(e => e.ErrorMessage));
             return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -39,7 +39,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         if (user == null || !user.is_active)
 		    return BadRequest(new ResponseDto<UserDto>()
 		    {
-			    data = new UserDto(),
+			    data = null,
 			    is_success = false,
 			    message = "کاربر پیدا نشد یا تایید نشده.",
 			    response_code = 400
@@ -49,7 +49,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 		if (user.is_locked_out && user.lock_out_end_time > DateTime.UtcNow)
 		    return Unauthorized(new ResponseDto<UserDto>()
 		    {
-			    data = new UserDto(),
+			    data = null,
 			    is_success = false,
 			    message = "اکانت شما موقتاً قفل شده است.",
 			    response_code = 401
@@ -69,7 +69,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
 			return Unauthorized(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "رمز عبور اشتباه است.",
 				response_code = 401
@@ -129,7 +129,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         if (userId == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر پیدا نشد",
 				response_code = 404
@@ -138,7 +138,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         if (user == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر پیدا نشد",
 				response_code = 404
@@ -147,7 +147,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         if (string.IsNullOrWhiteSpace(token))
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "داشتن توکن الزامی است",
 				response_code = 400
@@ -171,7 +171,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
         return Ok(new ResponseDto<UserDto>()
         {
-            data = new UserDto(),
+            data = null,
             is_success = true,
             response_code = 204,
             message = "با موفقیت خارج شدید."
@@ -187,7 +187,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         if (!JwtHelper.Validate(request.token))
 		    return BadRequest(new ResponseDto<UserDto>()
 		    {
-			    data = new UserDto(),
+			    data = null,
 			    is_success = false,
 			    message = "Invalid token",
 			    response_code = 400
@@ -201,7 +201,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         if (user == null || user.refresh_token != request.refresh_token || user.refresh_token_expiry_time < DateTime.UtcNow)
 		    return Unauthorized(new ResponseDto<UserDto>()
 		    {
-			    data = new UserDto(),
+			    data = null,
 			    is_success = false,
 			    message = "Invalid refresh token or expired.",
 			    response_code = 400
@@ -247,7 +247,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         if (userId == null)
 		    return NotFound(new ResponseDto<UserDto>()
 		    {
-			    data = new UserDto(),
+			    data = null,
 			    is_success = false,
 			    message = "کاربر پیدا نشد",
 			    response_code = 404
@@ -256,7 +256,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 		if (user == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر پیدا نشد",
 				response_code = 404

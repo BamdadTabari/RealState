@@ -67,10 +67,10 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
+    options.AddPolicy("AllowSpecific",
         policy =>
         {
-            policy.AllowAnyOrigin()
+            policy.WithOrigins("http://localhost:5184")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
@@ -137,7 +137,7 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-app.UseCors("AllowAll");
+app.UseCors("AllowSpecific");
 // Middlewares
 //app.UseHttpsRedirection();
 app.UseStaticFiles();

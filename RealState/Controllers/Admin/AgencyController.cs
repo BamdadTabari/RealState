@@ -46,7 +46,7 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 		if (data.Count() == 0)
 			return Ok(new ResponseDto<List<AgencyDto>>()
 			{
-				data = new List<AgencyDto>(),
+				data = null,
 				is_success = true,
 				message = "مقدار آژانس املاک در دیتابیس وجود ندارد.",
 				response_code = 200
@@ -100,7 +100,7 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<AgencyDto>()
 			{
-				data = new AgencyDto(),
+				data = null,
 				is_success = false,
 				message = "آژانس املاک با این slug پیدا نشد",
 				response_code = 404
@@ -155,7 +155,7 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<AgencyDto>()
 			{
-				data = new AgencyDto(),
+				data = null,
 				is_success = false,
 				message = "آژانس املاک با این ایدی پیدا نشد",
 				response_code = 404
@@ -209,7 +209,7 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<AgencyDto>()
 			{
-				data = new AgencyDto(),
+				data = null,
 				is_success = false,
 				message = "آژانس املاک با این ایدی پیدا نشد",
 				response_code = 404
@@ -218,7 +218,7 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<AgencyDto>()
 		{
-			data = new AgencyDto(),
+			data = null,
 			is_success = true,
 			message = "آژانس املاک با موفقیت حذف شد",
 			response_code = 204

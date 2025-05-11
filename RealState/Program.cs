@@ -155,7 +155,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 //if (app.Environment.IsDevelopment())
-//{
+//{ 
 app.UseDeveloperExceptionPage();
 app.UseSwagger();
 //app.UseSwaggerUI();

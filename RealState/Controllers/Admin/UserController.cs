@@ -167,7 +167,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 		entity.slug = slug;
 		entity.user_name = src.user_name;
-		entity.password_hash = PasswordHasher.Hash(src.password);
+		entity.password_hash = string.IsNullOrEmpty(src.password) ? entity.password_hash : PasswordHasher.Hash(src.password);
 		entity.updated_at = DateTime.Now;
 		entity.email = src.email;
 		entity.is_active = src.is_active;

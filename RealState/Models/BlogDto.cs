@@ -10,7 +10,7 @@ public class BlogDto : BaseDto
     public string name { get; set; }
     [Display(Name = "توضیخات کوتاه")]
     [Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
-    public string short_description { get; set; }
+    public string description { get; set; }
     [Display(Name = "فایل تصویر شاخص")]
     public IFormFile? image_file { get; set; }
     [Display(Name = "آدرس تصویر شاخص")]

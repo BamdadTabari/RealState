@@ -10,7 +10,7 @@ public static class BlogExtension
 		if (!string.IsNullOrEmpty(filter.Keyword))
 			query = query.Where(x => x.name.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase) ||
 			x.slug.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase)
-			|| x.short_description.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase));
+			|| x.description.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase));
 
 		if (filter.BoolFilter != null)
 			query = query.Where(x => x.show_blog == filter.BoolFilter);

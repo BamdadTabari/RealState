@@ -128,6 +128,10 @@ namespace DataLayer.Migrations
                     b.Property<DateTime>("created_at")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -144,10 +148,6 @@ namespace DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("short_description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<bool>("show_blog")
                         .HasColumnType("bit");
 
@@ -162,8 +162,6 @@ namespace DataLayer.Migrations
                     b.HasKey("id");
 
                     b.HasIndex("blog_category_id");
-
-                    b.HasIndex("short_description");
 
                     b.HasIndex("slug")
                         .IsUnique();
@@ -773,6 +771,14 @@ namespace DataLayer.Migrations
                             slug = "Customer_Role",
                             title = "Customer",
                             updated_at = new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            id = 3L,
+                            created_at = new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            slug = "Main_Admin_Role",
+                            title = "MainAdmin",
+                            updated_at = new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -802,6 +808,9 @@ namespace DataLayer.Migrations
                         .HasColumnType("int");
 
                     b.Property<bool>("is_active")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("is_delete_able")
                         .HasColumnType("bit");
 
                     b.Property<bool>("is_locked_out")
@@ -869,6 +878,7 @@ namespace DataLayer.Migrations
                             email = "info@avatick.com",
                             failed_login_count = 0,
                             is_active = true,
+                            is_delete_able = false,
                             is_locked_out = false,
                             is_mobile_confirmed = false,
                             mobile = "09309309393",
@@ -916,10 +926,10 @@ namespace DataLayer.Migrations
                         new
                         {
                             user_id = 1L,
-                            role_id = 1L,
+                            role_id = 3L,
                             id = 0L,
                             created_at = new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            slug = "Admin-User",
+                            slug = "Main-Admin-User",
                             updated_at = new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });

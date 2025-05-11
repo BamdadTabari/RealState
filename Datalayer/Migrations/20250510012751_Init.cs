@@ -209,7 +209,7 @@ namespace DataLayer.Migrations
                     id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    short_description = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     image_alt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     blog_text = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -355,6 +355,7 @@ namespace DataLayer.Migrations
                     is_active = table.Column<bool>(type: "bit", nullable: false),
                     refresh_token = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     refresh_token_expiry_time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_delete_able = table.Column<bool>(type: "bit", nullable: false),
                     agency_id = table.Column<long>(type: "bigint", nullable: true),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -467,18 +468,19 @@ namespace DataLayer.Migrations
                 values: new object[,]
                 {
                     { 1L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "Admin_Role", "Admin", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "Customer_Role", "Customer", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 2L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "Customer_Role", "Customer", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "Main_Admin_Role", "MainAdmin", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
                 table: "User",
-                columns: new[] { "id", "agency_id", "concurrency_stamp", "created_at", "email", "failed_login_count", "is_active", "is_locked_out", "is_mobile_confirmed", "last_login_date_time", "lock_out_end_time", "mobile", "password_hash", "refresh_token", "refresh_token_expiry_time", "security_stamp", "slug", "updated_at", "user_name" },
-                values: new object[] { 1L, null, "X3JO2EOCURAEBU6HHY6OBYEDD2877FXU", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "info@avatick.com", 0, true, false, false, null, null, "09309309393", "omTtMfA5EEJCzjH5t/Q67cRXK5TRwerSqN7sJSm41No=.FRLmTm9jwMcEFnjpjgivJw==", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "098NTB7E5LFFXREHBSEHDKLI0DOBIKST", "Admin-User", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "admin-user" });
+                columns: new[] { "id", "agency_id", "concurrency_stamp", "created_at", "email", "failed_login_count", "is_active", "is_delete_able", "is_locked_out", "is_mobile_confirmed", "last_login_date_time", "lock_out_end_time", "mobile", "password_hash", "refresh_token", "refresh_token_expiry_time", "security_stamp", "slug", "updated_at", "user_name" },
+                values: new object[] { 1L, null, "X3JO2EOCURAEBU6HHY6OBYEDD2877FXU", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "info@avatick.com", 0, true, false, false, false, null, null, "09309309393", "omTtMfA5EEJCzjH5t/Q67cRXK5TRwerSqN7sJSm41No=.FRLmTm9jwMcEFnjpjgivJw==", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "098NTB7E5LFFXREHBSEHDKLI0DOBIKST", "Admin-User", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "admin-user" });
 
             migrationBuilder.InsertData(
                 table: "UserRole",
                 columns: new[] { "id", "role_id", "user_id", "created_at", "slug", "updated_at" },
-                values: new object[] { 0L, 1L, 1L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "Admin-User", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) });
+                values: new object[] { 0L, 3L, 1L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "Main-Admin-User", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Agency_city_id",
@@ -501,11 +503,6 @@ namespace DataLayer.Migrations
                 name: "IX_Blog_blog_category_id",
                 table: "Blog",
                 column: "blog_category_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Blog_short_description",
-                table: "Blog",
-                column: "short_description");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Blog_slug",

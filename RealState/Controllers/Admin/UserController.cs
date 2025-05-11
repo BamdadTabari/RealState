@@ -3,6 +3,7 @@ using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
 using RealState.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RaelState.Controllers.Admin;
 [Route("api/user")]
@@ -43,13 +44,25 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.user_name == src.user_name))
 		{
 			var error = "کاربر با این نام وجود دارد";
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		var slug = src.slug ?? SlugHelper.GenerateSlug(src.user_name);
 		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "کاربر با این نامک وجود دارد";
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		User user = new()
 		{
@@ -80,7 +93,13 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 			user_id = user.id,
 		});
 		await _unitOfWork.CommitAsync();
-		return Created();
+		return Ok(new ResponseDto<UserDto>()
+		{
+			data = new UserDto(),
+			is_success = true,
+			message = "کاربر ایجاد شد.",
+			response_code = 201
+		});
 	}
 
 	[HttpPost]
@@ -96,17 +115,35 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 		}
 		var entity = await _unitOfWork.UserRepository.GetUser(src.id);
 		if (entity == null)
-			return NotFound("کاربر با این ایدی وجود ندارد");
+			return NotFound(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = "کاربر با این ایدی وجود ندارد",
+				response_code = 404
+			});
 		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.user_name == src.user_name) && entity.user_name != src.user_name)
 		{
 			var error = "کاربر با این نام وجود دارد";
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		var slug = src.slug ?? SlugHelper.GenerateSlug(src.user_name);
 		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug) && entity.slug != slug)
 		{
 			var error = "کاربر با این نامک وجود دارد";
-			return BadRequest(error);
+			return BadRequest(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
 		}
 		entity.slug = slug;
 		entity.user_name = src.user_name;
@@ -116,7 +153,13 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 		entity.is_active = src.is_active;
 		_unitOfWork.UserRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
-		return NoContent();
+		return Ok(new ResponseDto<UserDto>()
+		{
+			data = new UserDto(),
+			is_success = true,
+			message = "کاربر ویرایش شد",
+			response_code = 204
+		});
 	}
 
 	[HttpPost]
@@ -125,10 +168,22 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 	{
 		var entity = await _unitOfWork.UserRepository.GetUser(id);
 		if (entity == null)
-			return NotFound("کاربر با این ایدی وجود ندارد");
+			return NotFound(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = true,
+				message = "کاربر با این ایدی وجود ندارد",
+				response_code = 404
+			});
 		_unitOfWork.UserRepository.Remove(entity);
 		await _unitOfWork.CommitAsync();
-		return NoContent();
+		return Ok(new ResponseDto<UserDto>()
+		{
+			data = new UserDto(),
+			is_success = true,
+			message = "کاربر با این ایدی وجود ندارد",
+			response_code = 204
+		});
 	}
 
 	[HttpGet]
@@ -137,30 +192,42 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 	{
 		var entity = await _unitOfWork.UserRepository.Get(slug);
 		if (entity == null)
-			return NotFound("کاربر با این slug وجود ندارد");
-		return Ok(new UserDto()
-		{
-			id = entity.id,
-			created_at = entity.created_at,
-			updated_at = entity.updated_at,
-			slug = slug,
-			mobile = entity.mobile,
-			is_mobile_confirmed = entity.is_mobile_confirmed,
-			is_active = entity.is_active,
-			failed_login_count = entity.failed_login_count,
-			email = entity.email,
-			last_login_date_time = entity.last_login_date_time,
-			user_name = entity.user_name,
-			user_roles = entity.user_roles == null ? [] :
-			entity.user_roles.Select(y => new UserRoleDto()
+			return NotFound(new ResponseDto<UserDto>()
 			{
-				id = y.id,
-				created_at = y.created_at,
-				updated_at = y.updated_at,
-				slug = y.slug,
-				role_id = y.role_id,
-				user_id = y.user_id
-			}).ToList(),
+				data = new UserDto(),
+				is_success = true,
+				message = "کاربر با این slug وجود ندارد",
+				response_code = 404
+			});
+		return Ok(new ResponseDto<UserDto>()
+		{
+			data = new UserDto()
+			{
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = slug,
+				mobile = entity.mobile,
+				is_mobile_confirmed = entity.is_mobile_confirmed,
+				is_active = entity.is_active,
+				failed_login_count = entity.failed_login_count,
+				email = entity.email,
+				last_login_date_time = entity.last_login_date_time,
+				user_name = entity.user_name,
+				user_roles = entity.user_roles == null ? [] :
+				entity.user_roles.Select(y => new UserRoleDto()
+				{
+					id = y.id,
+					created_at = y.created_at,
+					updated_at = y.updated_at,
+					slug = y.slug,
+					role_id = y.role_id,
+					user_id = y.user_id
+				}).ToList(),
+			},
+			is_success = true,
+			message = "",
+			response_code = 200
 		});
 	}
 
@@ -170,11 +237,23 @@ public class UserController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenServ
 	{
 		var user = await _unitOfWork.UserRepository.GetUser(id);
 		if (user == null)
-			return NotFound("کاربر با این ایدی وجود ندارد");
+			return NotFound(new ResponseDto<UserDto>()
+			{
+				data = new UserDto(),
+				is_success = false,
+				message = "کاربر با این ایدی وجود ندارد",
+				response_code = 404
+			});
 		user.is_active = !user.is_active;
 		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
 		_unitOfWork.Dispose();
-		return NoContent();
+		return Ok(new ResponseDto<UserDto>()
+		{
+			data = new UserDto(),
+			is_success = true,
+			message = "وضعیت کاربر تغییر کرد",
+			response_code = 200
+		});
 	}
 }

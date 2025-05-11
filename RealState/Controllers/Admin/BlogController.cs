@@ -91,7 +91,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             blog_category_id = src.blog_category_id,
             image = imagePath,
             image_alt = src.image_alt,
-            short_description = src.short_description,
+            description = src.description,
             show_blog = src.show_blog,
             keywords = src.keyWords
         });
@@ -193,7 +193,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         entity.blog_text = src.blog_text;
         entity.blog_category_id = src.blog_category_id;
         entity.image_alt = src.image_alt;
-        entity.short_description = src.short_description;
+        entity.description = src.description;
         entity.show_blog = src.show_blog;
         entity.keywords = src.keyWords;
         _unitOfWork.BlogRepository.Update(entity);
@@ -246,7 +246,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             blog_text = entity.blog_text,
             image = entity.image,
             image_alt = entity.image_alt,
-            short_description = entity.short_description,
+            description = entity.description,
             show_blog = entity.show_blog,
             keyWords = entity.keywords,
             blog_category = new BlogCategoryDto()

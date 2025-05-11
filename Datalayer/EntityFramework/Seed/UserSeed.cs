@@ -8,7 +8,7 @@ public static class UserSeed
 		new()
 		{
 			id = 1,
-			email = "info@avatick.com",
+			email = " ",
 			failed_login_count = 0,
 			is_locked_out = false,
 			is_delete_able = false,

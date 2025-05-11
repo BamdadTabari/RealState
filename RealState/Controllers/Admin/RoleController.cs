@@ -123,8 +123,8 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("delete/{id}")]
-    public async Task<IActionResult> Delete([FromRoute] long id)
+    [Route("delete")]
+    public async Task<IActionResult> Delete([FromQuery] long id)
     {
         var entity = await _unitOfWork.RoleRepository.GetRole(id);
         if (entity == null)

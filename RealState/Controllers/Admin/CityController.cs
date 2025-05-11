@@ -194,8 +194,8 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("delete/{id}")]
-	public async Task<IActionResult> Delete([FromRoute] long id)
+	[Route("delete")]
+	public async Task<IActionResult> Delete([FromQuery] long id)
 	{
 		var entity = await _unitOfWork.CityRepository.Get(id);
 		if (entity == null)

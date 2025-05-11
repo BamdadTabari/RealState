@@ -183,8 +183,8 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
 	[HttpPost]
-	[Route("delete/{id}")]
-	public async Task<IActionResult> Delete([FromRoute]int id)
+	[Route("delete")]
+	public async Task<IActionResult> Delete([FromQuery]int id)
 	{
 		var entity = await _unitOfWork.UserRepository.GetUser(id);
 		if (entity == null)

@@ -180,8 +180,8 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("delete/{id}")]
-    public async Task<IActionResult> Delete([FromRoute] long id)
+    [Route("delete")]
+    public async Task<IActionResult> Delete([FromQuery] long id)
     {
         var entity = await _unitOfWork.BlogCategoryRepository.Get(id);
         if (entity == null)

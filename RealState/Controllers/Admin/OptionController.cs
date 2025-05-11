@@ -15,7 +15,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     [HttpGet]
-    [Route("home")]
+    [Route("list")]
     public async Task<IActionResult> Index(string? search_term,
         SortByEnum sort_by = SortByEnum.CreationDate,
         int page = 1,
@@ -38,7 +38,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
     [HttpGet]
-    [Route("get-all-options")]
+    [Route("all")]
     public async Task<IActionResult> GetAll()
     {
         var data = await _unitOfWork.OptionRepository.GetAll();
@@ -68,7 +68,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpGet]
-    [Route("option-detail/{slug}")]
+    [Route("read/{slug}")]
     public async Task<IActionResult> Detail([FromRoute] string slug)
     {
         var entity = await _unitOfWork.OptionRepository.Get(slug);
@@ -99,7 +99,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
 
     [HttpGet]
-    [Route("get-option/{id}")]
+    [Route("get/{id}")]
     public async Task<IActionResult> Get([FromRoute] long id)
     {
         var entity = await _unitOfWork.OptionRepository.Get(id);
@@ -129,8 +129,8 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
     }
 
     [HttpPost]
-    [Route("option-delete/{id}")]
-    public async Task<IActionResult> Delete([FromRoute] long id)
+    [Route("delete")]
+    public async Task<IActionResult> Delete([FromQuery] long id)
     {
         var entity = await _unitOfWork.OptionRepository.Get(id);
         if (entity == null)
@@ -153,7 +153,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
     [HttpPost]
-    [Route("create-option")]
+    [Route("create")]
     public async Task<IActionResult> Create([FromForm] OptionDto src)
     {
         if (!ModelState.IsValid)
@@ -212,7 +212,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 	}
 
     [HttpPost]
-    [Route("edit-option")]
+    [Route("edit")]
     public async Task<IActionResult> Edit([FromForm] OptionDto src)
     {
         if (!ModelState.IsValid)

@@ -98,8 +98,8 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
-            Secure = true,    // فقط در HTTPS ارسال شود
-            SameSite = SameSiteMode.Lax,  // تنظیمات سیاست کوکی
+            Secure = false,    // فقط در HTTPS ارسال شود
+            SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
             Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
         };
 
@@ -223,8 +223,17 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         _unitOfWork.UserRepository.Update(user);
         await _unitOfWork.CommitAsync();
 
-        // 6. بازگشت توکن‌ها به کاربر
-        return Ok(new ResponseDto<LoginResponseDto>()
+		// ذخیره توکن در کوکی
+		var cookieOptions = new CookieOptions
+		{
+			HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
+			Secure = false,    // فقط در HTTPS ارسال شود
+			SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
+			Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
+		};
+		Response.Cookies.Append("jwt", token, cookieOptions);
+		// 6. بازگشت توکن‌ها به کاربر
+		return Ok(new ResponseDto<LoginResponseDto>()
         {
             data = new LoginResponseDto()
             {

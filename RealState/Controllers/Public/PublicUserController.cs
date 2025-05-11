@@ -144,13 +144,15 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		var refreshToken = _tokenService.GenerateRefreshToken();
 
 		// تنظیم توکن در کوکی
-		Response.Cookies.Append("jwt", token, new CookieOptions
+		// ذخیره توکن در کوکی
+		var cookieOptions = new CookieOptions
 		{
-			HttpOnly = true, // جلوگیری از دسترسی جاوااسکریپت به کوکی
-			Secure = true,
-			SameSite = SameSiteMode.Strict,
-			Expires = DateTimeOffset.UtcNow.AddDays(10) // زمان انقضا
-		});
+			HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
+			Secure = false,    // فقط در HTTPS ارسال شود
+			SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
+			Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
+		};
+		Response.Cookies.Append("jwt", token, cookieOptions);
 
 		// حذف تمام OTPهای مرتبط
 		var allPhoneOtps = await _unitOfWork.OtpRepository.GetAllByPhone(src.phone_number);
@@ -428,6 +430,16 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		user.refresh_token_expiry_time = DateTime.UtcNow.Add(Config.RefreshTokenLifetime);
 		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
+
+		// ذخیره توکن در کوکی
+		var cookieOptions = new CookieOptions
+		{
+			HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
+			Secure = false,    // فقط در HTTPS ارسال شود
+			SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
+			Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
+		};
+		Response.Cookies.Append("jwt", token, cookieOptions);
 
 		// 6. بازگشت توکن‌ها به کاربر
 		return Ok(new ResponseDto<LoginResponseDto>()

@@ -4,7 +4,7 @@ let tokenExpiresAt = 0;
 
 async function getToken() {
     const formData = new URLSearchParams();
-    formData.append("user_name_or_email", "info@avatick.com");
+    formData.append("user_name_or_email", "info@amajpanah.com");
     formData.append("password", "QAZqaz!@#123");
 
     const response = await fetch("/api/login/username", {

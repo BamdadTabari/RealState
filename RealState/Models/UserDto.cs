@@ -18,15 +18,14 @@ public class UserDto : BaseDto
     public string email { get; set; }
 
 	[Display(Name = "پسورد")]
-	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
-	public string password { get; set; }
+	public string? password { get; set; }
 	#endregion
 
 	#region Login
 
-	public string password_hash { get; set; }
+	public string? password_hash { get; set; }
 
-    public int failed_login_count { get; set; }
+    public int? failed_login_count { get; set; }
     public DateTime? lock_out_end_time { get; set; }
 
     public DateTime? last_login_date_time { get; set; }
@@ -35,9 +34,9 @@ public class UserDto : BaseDto
 
     #region Management
 
-    public string security_stamp { get; set; }
-    public string concurrency_stamp { get; set; }
-	public bool is_locked_out { get; set; }
+    public string? security_stamp { get; set; }
+    public string? concurrency_stamp { get; set; }
+	public bool? is_locked_out { get; set; }
 	public bool is_active { get; set; }
 	public string? refresh_token { get; set; }
 	public DateTime refresh_token_expiry_time { get; set; }
@@ -46,6 +45,6 @@ public class UserDto : BaseDto
 
 	#region Navigations
 	public ICollection<UserRoleDto>? user_roles { get; set; }
-	public AgencyDto agency { get; set; }
+	public AgencyDto? agency { get; set; }
 	#endregion
 }

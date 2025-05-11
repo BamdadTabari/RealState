@@ -15,5 +15,5 @@ public class CityDto : BaseDto
     public long province_id { get; set; }
     public ProvinceDto? province { get; set; }
 
-	public ICollection<AgencyDto> agency_list { get; set; }
+	public ICollection<AgencyDto>? agency_list { get; set; }
 }

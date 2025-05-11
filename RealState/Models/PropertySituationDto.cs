@@ -9,5 +9,5 @@ public class PropertySituationDto : BaseDto
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public string name { get; set; }
 
-	public ICollection<PropertyDto> properties { get; set; }
+	public ICollection<PropertyDto>? properties { get; set; }
 }

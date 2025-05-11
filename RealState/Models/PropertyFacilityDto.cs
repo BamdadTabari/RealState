@@ -9,5 +9,5 @@ public class PropertyFacilityDto : BaseDto
 	[Display(Name = "نام")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public string name { get; set; }
-	public ICollection<PropertyFacilityPropertyDto> property_facility_properties { get; set; }
+	public ICollection<PropertyFacilityPropertyDto>? property_facility_properties { get; set; }
 }

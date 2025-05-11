@@ -40,7 +40,7 @@ public class PropertyDto : BaseDto
 	[Display(Name = "دسته بندی")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public long category_id { get; set; }
-	public PropertyCategoryDto property_category { get; set; }
+	public PropertyCategoryDto? property_category { get; set; }
 	[Display(Name = "برای فروش است؟")]
 	public bool is_for_sale { get; set; }
 	[Display(Name = "قیمت فروش")]
@@ -70,11 +70,11 @@ public class PropertyDto : BaseDto
 
 	[Display(Name = "تاریخ انقضا")]
 	public DateTime expire_date { get; set; }
-	public ICollection<PropertyFacilityPropertyDto> property_facility_properties { get; set; }
+	public ICollection<PropertyFacilityPropertyDto>? property_facility_properties { get; set; }
 	[Display(Name = "وضعیت")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public long situation_id { get; set; }
-	public PropertySituationDto situation { get; set; }
+	public PropertySituationDto? situation { get; set; }
 
 }
 

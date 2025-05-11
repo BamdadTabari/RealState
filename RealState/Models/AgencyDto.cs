@@ -23,7 +23,7 @@ public class AgencyDto : BaseDto
 	[Display(Name = "شهر")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public long city_id { get; set; }
-	public CityDto city { get; set; }
+	public CityDto? city { get; set; }
 
-	public UserDto user { get; set; }
+	public UserDto? user { get; set; }
 }

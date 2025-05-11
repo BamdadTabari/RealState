@@ -210,7 +210,7 @@ public class PropertyCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpPost]
 	[Route("delete")]
-	public async Task<IActionResult> Delete([FromQuery] long id)
+	public async Task<IActionResult> Delete([FromBody] long id)
 	{
 		var entity = await _unitOfWork.PropertyCategoryRepository.Get(id);
 		if (entity == null)

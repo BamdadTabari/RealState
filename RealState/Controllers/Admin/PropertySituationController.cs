@@ -211,7 +211,7 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 
 	[HttpPost]
 	[Route("delete")]
-	public async Task<IActionResult> Delete([FromQuery] long id)
+	public async Task<IActionResult> Delete([FromBody] long id)
 	{
 		var entity = await _unitOfWork.PropertySituationRepository.Get(id);
 		if (entity == null)

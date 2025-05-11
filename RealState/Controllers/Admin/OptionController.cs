@@ -130,7 +130,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("delete")]
-    public async Task<IActionResult> Delete([FromQuery] long id)
+    public async Task<IActionResult> Delete([FromBody] long id)
     {
         var entity = await _unitOfWork.OptionRepository.Get(id);
         if (entity == null)

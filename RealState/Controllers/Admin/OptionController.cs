@@ -52,14 +52,14 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 			});
 		return Ok(new ResponseDto<List<OptionDto>>()
         {
-            data = data.Select(x => new OptionDto()
+            data = data.Select(entity => new OptionDto()
 			{
-				id = x.id,
-				created_at = x.created_at,
-				updated_at = x.updated_at,
-				slug = x.slug,
-				option_key = x.option_key,
-				option_value = x.option_value,
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				option_key = entity.option_key,
+				option_value = entity.option_value,
 			}).ToList(),
             is_success = true,
             message = "",

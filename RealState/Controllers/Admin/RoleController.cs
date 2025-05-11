@@ -51,13 +51,13 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 			});
 		return Ok(new ResponseDto<List<RoleDto>>()
         {
-            data = data.Select(x => new RoleDto()
+            data = data.Select(entity => new RoleDto()
 			{
-				id = x.id,
-				created_at = x.created_at,
-				updated_at = x.updated_at,
-				slug = x.slug,
-				title = x.title,
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				title = entity.title,
 			}).ToList()
 		});
     }

@@ -51,15 +51,15 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 			});
 		return Ok(new ResponseDto<List<ProvinceDto>>()
 		{
-			data = data.Select(x => new ProvinceDto()
+			data = data.Select(entity => new ProvinceDto()
 			{
-				id = x.id,
-				created_at = x.created_at,
-				updated_at = x.updated_at,
-				slug = x.slug,
-				name = x.name,
-				cities = x.cities == null ? new List<CityDto>() :
-			x.cities.Select(y => new CityDto()
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				name = entity.name,
+				cities = entity.cities == null ? new List<CityDto>() :
+			entity.cities.Select(y => new CityDto()
 			{
 				id = y.id,
 				created_at = y.created_at,

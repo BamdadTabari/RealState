@@ -51,24 +51,24 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			});
 		return Ok(new ResponseDto<List<CityDto>>()
 		{
-			data = data.Select(x => new CityDto()
+			data = data.Select(entity => new CityDto()
 			{
-				id = x.id,
-				created_at = x.created_at,
-				updated_at = x.updated_at,
-				slug = x.slug,
-				name = x.name,
-				province_id = x.province_id,
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				name = entity.name,
+				province_id = entity.province_id,
 				province = new ProvinceDto()
 				{
-					name = x.province.name,
-					id = x.province.id,
-					created_at = x.province.created_at,
-					updated_at = x.province.updated_at,
-					slug = x.province.slug,
+					name = entity.province.name,
+					id = entity.province.id,
+					created_at = entity.province.created_at,
+					updated_at = entity.province.updated_at,
+					slug = entity.province.slug,
 				},
-				agency_list = x.agency_list == null ? new List<AgencyDto>() :
-			x.agency_list.Select(y => new AgencyDto()
+				agency_list = entity.agency_list == null ? new List<AgencyDto>() :
+			entity.agency_list.Select(y => new AgencyDto()
 			{
 				id = y.id,
 				created_at = y.created_at,

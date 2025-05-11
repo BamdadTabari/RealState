@@ -52,17 +52,17 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 			});
 		return Ok(new ResponseDto<List<PlanDto>>()
 		{
-			data = data.Select(x => new PlanDto()
+			data = data.Select(entity => new PlanDto()
 			{
-				id = x.id,
-				created_at = x.created_at,
-				updated_at = x.updated_at,
-				slug = x.slug,
-				name = x.name,
-				description = x.description,
-				price = x.price,
-				plan_months = x.plan_months,
-				property_count = x.property_count
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				name = entity.name,
+				description = entity.description,
+				price = entity.price,
+				plan_months = entity.plan_months,
+				property_count = entity.property_count
 			}).ToList(),
 			is_success=true,
 			message = "",

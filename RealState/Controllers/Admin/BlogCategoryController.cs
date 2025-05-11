@@ -53,16 +53,16 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 		    });
 		return Ok(new ResponseDto<List<BlogCategoryDto>>()
 		{
-			data = data.Select(x => new BlogCategoryDto()
+			data = data.Select(entity => new BlogCategoryDto()
 			{
-				id = x.id,
-				name = x.name,
-				description = x.description,
-				created_at = x.created_at,
-				updated_at = x.updated_at,
-				slug = x.slug,
-				blogs = x.blogs == null ? [] :
-			x.blogs.Select(y => new BlogDto()
+				id = entity.id,
+				name = entity.name,
+				description = entity.description,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				blogs = entity.blogs == null ? [] :
+			entity.blogs.Select(y => new BlogDto()
 			{
 				id = y.id,
 				created_at = y.created_at,

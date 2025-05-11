@@ -98,7 +98,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
-            Secure = false,    // فقط در HTTPS ارسال شود
+            Secure = true,    // فقط در HTTPS ارسال شود
             SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
             Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
         };
@@ -227,7 +227,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 		var cookieOptions = new CookieOptions
 		{
 			HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
-			Secure = false,    // فقط در HTTPS ارسال شود
+			Secure = true,    // فقط در HTTPS ارسال شود
 			SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
 			Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
 		};

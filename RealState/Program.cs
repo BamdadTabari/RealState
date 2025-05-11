@@ -74,7 +74,6 @@ builder.Services.AddCors(options =>
 				  .AllowAnyHeader()
 				  .AllowAnyMethod()
 				  .AllowCredentials();
-				  
         });
 });
 
@@ -139,8 +138,9 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
-app.UseCors("AllowSpecific");
+
 // Middlewares
+app.UseCors("AllowSpecific");
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions

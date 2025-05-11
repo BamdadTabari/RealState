@@ -65,6 +65,19 @@ builder.Services.AddSwaggerGen(c =>
 
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+// In middleware:
+
 // Repositories and services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -124,6 +137,7 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
+app.UseCors("AllowAll");
 // Middlewares
 //app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -29,7 +29,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				.Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -40,7 +40,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (user == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر پیدا نشد",
 				response_code = 404
@@ -52,7 +52,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var error = "کاربر پیدا نشد یا توسط ادمین غیر فعال شده";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -74,7 +74,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 
 		return Ok(new ResponseDto<UserDto>()
 		{
-			data = new UserDto(),
+			data = null,
 			is_success = true,
 			message = $"پبامک ورود به شماره {dto.phone_number} فرستاده شد.",
 			response_code = 204
@@ -93,7 +93,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				.Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -105,7 +105,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var error = "کد وارد شده منقضی شده است. لطفاً دوباره تلاش کنید";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -117,7 +117,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var error = "مقدار نامعتبر است";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -130,7 +130,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (user == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = true,
 				message = "کاربر با این شماره تلفن وجود ندارد.",
 				response_code = 401
@@ -182,7 +182,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 
 	[HttpPost]
 	[Route("register")]
-	public async Task<IActionResult> Register([FromForm] UserForRegistrationCommand request)
+	public async Task<IActionResult> Register([FromForm] UserForRegistrationCommand request , [FromForm] AgencyDto src)
 	{
 		if (!ModelState.IsValid)
 		{
@@ -191,7 +191,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				   .Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -202,7 +202,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var error = " شماره تلفن موجود است لطفا وارد شوید";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -213,7 +213,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var error = "ایمیل موجود است";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -224,7 +224,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var error = "نام کاربری موجود است";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -237,7 +237,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var error = "کاربر با این نامک وجود دارد";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -274,6 +274,27 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			user_id = user.id,
 		});
 		await _unitOfWork.CommitAsync();
+		var city = await _unitOfWork.CityRepository.Get(src.city_id);
+		if (city != null)
+			return NotFound(new ResponseDto<CityDto>()
+			{
+				data = null,
+				is_success = false,
+				message ="شهر پیدا نشد",
+				response_code = 404
+			});
+		await _unitOfWork.AgencyRepository.AddAsync(new Agency()
+		{
+			agency_name = src.agency_name ?? "",
+			created_at = DateTime.UtcNow,
+			updated_at = DateTime.UtcNow,
+			city_id = src.city_id,
+			city_province_full_name = city.name + $"({city.province.name})",
+			full_name = src.full_name,
+			mobile = src.mobile,
+			slug = src.slug ?? SlugHelper.GenerateSlug(src.full_name + Guid.NewGuid().ToString()),
+		});
+		await _unitOfWork.CommitAsync();
 
 		// تولید کد OTP
 		var otpCode = new Random().Next(1000, 9999);
@@ -290,7 +311,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 
 		return Ok(new ResponseDto<UserDto>()
 		{
-			data = new UserDto(),
+			data = null,
 			message = $"پبامک ورود به شماره {request.phone_number} فرستاده شد.",
 			is_success = true,
 			response_code = 200
@@ -316,7 +337,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var error = "کد وارد شده منقضی شده است. لطفاً دوباره تلاش کنید";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -328,7 +349,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var error = "مقدار نامعتبر است";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -340,7 +361,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (user == null)
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر با این شماره تلفن وجود ندارد",
 				response_code = 400
@@ -397,7 +418,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (!JwtHelper.Validate(request.token))
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "توکن نامعتبر",
 				response_code = 400
@@ -411,7 +432,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (user == null || user.refresh_token != request.refresh_token || user.refresh_token_expiry_time < DateTime.UtcNow)
 			return Unauthorized(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "توکن نامعتبر است و یا منقضی شده است",
 				response_code = 401
@@ -467,7 +488,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (userId == null)
 			return Unauthorized(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر پیدا نشد",
 				response_code = 401
@@ -476,7 +497,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (user == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر پیدا نشد",
 				response_code = 404
@@ -493,7 +514,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (userId == null)
 			return Unauthorized(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر پیدا نشد",
 				response_code = 401
@@ -503,7 +524,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (user == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر پیدا نشد",
 				response_code = 404
@@ -519,7 +540,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 
 		return Ok(new ResponseDto<UserDto>()
 		{
-			data = new UserDto(),
+			data = null,
 			is_success = true,
 			message = "با موفقیت از سیستم خارج شدید.",
 			response_code = 200

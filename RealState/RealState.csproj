@@ -21,9 +21,4 @@
     <ProjectReference Include="..\Datalayer\DataLayer.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\images\" />
-    <Folder Include="images\" />
-  </ItemGroup>
-
 </Project>

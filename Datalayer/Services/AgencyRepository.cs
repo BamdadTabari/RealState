@@ -5,6 +5,7 @@ public interface IAgencyRepository : IRepository<Agency>
 {
 	Task<Agency?> Get(string slug);
 	Task<Agency?> Get(long id);
+	Task<Agency?> GetByUserId(long id);
 	PaginatedList<Agency> GetPaginated(DefaultPaginationFilter filter);
 	Task<List<Agency>> GetAgencies(int count);
 	Task<List<Agency>> GetAll();
@@ -90,6 +91,18 @@ public class AgencyRepository : Repository<Agency>, IAgencyRepository
 		catch
 		{
 			return new PaginatedList<Agency>([], 0, filter.Page, filter.PageSize);
+		}
+	}
+
+	public async Task<Agency?> GetByUserId(long id)
+	{
+		try
+		{
+			return await _queryable.Include(x => x.user).Include(x => x.city).AsNoTracking().SingleOrDefaultAsync(x => x.user.id == id);
+		}
+		catch
+		{
+			return null;
 		}
 	}
 }

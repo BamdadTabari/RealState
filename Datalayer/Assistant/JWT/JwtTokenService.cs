@@ -48,7 +48,7 @@ public class JwtTokenService
 		return Convert.ToBase64String(randomBytes);
 	}
 
-	public string? GetUseridFromClaims(ClaimsPrincipal user)
+	public string? GetUserIdFromClaims(ClaimsPrincipal user)
 	{
 		return user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 	}

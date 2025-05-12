@@ -243,7 +243,18 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-
+		var agencySlug = src.slug ?? SlugHelper.GenerateSlug(src.full_name + Guid.NewGuid().ToString());
+		if(await _unitOfWork.AgencyRepository.ExistsAsync(x=>x.slug == agencySlug))
+		{
+			var error = "آژانس املاک با این نامک وجود دارد";
+			return BadRequest(new ResponseDto<AgencyDto>()
+			{
+				data = null,
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
 		// ایجاد کاربر
 		User user = new()
 		{
@@ -275,7 +286,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		});
 		await _unitOfWork.CommitAsync();
 		var city = await _unitOfWork.CityRepository.Get(src.city_id);
-		if (city != null)
+		if (city == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
 				data = null,
@@ -283,7 +294,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				message ="شهر پیدا نشد",
 				response_code = 404
 			});
-		await _unitOfWork.AgencyRepository.AddAsync(new Agency()
+		await _unitOfWork.AgencyRepository.AddAsync(new Agency	()
 		{
 			agency_name = src.agency_name ?? "",
 			created_at = DateTime.UtcNow,
@@ -292,7 +303,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			city_province_full_name = city.name + $"({city.province.name})",
 			full_name = src.full_name,
 			mobile = src.mobile,
-			slug = src.slug ?? SlugHelper.GenerateSlug(src.full_name + Guid.NewGuid().ToString()),
+			slug = agencySlug,
 		});
 		await _unitOfWork.CommitAsync();
 

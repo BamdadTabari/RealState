@@ -29,7 +29,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             Keyword = search_term,
             SortBy = sort_by,
         };
-        var data = _unitOfWork.BlogRepository.GetPaginated(filter);
+        var data = _unitOfWork.BlogRepository.GetPaginated(filter, null);
 		return Ok(new ResponseDto<PaginatedList<Blog>>()
 		{
 			data = data,

@@ -7,10 +7,10 @@ public static class UserExtension
 	{
 
 		if (!string.IsNullOrEmpty(filter.Keyword))
-			query = query.Where(x => x.email.ToString().Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-			x.slug.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase)
-			|| x.mobile.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase)
-			|| x.user_name.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase));
+			query = query.Where(x => x.email.ToString().ToLower().Contains(filter.Keyword.ToLower().Trim()) ||
+			x.slug.ToLower().Contains(filter.Keyword.ToLower().Trim())
+			|| x.mobile.ToLower().Contains(filter.Keyword.ToLower().Trim())
+			|| x.user_name.ToLower().Contains(filter.Keyword.ToLower().Trim()));
 
 		return query;
 	}

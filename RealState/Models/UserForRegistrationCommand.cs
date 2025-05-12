@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace RealState.Models;
 
-public class UserForRegistrationCommand : BaseDto
+public class UserForRegistrationCommand 
 {
 	[Display(Name = "نام کاربری")]
 	[Required(ErrorMessage = "لطفا مقدار {0} را وارد کنید")]
@@ -15,4 +15,6 @@ public class UserForRegistrationCommand : BaseDto
 	[Display(Name = "شماره تماس")]
 	[Required(ErrorMessage = "لطفا مقدار {0} را وارد کنید")]
 	public string phone_number { get; set; }
+
+	public AgencyDto Agency { get; set; }
 }

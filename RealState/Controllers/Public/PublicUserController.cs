@@ -182,7 +182,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 
 	[HttpPost]
 	[Route("register")]
-	public async Task<IActionResult> Register([FromForm] UserForRegistrationCommand request , [FromForm] AgencyDto src)
+	public async Task<IActionResult> Register([FromForm] UserForRegistrationCommand request)
 	{
 		if (!ModelState.IsValid)
 		{
@@ -231,7 +231,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			});
 		}
 
-		var slug = request.slug ?? SlugHelper.GenerateSlug(request.user_name);
+		var slug = request.Agency.slug ?? SlugHelper.GenerateSlug(request.user_name);
 		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "کاربر با این نامک وجود دارد";
@@ -243,8 +243,8 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-		var agencySlug = src.slug ?? SlugHelper.GenerateSlug(src.full_name + Guid.NewGuid().ToString());
-		if(await _unitOfWork.AgencyRepository.ExistsAsync(x=>x.slug == agencySlug))
+		var agencySlug = request.Agency.slug ?? SlugHelper.GenerateSlug(request.Agency.full_name + Guid.NewGuid().ToString());
+		if (await _unitOfWork.AgencyRepository.ExistsAsync(x => x.slug == agencySlug))
 		{
 			var error = "آژانس املاک با این نامک وجود دارد";
 			return BadRequest(new ResponseDto<AgencyDto>()
@@ -285,24 +285,24 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			user_id = user.id,
 		});
 		await _unitOfWork.CommitAsync();
-		var city = await _unitOfWork.CityRepository.Get(src.city_id);
+		var city = await _unitOfWork.CityRepository.Get(request.Agency.city_id);
 		if (city == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
 				data = null,
 				is_success = false,
-				message ="شهر پیدا نشد",
+				message = "شهر پیدا نشد",
 				response_code = 404
 			});
-		await _unitOfWork.AgencyRepository.AddAsync(new Agency	()
+		await _unitOfWork.AgencyRepository.AddAsync(new Agency()
 		{
-			agency_name = src.agency_name ?? "",
+			agency_name = request.Agency.agency_name ?? "",
 			created_at = DateTime.UtcNow,
 			updated_at = DateTime.UtcNow,
-			city_id = src.city_id,
+			city_id = request.Agency.city_id,
 			city_province_full_name = city.name + $"({city.province.name})",
-			full_name = src.full_name,
-			mobile = src.mobile,
+			full_name = request.Agency.full_name,
+			mobile = request.Agency.mobile,
 			slug = agencySlug,
 		});
 		await _unitOfWork.CommitAsync();

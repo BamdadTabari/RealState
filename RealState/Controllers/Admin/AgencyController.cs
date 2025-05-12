@@ -207,7 +207,7 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 	[Route("delete")]
 	public async Task<IActionResult> Delete(DeleteRequest<long> src)
 	{
-		var entity = await _unitOfWork.AgencyRepository.Get(src.id);
+		var entity = await _unitOfWork.AgencyRepository.Get(src.data);
 		if (entity == null)
 			return NotFound(new ResponseDto<AgencyDto>()
 			{

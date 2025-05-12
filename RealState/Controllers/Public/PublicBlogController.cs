@@ -83,4 +83,50 @@ public class PublicBlogController(IUnitOfWork unitOfWork) : ControllerBase
 			response_code = 200
 		});
 	}
+
+	[HttpGet]
+	[Route("read/{slug}")]
+	public async Task<IActionResult> Detail([FromRoute] string slug)
+	{
+		var entity = await _unitOfWork.BlogRepository.Get(slug);
+		if (entity == null)
+			return NotFound(new ResponseDto<BlogDto>()
+			{
+				data = null,
+				is_success = false,
+				message = "بلاگ با این slug پیدا نشد.",
+				response_code = 404
+			});
+
+		return Ok(new ResponseDto<BlogDto>()
+		{
+			data = new BlogDto()
+			{
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = entity.slug,
+				name = entity.name,
+				blog_category_id = entity.blog_category_id,
+				blog_text = entity.blog_text,
+				image = entity.image,
+				image_alt = entity.image_alt,
+				description = entity.description,
+				show_blog = entity.show_blog,
+				keyWords = entity.keywords,
+				blog_category = new BlogCategoryDto()
+				{
+					created_at = entity.blog_category.created_at,
+					updated_at = entity.blog_category.updated_at,
+					slug = entity.blog_category.slug,
+					description = entity.blog_category.description,
+					name = entity.blog_category.name,
+					id = entity.blog_category.id,
+				}
+			},
+			is_success = true,
+			message = "",
+			response_code = 200
+		});
+	}
 }

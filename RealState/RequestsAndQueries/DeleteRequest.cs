@@ -5,8 +5,8 @@ namespace RealState.Requests;
 public class DeleteRequest<T>
 {
 	[FromForm]
-	public T Id { get; set; }
+	public T data { get; set; }
 
 	[FromForm]
-	public Dictionary<string, string>? ExtraData { get; set; }
+	public Dictionary<string, string>? extra_data { get; set; }
 }

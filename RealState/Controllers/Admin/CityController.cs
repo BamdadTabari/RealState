@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
 using RealState.Models;
+using RealState.Requests;
+using RealState.RequestsAndQueries;
 
 namespace RaelState.Controllers.Admin;
 [Route("api/city")]
@@ -90,9 +92,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpGet]
 	[Route("read/{slug}")]
-	public async Task<IActionResult> Detail([FromRoute] string slug)
+	public async Task<IActionResult> Detail(GetQuery<string> src )
 	{
-		var entity = await _unitOfWork.CityRepository.Get(slug);
+		var entity = await _unitOfWork.CityRepository.Get(src.data);
 		if (entity == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
@@ -143,9 +145,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpGet]
 	[Route("get/{id}")]
-	public async Task<IActionResult> Get([FromRoute] long id)
+	public async Task<IActionResult> Get(GetQuery<long> src)
 	{
-		var entity = await _unitOfWork.CityRepository.Get(id);
+		var entity = await _unitOfWork.CityRepository.Get(src.data);
 		if (entity == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
@@ -195,9 +197,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpPost]
 	[Route("delete")]
-	public async Task<IActionResult> Delete([FromForm] long id)
+	public async Task<IActionResult> Delete(DeleteRequest<long> src)
 	{
-		var entity = await _unitOfWork.CityRepository.Get(id);
+		var entity = await _unitOfWork.CityRepository.Get(src.data);
 		if (entity == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
@@ -219,7 +221,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpPost]
 	[Route("create")]
-	public async Task<IActionResult> Create([FromForm] CityDto src)
+	public async Task<IActionResult> Create(CreateRequest<CityDto> src)
 	{
 		if (!ModelState.IsValid)
 		{
@@ -234,7 +236,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.name == src.name && x.province_id == src.province_id))
+		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.name == src.data.name && x.province_id == src.data.province_id))
 		{
 			var error = "مقدار نام شهر تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<CityDto>()
@@ -245,7 +247,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-		var slug = src.slug ?? SlugHelper.GenerateSlug(src.name + src.province_id);
+		var slug = src.data.slug ?? SlugHelper.GenerateSlug(src.data.name + src.data.province_id);
 		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
@@ -263,8 +265,8 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			created_at = DateTime.UtcNow,
 			updated_at = DateTime.UtcNow,
 			slug = slug,
-			name = src.name,
-			province_id = src.province_id,
+			name = src.data.name,
+			province_id = src.data.province_id,
 		});
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<CityDto>()
@@ -278,7 +280,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpPost]
 	[Route("edit")]
-	public async Task<IActionResult> Edit([FromForm] CityDto src)
+	public async Task<IActionResult> Edit(EditRequest<CityDto> src)
 	{
 		if (!ModelState.IsValid)
 		{
@@ -293,7 +295,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-		var entity = await _unitOfWork.CityRepository.Get(src.id);
+		var entity = await _unitOfWork.CityRepository.Get(src.data.id);
 		if (entity == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
@@ -303,8 +305,8 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 
-		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.name == src.name && entity.name != src.name
-		&& x.province_id == src.province_id))
+		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.name == src.data.name && entity.name != src.data.name
+		&& x.province_id == src.data.province_id))
 		{
 			var error = "مقدار نام شهر تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<CityDto>()
@@ -315,7 +317,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-		var slug = src.slug ?? SlugHelper.GenerateSlug(src.name + src.province_id);
+		var slug = src.data.slug ?? SlugHelper.GenerateSlug(src.data.name + src.data.province_id);
 		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
@@ -330,8 +332,8 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 		entity.slug = slug;
 		entity.updated_at = DateTime.UtcNow;
-		entity.name = src.name;
-		entity.province_id = src.province_id;
+		entity.name = src.data.name;
+		entity.province_id = src.data.province_id;
 
 		_unitOfWork.CityRepository.Update(entity);
 		await _unitOfWork.CommitAsync();

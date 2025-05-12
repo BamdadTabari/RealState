@@ -5,8 +5,8 @@ namespace RealState.RequestsAndQueries;
 public class GetQuery<T>
 {
 	[FromRoute]
-	public T Data { get; set; }
+	public T data { get; set; }
 
 	[FromRoute]
-	public Dictionary<string, string>? ExtraData { get; set; }
+	public Dictionary<string, string>? extra_data { get; set; }
 }

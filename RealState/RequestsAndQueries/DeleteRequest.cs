@@ -2,11 +2,11 @@
 
 namespace RealState.Requests;
 
-public class DeleteRequest
+public class DeleteRequest<T>
 {
-	[FromRoute]
-	public long Id { get; set; }
+	[FromForm]
+	public T Id { get; set; }
 
-	[FromRoute]
+	[FromForm]
 	public Dictionary<string, string>? ExtraData { get; set; }
 }

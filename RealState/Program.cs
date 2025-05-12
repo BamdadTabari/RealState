@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using RaelState.Assistant;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,20 @@ var builder = WebApplication.CreateBuilder(args);
 var jwtSection = builder.Configuration.GetSection("JWT");
 var jwtConfig = jwtSection.Get<SecurityTokenConfig>();
 builder.Services.AddSingleton(jwtConfig);
+
+builder.Services.AddControllers()
+	.AddJsonOptions(options =>
+	{
+		options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+		options.JsonSerializerOptions.WriteIndented = true; // اختیاری
+	});
+//builder.Services.AddControllers()
+//	.AddJsonOptions(options =>
+//	{
+//		options.JsonSerializerOptions.WriteIndented = true; // اختیاری
+//		options.JsonSerializerOptions.ReferenceHandler = null; // حذف $id و $ref
+//		options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; // اختیاری
+//	});
 
 // Controllers
 builder.Services.AddControllers();

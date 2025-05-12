@@ -9,7 +9,7 @@ public static class BlogCategoryExtension
 		if (!string.IsNullOrEmpty(filter.Keyword))
 			query = query.Where(x => x.name.ToLower().Contains(filter.Keyword.ToLower().Trim()) 
 			|| x.slug.ToLower().Contains(filter.Keyword.ToLower().Trim())
-			|| x.description.ToLower().Contains(filter.Keyword.ToLower().Trim()));
+			|| x.name.ToLower().Contains(filter.Keyword.ToLower().Trim()));
 
 
 		return query;

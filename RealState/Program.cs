@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using RaelState.Assistant;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,9 +23,18 @@ builder.Services.AddSingleton(jwtConfig);
 builder.Services.AddControllers()
 	.AddJsonOptions(options =>
 	{
-		options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-		options.JsonSerializerOptions.WriteIndented = true; // اختیاری
+		options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+		options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+		options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+		options.JsonSerializerOptions.WriteIndented = true; // فقط برای خوانایی بهتر
 	});
+
+//builder.Services.AddControllers()
+//	.AddJsonOptions(options =>
+//	{
+//		options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+//		options.JsonSerializerOptions.WriteIndented = true; // اختیاری
+//	});
 //builder.Services.AddControllers()
 //	.AddJsonOptions(options =>
 //	{

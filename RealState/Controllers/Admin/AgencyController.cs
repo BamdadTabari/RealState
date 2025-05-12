@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
 using RealState.Models;
-using RealState.Requests;
-using RealState.RequestsAndQueries;
 using System.Xml;
 
 namespace RealState.Controllers.Admin;
@@ -96,9 +94,9 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpGet]
 	[Route("read/{slug}")]
-	public async Task<IActionResult> Detail(GetQuery<string> src)
+	public async Task<IActionResult> Detail([FromRoute] string slug)
 	{
-		var entity = await _unitOfWork.AgencyRepository.Get(src.data);
+		var entity = await _unitOfWork.AgencyRepository.Get(slug);
 		if (entity == null)
 			return NotFound(new ResponseDto<AgencyDto>()
 			{
@@ -151,9 +149,9 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpGet]
 	[Route("get/{id}")]
-	public async Task<IActionResult> Get(GetQuery<long> src)
+	public async Task<IActionResult> Get([FromRoute] long id)
 	{
-		var entity = await _unitOfWork.AgencyRepository.Get(src.data);
+		var entity = await _unitOfWork.AgencyRepository.Get(id);
 		if (entity == null)
 			return NotFound(new ResponseDto<AgencyDto>()
 			{
@@ -205,9 +203,9 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpPost]
 	[Route("delete")]
-	public async Task<IActionResult> Delete(DeleteRequest<long> src)
+	public async Task<IActionResult> Delete([FromForm] long id)
 	{
-		var entity = await _unitOfWork.AgencyRepository.Get(src.data);
+		var entity = await _unitOfWork.AgencyRepository.Get(id);
 		if (entity == null)
 			return NotFound(new ResponseDto<AgencyDto>()
 			{

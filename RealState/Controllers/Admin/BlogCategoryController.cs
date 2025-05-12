@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using RaelState.Assistant;
 using RaelState.Models;
 using RealState.Models;
-using RealState.Requests;
-using RealState.RequestsAndQueries;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RaelState.Controllers;
@@ -89,9 +87,9 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpGet]
     [Route("read/{slug}")]
-    public async Task<IActionResult> Detail(GetQuery<string> src)
+    public async Task<IActionResult> Detail([FromRoute] string slug)
     {
-        var entity = await _unitOfWork.BlogCategoryRepository.Get(src.data);
+        var entity = await _unitOfWork.BlogCategoryRepository.Get(slug);
         if (entity == null)
 			return NotFound(new ResponseDto<BlogCategoryDto>()
 			{
@@ -136,9 +134,9 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpGet]
     [Route("get/{id}")]
-    public async Task<IActionResult> Get(GetQuery<long> src)
+    public async Task<IActionResult> Get([FromRoute] long id)
     {
-        var entity = await _unitOfWork.BlogCategoryRepository.Get(src.data);
+        var entity = await _unitOfWork.BlogCategoryRepository.Get(id);
         if (entity == null)
 			return NotFound(new ResponseDto<BlogCategoryDto>()
 			{
@@ -183,9 +181,9 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("delete")]
-    public async Task<IActionResult> Delete(DeleteRequest<long> src)
+    public async Task<IActionResult> Delete([FromRoute] long id)
     {
-        var entity = await _unitOfWork.BlogCategoryRepository.Get(src.data);
+        var entity = await _unitOfWork.BlogCategoryRepository.Get(id);
         if (entity == null)
             return NotFound(new ResponseDto<BlogCategoryDto>()
             {
@@ -207,7 +205,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("create")]
-    public async Task<IActionResult> Create(CreateRequest<BlogCategoryDto> src)
+    public async Task<IActionResult> Create([FromForm] BlogCategoryDto src)
     {
         if (!ModelState.IsValid)
         {
@@ -222,7 +220,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        if (await _unitOfWork.BlogCategoryRepository.ExistsAsync(x => x.name == src.data.name))
+        if (await _unitOfWork.BlogCategoryRepository.ExistsAsync(x => x.name == src.name))
         {
             var error = "مقدار نام تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<BlogCategoryDto>()
@@ -233,7 +231,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        var slug = src.data.slug ?? SlugHelper.GenerateSlug(src.data.name);
+        var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
         if (await _unitOfWork.BlogCategoryRepository.ExistsAsync(x => x.slug == slug))
         {
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
@@ -248,9 +246,9 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 
         await _unitOfWork.BlogCategoryRepository.AddAsync(new BlogCategory()
         {
-            name = src.data.name,
+            name = src.name,
             slug = slug,
-            description = src.data.description,
+            description = src.description,
             created_at = DateTime.UtcNow,
             updated_at = DateTime.UtcNow,
         });
@@ -266,7 +264,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("edit")]
-    public async Task<IActionResult> Edit(EditRequest<BlogCategoryDto>  src)
+    public async Task<IActionResult> Edit([FromForm] BlogCategoryDto src)
     {
         if (!ModelState.IsValid)
         {
@@ -281,7 +279,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        var entity = await _unitOfWork.BlogCategoryRepository.Get(src.data.id);
+        var entity = await _unitOfWork.BlogCategoryRepository.Get(src.id);
         if (entity == null)
 			return NotFound(new ResponseDto<BlogCategoryDto>()
 			{
@@ -291,7 +289,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 404
 			});
 
-		if (await _unitOfWork.BlogCategoryRepository.ExistsAsync(x => x.name == src.data.name && entity.name != src.data.name))
+		if (await _unitOfWork.BlogCategoryRepository.ExistsAsync(x => x.name == src.name && entity.name != src.name))
         {
             var error = "مقدار نام تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<BlogCategoryDto>()
@@ -302,7 +300,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        var slug = src.data.slug ?? SlugHelper.GenerateSlug(src.data.name);
+        var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
         if (await _unitOfWork.BlogCategoryRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
         {
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
@@ -316,8 +314,8 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 
         entity.slug = slug;
-        entity.name = src.data.name;
-        entity.description = src.data.description;
+        entity.name = src.name;
+        entity.description = src.description;
         entity.updated_at = DateTime.UtcNow;
         _unitOfWork.BlogCategoryRepository.Update(entity);
         await _unitOfWork.CommitAsync();

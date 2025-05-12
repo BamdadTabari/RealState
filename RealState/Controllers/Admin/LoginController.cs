@@ -5,7 +5,6 @@ using RaelState.Assistant;
 using RaelState.Models;
 using RealState;
 using RealState.Models;
-using RealState.Requests;
 using System.Security.Claims;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -20,7 +19,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
     [HttpPost]
     [Route("username")]
-    public async Task<IActionResult> Login(CreateRequest<AdminLoginDto> src)
+    public async Task<IActionResult> Login([FromForm] AdminLoginDto src)
     {
         if (!ModelState.IsValid)
         {
@@ -36,7 +35,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 			});
         }
 
-        var user = await _unitOfWork.UserRepository.GetUser(src.data.user_name_or_email);
+        var user = await _unitOfWork.UserRepository.GetUser(src.user_name_or_email);
         if (user == null || !user.is_active)
 		    return BadRequest(new ResponseDto<UserDto>()
 		    {
@@ -56,7 +55,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 			    response_code = 401
 		    });
 		// بررسی رمز عبور
-		if (!PasswordHasher.Check(user.password_hash, src.data.password))
+		if (!PasswordHasher.Check(user.password_hash, src.password))
         {
             user.failed_login_count++;
             if (user.failed_login_count >= 5)
@@ -182,10 +181,10 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
     [HttpPost]
     [Route("refresh-token")]
 	[Authorize(Roles = "Admin,MainAdmin")]
-	public async Task<IActionResult> Refresh(CreateRequest<TokenRequestDto> src)
+	public async Task<IActionResult> Refresh([FromForm] TokenRequestDto src)
     {
         // 1. اعتبارسنجی توکن
-        if (!JwtHelper.Validate(src.data.token))
+        if (!JwtHelper.Validate(src.token))
 		    return BadRequest(new ResponseDto<UserDto>()
 		    {
 			    data = null,
@@ -195,11 +194,11 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 		    });
 
 		// 2. دریافت اطلاعات کاربر از توکن
-		var username = JwtHelper.GetUsername(src.data.token);
+		var username = JwtHelper.GetUsername(src.token);
         var user = await _unitOfWork.UserRepository.Get(username);
 
         // 3. بررسی صحت توکن و تاریخ انقضای Refresh Token
-        if (user == null || user.refresh_token != src.data.refresh_token || user.refresh_token_expiry_time < DateTime.UtcNow)
+        if (user == null || user.refresh_token != src.refresh_token || user.refresh_token_expiry_time < DateTime.UtcNow)
 		    return Unauthorized(new ResponseDto<UserDto>()
 		    {
 			    data = null,

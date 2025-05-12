@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
 using RealState.Models;
-using RealState.Requests;
-using RealState.RequestsAndQueries;
-using System.Globalization;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -43,7 +40,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("create")]
-    public async Task<IActionResult> Create(CreateRequest<BlogDto> src)
+    public async Task<IActionResult> Create([FromForm] BlogDto src)
     {
         if (!ModelState.IsValid)
         {
@@ -58,7 +55,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        if (src.data.blog_text == "<p><br></p>")
+        if (src.blog_text == "<p><br></p>")
         {
             var error = "لطفا مقدار متن خبر را وارد کنید";
 			return BadRequest(new ResponseDto<BlogDto>()
@@ -69,7 +66,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        if (src.data.image_file == null)
+        if (src.image_file == null)
         {
             var error = "لطفا تصویر شاخص را انتخاب کنید";
 			return BadRequest(new ResponseDto<BlogDto>()
@@ -80,7 +77,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.data.name))
+        if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.name))
         {
             var error = "بلاگ با این نام وجود دارد";
 			return BadRequest(new ResponseDto<BlogDto>()
@@ -91,7 +88,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        var slug = src.data.slug ?? SlugHelper.GenerateSlug(src.data.name);
+        var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
         if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.slug == slug))
         {
             var error = "بلاگ با این نامک وجود دارد";
@@ -114,28 +111,28 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         }
 
         // Build file name
-        var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(src.data.image_file.FileName);
+        var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(src.image_file.FileName);
         var imagePath = Path.Combine(uploadPath, newFileName);
 
         // Save Image
         using (var stream = new FileStream(imagePath, FileMode.Create))
         {
-            await src.data.image_file.CopyToAsync(stream);
+            await src.image_file.CopyToAsync(stream);
         }
 
         await _unitOfWork.BlogRepository.AddAsync(new()
         {
             updated_at = DateTime.Now,
             created_at = DateTime.Now,
-            name = src.data.name,
+            name = src.name,
             slug = slug,
-            blog_text = src.data.blog_text,
-            blog_category_id = src.data.blog_category_id,
+            blog_text = src.blog_text,
+            blog_category_id = src.blog_category_id,
             image = imagePath,
-            image_alt = src.data.image_alt,
-            description = src.data.description,
-            show_blog = src.data.show_blog,
-            keywords = src.data.keyWords
+            image_alt = src.image_alt,
+            description = src.description,
+            show_blog = src.show_blog,
+            keywords = src.keyWords
         });
 
         await _unitOfWork.CommitAsync();
@@ -158,7 +155,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("edit")]
-    public async Task<IActionResult> Edit(EditRequest<BlogDto> src)
+    public async Task<IActionResult> Edit([FromForm] BlogDto src)
     {
         if (!ModelState.IsValid)
         {
@@ -173,7 +170,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        if (src.data.blog_text == "<p><br></p>")
+        if (src.blog_text == "<p><br></p>")
         {
             var error = "لطفا مقدار متن خبر را وارد کنید";
 			return BadRequest(new ResponseDto<BlogDto>()
@@ -184,10 +181,10 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        var entity = await _unitOfWork.BlogRepository.Get(src.data.id);
+        var entity = await _unitOfWork.BlogRepository.Get(src.id);
         if (entity == null)
             return NotFound();
-        if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.data.name) && entity.name != src.data.name)
+        if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.name) && entity.name != src.name)
         {
             var error = "بلاگ با این نام وجود دارد";
 			return BadRequest(new ResponseDto<BlogDto>()
@@ -198,7 +195,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-        var slug = src.data.slug ?? SlugHelper.GenerateSlug(src.data.name);
+        var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
         if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.slug == slug) && entity.slug != slug)
         {
             var error = "بلاگ با این نامک وجود دارد";
@@ -212,7 +209,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 
 
-        if (src.data.image_file != null)
+        if (src.image_file != null)
         {
             // Delete old file
             var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), entity.image);
@@ -231,18 +228,18 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             }
 
             // Build file name
-            var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(src.data.image_file.FileName);
+            var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(src.image_file.FileName);
             // file path
             var image = Path.Combine(uploadPath, newFileName);
             using (var stream = new FileStream(image, FileMode.Create))
             {
-                await src.data.image_file.CopyToAsync(stream);
+                await src.image_file.CopyToAsync(stream);
             }
 
             entity.image = image;
         }
 
-        var blog = await _unitOfWork.BlogRepository.Get(src.data.id);
+        var blog = await _unitOfWork.BlogRepository.Get(src.id);
         if (blog == null)
 			return NotFound(new ResponseDto<BlogDto>()
 			{
@@ -253,7 +250,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 			});
 
 		var oldImages = ExtractImageSources(blog.blog_text);
-        var newImages = ExtractImageSources(src.data.blog_text);
+        var newImages = ExtractImageSources(src.blog_text);
 
         var imagesToDelete = oldImages.Except(newImages).ToList();
 
@@ -266,14 +263,14 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         }
 
         entity.updated_at = DateTime.Now;
-        entity.name = src.data.name;
+        entity.name = src.name;
         entity.slug = slug;
-        entity.blog_text = src.data.blog_text;
-        entity.blog_category_id = src.data.blog_category_id;
-        entity.image_alt = src.data.image_alt;
-        entity.description = src.data.description;
-        entity.show_blog = src.data.show_blog;
-        entity.keywords = src.data.keyWords;
+        entity.blog_text = src.blog_text;
+        entity.blog_category_id = src.blog_category_id;
+        entity.image_alt = src.image_alt;
+        entity.description = src.description;
+        entity.show_blog = src.show_blog;
+        entity.keywords = src.keyWords;
         _unitOfWork.BlogRepository.Update(entity);
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<BlogDto>()
@@ -287,9 +284,9 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpPost]
     [Route("delete")]
-    public async Task<IActionResult> Delete(DeleteRequest<long> src)
+    public async Task<IActionResult> Delete([FromForm] long id)
     {
-        var entity = await _unitOfWork.BlogRepository.Get(src.data);
+        var entity = await _unitOfWork.BlogRepository.Get(id);
         if (entity == null)
 			return NotFound(new ResponseDto<BlogDto>()
 			{
@@ -326,9 +323,9 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpGet]
     [Route("read/{slug}")]
-    public async Task<IActionResult> Detail(GetQuery<string> src)
+    public async Task<IActionResult> Detail([FromRoute] string slug)
     {
-        var entity = await _unitOfWork.BlogRepository.Get(src.data);
+        var entity = await _unitOfWork.BlogRepository.Get(slug);
         if (entity == null)
 			return NotFound(new ResponseDto<BlogDto>()
 			{

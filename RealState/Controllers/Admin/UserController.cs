@@ -92,7 +92,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 			is_mobile_confirmed = true,
 			last_login_date_time = DateTime.Now,
 			password_hash = PasswordHasher.Hash(src.password),
-			mobile = src.phone_number,
+			mobile = src.mobile,
 			slug = slug
 		};
 		await _unitOfWork.UserRepository.AddAsync(user);

@@ -14,7 +14,7 @@ public class AdminUserForRegistrationCommand : BaseDto
 	public string email { get; set; }
 	[Display(Name = "شماره تماس")]
 	[Required(ErrorMessage = "لطفا مقدار {0} را وارد کنید")]
-	public string phone_number { get; set; }
+	public string mobile { get; set; }
 
 	[Display(Name = "پسورد")]
 	[Required(ErrorMessage = "لطفا مقدار {0} را وارد کنید")]

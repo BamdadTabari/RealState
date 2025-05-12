@@ -7,8 +7,8 @@ public static class OrderExtension
 	{
 
 		if (!string.IsNullOrEmpty(filter.Keyword))
-			query = query.Where(x => x.amount.ToString().Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase)
-			|| x.slug.ToString().Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase));
+			query = query.Where(x => x.amount.ToString().ToLower().Contains(filter.Keyword.ToLower().Trim())
+			|| x.slug.ToLower().ToString().Contains(filter.Keyword.ToLower().Trim()));
 
 		return query;
 	}

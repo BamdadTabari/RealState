@@ -7,8 +7,8 @@ public static class RoleExtension
 	{
 
 		if (!string.IsNullOrEmpty(filter.Keyword))
-			query = query.Where(x => x.title.ToString().Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-			x.slug.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase));
+			query = query.Where(x => x.title.ToLower().ToString().Contains(filter.Keyword.ToLower().Trim()) ||
+			x.slug.ToLower().Contains(filter.Keyword.ToLower().Trim()));
 
 		return query;
 	}

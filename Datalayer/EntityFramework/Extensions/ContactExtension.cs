@@ -7,10 +7,10 @@ public static class ContactExtension
 	{
 
 		if (!string.IsNullOrEmpty(filter.Keyword))
-			query = query.Where(x => x.full_name.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-			x.phone.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase)
-			|| x.email.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase) ||
-			x.slug.Contains(filter.Keyword.ToLower().Trim(), StringComparison.CurrentCultureIgnoreCase));
+			query = query.Where(x => x.full_name.ToLower().Contains(filter.Keyword.ToLower().Trim()) ||
+			x.phone.ToLower().Contains(filter.Keyword.ToLower().Trim())
+			|| x.email.ToLower().Contains(filter.Keyword.ToLower().Trim()) ||
+			x.slug.ToLower().Contains(filter.Keyword.ToLower().Trim()));
 
 		return query;
 	}

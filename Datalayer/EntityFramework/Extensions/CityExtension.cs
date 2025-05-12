@@ -7,8 +7,8 @@ public static class CityExtension
 	{
 
 		if (!string.IsNullOrEmpty(filter.Keyword))
-			query = query.Where(x => x.name.ToLower().Contains(filter.Keyword.ToLower().Trim())
-			|| x.slug.ToLower().Contains(filter.Keyword.ToLower().Trim()));
+			query = query.Where(x => x.name.ToLower().ToLower().Contains(filter.Keyword.ToLower().Trim())
+			|| x.slug.ToLower().ToLower().Contains(filter.Keyword.ToLower().Trim()));
 
 		return query;
 	}

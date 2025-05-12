@@ -44,7 +44,7 @@ public class PropertyCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 		if (data.Count() == 0)
 			return Ok(new ResponseDto<List<PropertyCategoryDto>>()
 			{
-				data = new List<PropertyCategoryDto>(),
+				data = null,
 				is_success = true,
 				message = "مقدار دسته بندی ملک در دیتابیس وجود ندارد.",
 				response_code = 200
@@ -101,7 +101,7 @@ public class PropertyCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PropertyCategoryDto>()
 			{
-				data = new PropertyCategoryDto(),
+				data = null,
 				is_success = false,
 				message = "دسته بندی ملک با این slug پیدا نشد",
 				response_code = 404
@@ -159,7 +159,7 @@ public class PropertyCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PropertyCategoryDto>()
 			{
-				data = new PropertyCategoryDto(),
+				data = null,
 				is_success = false,
 				message = "دسته بندی ملک با این ایدی پیدا نشد",
 				response_code = 404
@@ -216,7 +216,7 @@ public class PropertyCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PropertyCategoryDto>()
 			{
-				data = new PropertyCategoryDto(),
+				data = null,
 				is_success = false,
 				message = "دسته بندی ملک با این ایدی پیدا نشد",
 				response_code = 404
@@ -225,7 +225,7 @@ public class PropertyCategoryController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<PropertyCategoryDto>()
 		{
-			data = new PropertyCategoryDto(),
+			data = null,
 			is_success = true,
 			message = "دسته بندی ملک با موفقیت حذف شد",
 			response_code = 204

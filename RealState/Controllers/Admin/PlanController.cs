@@ -45,7 +45,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 		if (data.Count() == 0)
 			return Ok(new ResponseDto<List<PlanDto>>()
 			{
-				data = new List<PlanDto>(),
+				data = null,
 				is_success = true,
 				message = "مقدار پلن در دیتابیس وجود ندارد.",
 				response_code = 200
@@ -78,7 +78,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = "پلن با این slug پیدا نشد",
 				response_code = 404
@@ -112,7 +112,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = "پلن با این ایدی پیدا نشد",
 				response_code = 404
@@ -145,7 +145,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = "پلن با این ایدی پیدا نشد",
 				response_code = 404
@@ -154,7 +154,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<PlanDto>()
 		{
-			data = new PlanDto(),
+			data = null,
 			is_success = true,
 			message = "پلن با موفقیت حذف شد",
 			response_code = 204
@@ -172,7 +172,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 				.Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -183,7 +183,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = "مقدار نام تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -195,7 +195,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -216,7 +216,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<PlanDto>()
 		{
-			data = new PlanDto(),
+			data = null,
 			is_success = true,
 			message = "پلن با موفقیت ایجاد شد.",
 			response_code = 201
@@ -234,7 +234,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 				.Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -244,7 +244,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = "پلن با این ایدی پیدا نشد",
 				response_code = 404
@@ -255,7 +255,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = "مقدار نام تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -267,7 +267,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<PlanDto>()
 			{
-				data = new PlanDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -286,7 +286,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<PlanDto>()
 		{
-			data = new PlanDto(),
+			data = null,
 			is_success = true,
 			message = "پلن با موفقیت ویرایش شد.",
 			response_code = 204

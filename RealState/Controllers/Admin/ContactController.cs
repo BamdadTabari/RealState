@@ -44,7 +44,7 @@ public class ContactController(IUnitOfWork unitOfWork) : ControllerBase
 		if (data.Count() == 0)
 			return Ok(new ResponseDto<List<ContactDto>>()
 			{
-				data = new List<ContactDto>(),
+				data = null,
 				is_success = true,
 				message = "مقدار تیکت در دیتابیس وجود ندارد.",
 				response_code = 200
@@ -77,7 +77,7 @@ public class ContactController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<ContactDto>()
 			{
-				data = new ContactDto(),
+				data = null,
 				is_success = false,
 				message = "تیکت با این slug پیدا نشد",
 				response_code = 404
@@ -110,7 +110,7 @@ public class ContactController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<ContactDto>()
 			{
-				data = new ContactDto(),
+				data = null,
 				is_success = false,
 				message = "تیکت با این ایدی پیدا نشد",
 				response_code = 404
@@ -142,7 +142,7 @@ public class ContactController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<ContactDto>()
 			{
-				data = new ContactDto(),
+				data = null,
 				is_success = false,
 				message = "تیکت با این ایدی پیدا نشد",
 				response_code = 404
@@ -151,7 +151,7 @@ public class ContactController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<ContactDto>()
 		{
-			data = new ContactDto(),
+			data = null,
 			is_success = true,
 			message = "تیکت با موفقیت حذف شد",
 			response_code = 204

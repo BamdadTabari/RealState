@@ -45,7 +45,7 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		if (data.Count() == 0)
 			return Ok(new ResponseDto<List<PropertySituationDto>>()
 			{
-				data = new List<PropertySituationDto>(),
+				data = null,
 				is_success = true,
 				message = "مقدار وضعیت ملک در دیتابیس وجود ندارد.",
 				response_code = 200
@@ -102,7 +102,7 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		if (entity == null)
 			return NotFound(new ResponseDto<PropertySituationDto>()
 			{
-				data = new PropertySituationDto(),
+				data = null,
 				is_success = false,
 				message = "وضعیت ملک با این slug پیدا نشد",
 				response_code = 404
@@ -160,7 +160,7 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		if (entity == null)
 			return NotFound(new ResponseDto<PropertySituationDto>()
 			{
-				data = new PropertySituationDto(),
+				data = null,
 				is_success = false,
 				message = "وضعیت ملک با این ایدی پیدا نشد",
 				response_code = 404
@@ -217,7 +217,7 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		if (entity == null)
 			return NotFound(new ResponseDto<PropertySituationDto>()
 			{
-				data = new PropertySituationDto(),
+				data = null,
 				is_success = false,
 				message = "وضعیت ملک با این ایدی پیدا نشد",
 				response_code = 404
@@ -226,7 +226,7 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<PropertySituationDto>()
 		{
-			data = new PropertySituationDto(),
+			data = null,
 			is_success = true,
 			message = "وضعیت ملک با موفقیت حذف شد",
 			response_code = 204
@@ -242,9 +242,9 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 			var error = string.Join(" | ", ModelState.Values
 				.SelectMany(v => v.Errors)
 				.Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertySituationDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -253,9 +253,9 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		if (await _unitOfWork.PropertySituationRepository.ExistsAsync(x => x.name == src.name))
 		{
 			var error = "مقدار نام وضعیت ملک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertySituationDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -265,9 +265,9 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		if (await _unitOfWork.PropertySituationRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertySituationDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -282,9 +282,9 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 			name = src.name,
 		});
 		await _unitOfWork.CommitAsync();
-		return Ok(new ResponseDto<BlogDto>()
+		return Ok(new ResponseDto<PropertySituationDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "وضعیت ملک با موفقیت ایجاد شد.",
 			response_code = 201
@@ -300,9 +300,9 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 			var error = string.Join(" | ", ModelState.Values
 				.SelectMany(v => v.Errors)
 				.Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertySituationDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -310,9 +310,9 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		}
 		var entity = await _unitOfWork.PropertySituationRepository.Get(src.id);
 		if (entity == null)
-			return NotFound(new ResponseDto<BlogDto>()
+			return NotFound(new ResponseDto<PropertySituationDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = "وضعیت ملک با این ایدی پیدا نشد",
 				response_code = 400
@@ -322,9 +322,9 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		entity.name != src.name))
 		{
 			var error = "مقدار نام وضعیت ملک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertySituationDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -334,9 +334,9 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		if (await _unitOfWork.PropertySituationRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertySituationDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -349,9 +349,9 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 
 		_unitOfWork.PropertySituationRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
-		return Ok(new ResponseDto<BlogDto>()
+		return Ok(new ResponseDto<PropertySituationDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "وضعیت ملک با موفقیت ویرایش شد.",
 			response_code = 204

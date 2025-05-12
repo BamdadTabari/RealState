@@ -46,7 +46,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         if (data.Count() == 0)
 		    return Ok(new ResponseDto<List<BlogCategoryDto>> ()
 		    {
-			    data = new List<BlogCategoryDto>(),
+			    data = null,
 			    is_success = true,
 			    message = "هیچ مقداری در دیتابیس وجود ندارد",
 			    response_code = 200
@@ -93,7 +93,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<BlogCategoryDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = "دسته بندی با این slug پیدا نشد",
 				response_code = 404
@@ -140,7 +140,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<BlogCategoryDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = "دسته بت=ندی با این ایدی پیدا نشد",
 				response_code = 404
@@ -187,7 +187,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
             return NotFound(new ResponseDto<BlogCategoryDto>()
             {
-                data = new BlogCategoryDto(),
+                data = null,
                 is_success = false,
                 message = "دسته بندی با این ایدی پیدا نشد.",
                 response_code = 404
@@ -196,7 +196,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<BlogCategoryDto>()
 		{
-			data = new BlogCategoryDto(),
+			data = null,
 			is_success = true,
 			message = "دسته بندی با موفقیت حذف شد",
 			response_code = 204
@@ -214,7 +214,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
                 .Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<BlogCategoryDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -225,7 +225,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "مقدار نام تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<BlogCategoryDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -237,7 +237,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<BlogCategoryDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -255,7 +255,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<BlogCategoryDto>()
 		{
-			data = new BlogCategoryDto(),
+			data = null,
 			is_success = true,
 			message = "دسته بندی با موفقیت ایجاد شد.",
 			response_code = 201
@@ -273,7 +273,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
                 .Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<BlogCategoryDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -283,7 +283,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<BlogCategoryDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = "دسته بندی با این ایدی پیدا نشد.",
 				response_code = 404
@@ -294,7 +294,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "مقدار نام تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<BlogCategoryDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -306,7 +306,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<BlogCategoryDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -321,7 +321,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<BlogCategoryDto>()
 		{
-			data = new BlogCategoryDto(),
+			data = null,
 			is_success = true,
 			message = "دسته بندی با موفقیت ویرایش شد",
 			response_code = 204

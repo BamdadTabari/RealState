@@ -45,7 +45,7 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (data.Count() == 0)
 			return Ok(new ResponseDto<List<PropertyFacilityDto>>()
 			{
-				data = new List<PropertyFacilityDto>(),
+				data = null,
 				is_success = true,
 				message = "مقدار ویژگی ملک در دیتابیس وجود ندارد.",
 				response_code = 200
@@ -85,7 +85,7 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new PropertyFacilityDto(),
+				data = null,
 				is_success = false,
 				message = "ویژگی ملک با این slug پیدا نشد",
 				response_code = 404
@@ -126,7 +126,7 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new PropertyFacilityDto(),
+				data = null,
 				is_success = false,
 				message = "ویژگی ملک با این ایدی پیدا نشد",
 				response_code = 404
@@ -166,7 +166,7 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new PropertyFacilityDto(),
+				data = null,
 				is_success = false,
 				message = "ویژگی ملک با این ایدی پیدا نشد",
 				response_code = 404
@@ -175,7 +175,7 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<PropertyFacilityDto>()
 		{
-			data = new PropertyFacilityDto(),
+			data = null,
 			is_success = true,
 			message = "ویژگی ملک با موفقیت حذف شد",
 			response_code = 204
@@ -191,9 +191,9 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = string.Join(" | ", ModelState.Values
 				.SelectMany(v => v.Errors)
 				.Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -202,9 +202,9 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (await _unitOfWork.PropertyFacilityRepository.ExistsAsync(x => x.name == src.name))
 		{
 			var error = "مقدار نام ویژگی ملک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -214,9 +214,9 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (await _unitOfWork.PropertyFacilityRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -231,9 +231,9 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 			name = src.name,
 		});
 		await _unitOfWork.CommitAsync();
-		return Ok(new ResponseDto<BlogDto>()
+		return Ok(new ResponseDto<PropertyFacilityDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "ویژگی ملک با موفقیت ایجاد شد.",
 			response_code = 201
@@ -249,9 +249,9 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = string.Join(" | ", ModelState.Values
 				.SelectMany(v => v.Errors)
 				.Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -259,9 +259,9 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 		var entity = await _unitOfWork.PropertyFacilityRepository.Get(src.id);
 		if (entity == null)
-			return NotFound(new ResponseDto<BlogDto>()
+			return NotFound(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = "ویژگی ملک با این ایدی پیدا نشد",
 				response_code = 400
@@ -271,9 +271,9 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		entity.name != src.name))
 		{
 			var error = "مقدار نام ویژگی ملک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -283,9 +283,9 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (await _unitOfWork.PropertyFacilityRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<PropertyFacilityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -298,9 +298,9 @@ public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 
 		_unitOfWork.PropertyFacilityRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
-		return Ok(new ResponseDto<BlogDto>()
+		return Ok(new ResponseDto<PropertyFacilityDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "ویژگی ملک با موفقیت ویرایش شد.",
 			response_code = 204

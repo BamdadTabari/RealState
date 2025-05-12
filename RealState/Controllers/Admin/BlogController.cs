@@ -50,7 +50,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
                    .Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -61,7 +61,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "لطفا مقدار متن خبر را وارد کنید";
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -72,7 +72,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "لطفا تصویر شاخص را انتخاب کنید";
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -83,7 +83,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "بلاگ با این نام وجود دارد";
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -95,7 +95,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "بلاگ با این نامک وجود دارد";
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -139,7 +139,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<BlogDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "بلاگ با موفقیت ایجاد شد",
 			response_code = 201
@@ -165,7 +165,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
                    .Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -176,7 +176,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "لطفا مقدار متن خبر را وارد کنید";
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -190,7 +190,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "بلاگ با این نام وجود دارد";
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -202,7 +202,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "بلاگ با این نامک وجود دارد";
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -244,7 +244,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         if (blog == null)
 			return NotFound(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = "بلاگ با این ایدی پیدا نشد.",
 				response_code = 404
@@ -276,7 +276,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<BlogDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "بلاگ با موفقیت ویرایش شد.",
 			response_code = 204
@@ -291,7 +291,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = "بلاگ با این ایدی پیدا نشد.",
 				response_code = 404
@@ -315,7 +315,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<BlogDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "بلاگ با موفقیت حذف شد.",
 			response_code = 204
@@ -330,7 +330,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = "بلاگ با این slug پیدا نشد.",
 				response_code = 404
@@ -376,7 +376,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = "بلاگ با این ایدی پیدا نشد.",
 				response_code = 404
@@ -387,7 +387,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 
 		return Ok(new ResponseDto<BlogDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "وضعیت بلاگ تغییر کرد",
 			response_code = 204
@@ -401,7 +401,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         if (file == null || file.Length == 0)
 			return BadRequest(new ResponseDto<BlogDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = "فایلی وجود ندارد",
 				response_code = 400
@@ -412,7 +412,7 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         if (!allowedExtensions.Contains(ext))
 		    return BadRequest(new ResponseDto<BlogDto>()
 		    {
-			    data = new BlogDto(),
+			    data = null,
 			    is_success = false,
 			    message = "نوع فایل نامعتبر است",
 			    response_code = 400

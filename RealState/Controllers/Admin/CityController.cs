@@ -44,7 +44,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (data.Count() == 0)
 			return Ok(new ResponseDto<List<CityDto>>()
 			{
-				data = new List<CityDto>(),
+				data = null,
 				is_success = true,
 				message = "مقدار شهر در دیتابیس وجود ندارد.",
 				response_code = 200
@@ -96,7 +96,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
-				data = new CityDto(),
+				data = null,
 				is_success = false,
 				message = "شهر با این slug پیدا نشد",
 				response_code = 404
@@ -149,7 +149,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
-				data = new CityDto(),
+				data = null,
 				is_success = false,
 				message = "شهر با این ایدی پیدا نشد",
 				response_code = 404
@@ -201,7 +201,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
-				data = new CityDto(),
+				data = null,
 				is_success = false,
 				message = "شهر با این ایدی پیدا نشد",
 				response_code = 404
@@ -210,7 +210,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<CityDto>()
 		{
-			data = new CityDto(),
+			data = null,
 			is_success = true,
 			message = "شهر با موفقیت حذف شد",
 			response_code = 204
@@ -226,9 +226,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = string.Join(" | ", ModelState.Values
 				.SelectMany(v => v.Errors)
 				.Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<CityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -237,9 +237,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.name == src.name && x.province_id == src.province_id))
 		{
 			var error = "مقدار نام شهر تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<CityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -249,9 +249,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<CityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -267,9 +267,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			province_id = src.province_id,
 		});
 		await _unitOfWork.CommitAsync();
-		return Ok(new ResponseDto<BlogDto>()
+		return Ok(new ResponseDto<CityDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "شهر با موفقیت ایجاد شد.",
 			response_code = 201
@@ -285,9 +285,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = string.Join(" | ", ModelState.Values
 				.SelectMany(v => v.Errors)
 				.Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<CityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -295,9 +295,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 		var entity = await _unitOfWork.CityRepository.Get(src.id);
 		if (entity == null)
-			return NotFound(new ResponseDto<BlogDto>()
+			return NotFound(new ResponseDto<CityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = "شهر با این ایدی پیدا نشد",
 				response_code = 400
@@ -307,9 +307,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		&& x.province_id == src.province_id))
 		{
 			var error = "مقدار نام شهر تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<CityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -319,9 +319,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		if (await _unitOfWork.CityRepository.ExistsAsync(x => x.slug == slug && entity.slug != slug))
 		{
 			var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
-			return BadRequest(new ResponseDto<BlogDto>()
+			return BadRequest(new ResponseDto<CityDto>()
 			{
-				data = new BlogDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -335,9 +335,9 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 		_unitOfWork.CityRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
-		return Ok(new ResponseDto<BlogDto>()
+		return Ok(new ResponseDto<CityDto>()
 		{
-			data = new BlogDto(),
+			data = null,
 			is_success = true,
 			message = "شهر با موفقیت ویرایش شد.",
 			response_code = 204

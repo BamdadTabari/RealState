@@ -47,9 +47,9 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = string.Join(" | ", ModelState.Values
 				   .SelectMany(v => v.Errors)
 				   .Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<BlogCategoryDto>()
+			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -60,7 +60,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = "کاربر با این نام وجود دارد";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -72,7 +72,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = "کاربر با این نامک وجود دارد";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -109,7 +109,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<UserDto>()
 		{
-			data = new UserDto(),
+			data = null,
 			is_success = true,
 			message = "کاربر ایجاد شد.",
 			response_code = 201
@@ -125,9 +125,9 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = string.Join(" | ", ModelState.Values
 			   .SelectMany(v => v.Errors)
 			   .Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<BlogCategoryDto>()
+			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new BlogCategoryDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -137,7 +137,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر با این ایدی وجود ندارد",
 				response_code = 404
@@ -147,7 +147,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = "کاربر با این نام وجود دارد";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -159,7 +159,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 			var error = "کاربر با این نامک وجود دارد";
 			return BadRequest(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -175,7 +175,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<UserDto>()
 		{
-			data = new UserDto(),
+			data = null,
 			is_success = true,
 			message = "کاربر ویرایش شد",
 			response_code = 204
@@ -190,7 +190,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = true,
 				message = "کاربر با این ایدی وجود ندارد",
 				response_code = 404
@@ -199,7 +199,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<UserDto>()
 		{
-			data = new UserDto(),
+			data = null,
 			is_success = true,
 			message = "عملیات انجام شد",
 			response_code = 204
@@ -214,7 +214,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		if (entity == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = true,
 				message = "کاربر با این slug وجود ندارد",
 				response_code = 404
@@ -259,7 +259,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		if (user == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
-				data = new UserDto(),
+				data = null,
 				is_success = false,
 				message = "کاربر با این ایدی وجود ندارد",
 				response_code = 404
@@ -270,7 +270,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		_unitOfWork.Dispose();
 		return Ok(new ResponseDto<UserDto>()
 		{
-			data = new UserDto(),
+			data = null,
 			is_success = true,
 			message = "وضعیت کاربر تغییر کرد",
 			response_code = 200

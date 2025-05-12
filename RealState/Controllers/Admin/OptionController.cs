@@ -45,7 +45,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
         if (data.Count() == 0)
 			return Ok(new ResponseDto<List<OptionDto>>()
 			{
-				data = new List<OptionDto>(),
+				data = null,
 				is_success = true,
 				message = "مقدار آپشن در دیتابیس وجود ندارد.",
 				response_code = 200
@@ -75,7 +75,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = "آپشن با این slug پیدا نشد.",
 				response_code = 404
@@ -106,7 +106,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = "آپشن با این ایدی پیدا نشد",
 				response_code = 404
@@ -136,7 +136,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = "آپشن با این ایدی پیدا نشد",
 				response_code = 404
@@ -145,7 +145,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<OptionDto>()
 		{
-			data = new OptionDto(),
+			data = null,
 			is_success = true,
 			message = "آپشن با موفقیت حذف شد",
 			response_code = 204
@@ -163,7 +163,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
                 .Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -174,7 +174,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "مقدار کلید تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -186,7 +186,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -204,7 +204,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<OptionDto>()
 		{
-			data = new OptionDto(),
+			data = null,
 			is_success = true,
 			message = "آپشن با موفقیت ایجاد شد.",
 			response_code = 201
@@ -222,7 +222,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
                 .Select(e => e.ErrorMessage));
 			return BadRequest(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -232,7 +232,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
         if (entity == null)
 			return NotFound(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = "آپشن با این ایدی پیدا نشد.",
 				response_code = 400
@@ -243,7 +243,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "مقدار کلید تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -255,7 +255,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
             var error = "مقدار نامک تکراریست لطفا تغییر دهید.";
 			return BadRequest(new ResponseDto<OptionDto>()
 			{
-				data = new OptionDto(),
+				data = null,
 				is_success = false,
 				message = error,
 				response_code = 400
@@ -271,7 +271,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<OptionDto>()
 		{
-			data = new OptionDto(),
+			data = null,
 			is_success = true,
 			message = "آپشن با موفقیت ویرایش شد.",
 			response_code = 204

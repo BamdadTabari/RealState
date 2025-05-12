@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
 using RealState.Models;
+using RealState.RequestsAndQueries;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RaelState.Controllers.Admin;
@@ -69,9 +70,9 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpGet]
     [Route("read/{slug}")]
-    public async Task<IActionResult> Detail([FromRoute] string slug)
+    public async Task<IActionResult> Detail(GetQuery<string> src)
     {
-        var entity = await _unitOfWork.OptionRepository.Get(slug);
+        var entity = await _unitOfWork.OptionRepository.Get(src.data);
         if (entity == null)
 			return NotFound(new ResponseDto<OptionDto>()
 			{

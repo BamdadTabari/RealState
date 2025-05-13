@@ -4,17 +4,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealState.Models;
 
-namespace RealState.Controllers.Admin;
-[Route("api/property")]
+namespace RealState.Controllers.Public;
+[Route("api/public/property")]
 [ApiController]
-public class PropertyController(IUnitOfWork unitOfWork) : ControllerBase
+public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
 	[HttpGet]
 	[Route("list")]
 	public async Task<IActionResult> Index(string? search_term,
-		bool? is_active,
 		SortByEnum sort_by = SortByEnum.CreationDate,
 		int page = 1,
 		int page_size = 10)
@@ -23,7 +22,7 @@ public class PropertyController(IUnitOfWork unitOfWork) : ControllerBase
 		{
 			Keyword = search_term,
 			SortBy = sort_by,
-			BoolFilter = is_active
+			BoolFilter = true
 		};
 		var data = _unitOfWork.PropertyRepository.GetPaginated(filter, null);
 		return Ok(new ResponseDto<PaginatedList<Property>>()
@@ -102,28 +101,4 @@ public class PropertyController(IUnitOfWork unitOfWork) : ControllerBase
 		});
 	}
 
-	[HttpPost]
-	[Route("activate")]
-	public async Task<IActionResult> ActiveAndDeActive([FromBody] long id)
-	{
-		var entity = await _unitOfWork.PropertyRepository.Get(id);
-		if (entity == null)
-			return NotFound(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				message = "ملک با این ایدی پیدا نشد",
-				is_success = false,
-				response_code = 404
-			});
-		entity.is_active = !entity.is_active;
-		_unitOfWork.PropertyRepository.Update(entity);
-		await _unitOfWork.CommitAsync();
-		return Ok(new ResponseDto<PropertyDto>()
-		{
-			data = null,
-			message = "وضعیت ملک تغییر کرد",
-			is_success = true,
-			response_code = 204
-		});
-	}
 }

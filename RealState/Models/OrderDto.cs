@@ -13,4 +13,7 @@ public class OrderDto : BaseDto
     public string? card_number { get; set; }
     public long user_id { get; set; }
     public UserDto? user { get; set; }
+	public string mobile { get; set; }
+	public string email { get; set; }
+	public string username { get; set; }
 }

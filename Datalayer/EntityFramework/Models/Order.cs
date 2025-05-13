@@ -6,12 +6,16 @@ public class Order : BaseEntity
 {
 	public long amount { get; set; }
 	public int status {get; set; }
+	public string ref_id { get; set; }
 	public string? response_message { get; set; }
 	public string? authority { get; set; }
 	public DateTime date_paid { get; set; }
 	public string? card_number { get; set; }
 	public long user_id { get; set; }
 	public User? user { get; set; }
+	public string mobile { get; set; }
+	public string email { get; set; }
+	public string username { get; set; }
 }
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {

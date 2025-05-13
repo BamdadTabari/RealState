@@ -1,4 +1,5 @@
-﻿using RaelState.Assistant;
+﻿using DataLayer;
+using RaelState.Assistant;
 using RealState.Models;
 
 namespace RaelState.Models;
@@ -16,4 +17,7 @@ public class OrderDto : BaseDto
 	public string mobile { get; set; }
 	public string email { get; set; }
 	public string username { get; set; }
+
+	public long plan_id { get; set; }
+	public Plan plan { get; set; }
 }

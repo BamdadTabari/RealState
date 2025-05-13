@@ -44,6 +44,15 @@ public class User : BaseEntity
 
 	public long? agency_id { get; set; }
 	public Agency agency { get; set; }
+
+	public long? plan_id { get; set; }
+	public Plan plan { get; set; }
+
+	public ICollection<Property> properties { get; set; }
+
+
+	public DateTime expre_date { get; set; }
+	public int property_count { get; set; }
 	#endregion
 }
 
@@ -76,6 +85,18 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 			.HasOne(x => x.agency)
 			.WithOne(x => x.user)
 			.HasForeignKey<User>(x => x.agency_id)
+			.OnDelete(DeleteBehavior.Cascade);
+
+
+		builder.HasMany(x=>x.properties)
+			.WithOne(x=>x.user)
+			.HasForeignKey(x=>x.owner_id)
+			.OnDelete(DeleteBehavior.Cascade);
+
+		builder
+			.HasOne(x=>x.plan)
+			.WithMany(x=>x.users)
+			.HasForeignKey(x=>x.plan_id)
 			.OnDelete(DeleteBehavior.Cascade);
 		#endregion
 	}

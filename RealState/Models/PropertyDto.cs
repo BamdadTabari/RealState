@@ -75,6 +75,8 @@ public class PropertyDto : BaseDto
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public long situation_id { get; set; }
 	public PropertySituationDto? situation { get; set; }
+	public long? owner_id { get; set; }
+	public User? user { get; set; }
 
 }
 

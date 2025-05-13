@@ -1,4 +1,5 @@
-﻿using RaelState.Assistant;
+﻿using DataLayer;
+using RaelState.Assistant;
 using System.ComponentModel.DataAnnotations;
 
 namespace RealState.Models;
@@ -20,4 +21,6 @@ public class PlanDto : BaseDto
 	[Display(Name = "تعداد ماه")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public int plan_months { get; set; }
+
+	public Order? order { get; set; }
 }

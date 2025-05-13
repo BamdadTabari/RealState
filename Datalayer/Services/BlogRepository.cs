@@ -83,10 +83,10 @@ public class BlogRepository : Repository<Blog>, IBlogRepository
 	{
 		try
 		{
-			IQueryable<Blog> query;
+			IQueryable<Blog> query = _queryable;
 			if (categoryId != null)
-				query = _queryable.Include(x => x.blog_category).Where(x => x.blog_category_id == categoryId);
-			query = _queryable.Include(x => x.blog_category).AsNoTracking().Skip((filter.Page - 1) * filter.PageSize)
+				query = query.Include(x => x.blog_category).Where(x => x.blog_category_id == categoryId);
+			query = query.Include(x => x.blog_category).AsNoTracking().Skip((filter.Page - 1) * filter.PageSize)
 						.Take(filter.PageSize)
 						.ApplyFilter(filter).ApplySort(filter.SortBy);
 			var dataTotalCount = _queryable.Count();

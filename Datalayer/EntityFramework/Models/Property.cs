@@ -45,6 +45,9 @@ public class Property : BaseEntity
 	public long situation_id { get; set; }
 	public PropertySituation situation { get; set; }
 
+	public long owner_id { get; set; }
+	public User user { get; set; }
+
 }
 
 public class PropertyConfiguration : IEntityTypeConfiguration<Property>

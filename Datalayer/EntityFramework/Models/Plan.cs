@@ -9,6 +9,9 @@ public class Plan : BaseEntity
 	public decimal price { get; set; }
 	public int property_count { get; set; }
 	public int plan_months { get; set; }
+
+	public ICollection<User> users { get; set; }
+	public Order? order { get; set; }
 }
 public class PlanConfiguration : IEntityTypeConfiguration<Plan>
 {

@@ -11,7 +11,7 @@ using System.Text;
 namespace RealState.Controllers.Public;
 [Route("api/public-plan-order")]
 [ApiController]
-public class PlanOrderController(IUnitOfWork unitOfWork, JwtTokenService tokenService) : ControllerBase
+public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService tokenService) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 	private readonly JwtTokenService _tokenService = tokenService;

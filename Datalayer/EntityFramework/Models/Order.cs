@@ -16,6 +16,9 @@ public class Order : BaseEntity
 	public string mobile { get; set; }
 	public string email { get; set; }
 	public string username { get; set; }
+
+	public long plan_id { get; set; }
+	public Plan plan { get; set; }
 }
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
@@ -25,5 +28,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 		builder.Property(x => x.amount).IsRequired();
 		builder.Property(x => x.slug).IsRequired();
 		builder.HasIndex(x => x.slug).IsUnique();
+
+		builder
+			.HasOne(x=>x.plan)
+			.WithOne(x=>x.order)
+			.HasForeignKey<Order>(x=>x.plan_id)
+			.OnDelete(DeleteBehavior.Restrict);
 	}
 }

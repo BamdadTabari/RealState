@@ -5,7 +5,7 @@ public interface IPropertyRepository : IRepository<Property>
 {
 	Task<Property?> Get(string slug);
 	Task<Property?> Get(long id);
-	PaginatedList<Property> GetPaginated(DefaultPaginationFilter filter);
+	PaginatedList<Property> GetPaginated(DefaultPaginationFilter filter, long? userId);
 	Task<List<Property>> GetProperties(int count);
 	Task<List<Property>> GetAll();
 	Task<List<Property>> GetLatestProperties(int take);
@@ -97,11 +97,14 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		}
 	}
 
-	public PaginatedList<Property> GetPaginated(DefaultPaginationFilter filter)
+	public PaginatedList<Property> GetPaginated(DefaultPaginationFilter filter, long? userId)
 	{
 		try
 		{
-			var query = _queryable
+			IQueryable<Property> query = _queryable;
+			if(userId != null)
+				query = query.Where(x=>x.owner_id == userId);
+			query = query
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)
 				.ThenInclude(x => x.Select(x => x.property_facility))

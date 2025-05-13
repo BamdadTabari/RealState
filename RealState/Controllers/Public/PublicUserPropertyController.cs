@@ -6,9 +6,9 @@ using RaelState.Models;
 using RealState.Models;
 
 namespace RealState.Controllers.Public;
-[Route("api/public/property")]
+[Route("api/public/user-property")]
 [ApiController]
-public class PublicPropertyController(IUnitOfWork unitOfWork, JwtTokenService tokenService) : ControllerBase
+public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenService tokenService) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 	private readonly JwtTokenService _tokenService = tokenService;

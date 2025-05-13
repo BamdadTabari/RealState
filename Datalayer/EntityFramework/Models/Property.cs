@@ -39,7 +39,6 @@ public class Property : BaseEntity
 	public int property_age { get; set; }
 	public int property_floor { get; set; }
 
-	public DateTime expire_date { get; set; }
 	public ICollection<PropertyFacilityProperty> property_facility_properties{ get; set; }
 
 	public long situation_id { get; set; }

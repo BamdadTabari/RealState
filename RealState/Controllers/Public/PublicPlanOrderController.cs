@@ -118,7 +118,8 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 					slug = SlugHelper.GenerateSlug(amount.ToString() + authority + StampGenerator.CreateSecurityStamp(10)),
 					mobile = user.mobile,
 					email = user.email,
-					username = user.user_name
+					username = user.user_name,
+					plan_id = plan.id,
 				};
 				await _unitOfWork.OrderRepository.AddAsync(entity);
 				await _unitOfWork.CommitAsync();
@@ -225,6 +226,20 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 				ord.card_number = jodata["data"]["card_pan"].ToString(); // شماره کارت
 				ord.response_message = response.Content.ToString();
 				_unitOfWork.OrderRepository.Update(ord);
+				await _unitOfWork.CommitAsync();
+				var plan = await _unitOfWork.PlanRepository.Get(ord.plan_id);
+				if (plan == null)
+					return NotFound(new ResponseDto<PlanDto>()
+					{
+						data = null,
+						message = "پلن پیدا نشد",
+						is_success = false,
+						response_code = 404
+					});
+				var user = await GetCurrentUser();
+				user.expre_date = DateTime.Now.AddMonths(plan.plan_months);
+				user.property_count = plan.property_count;
+				_unitOfWork.UserRepository.Update(user);
 				await _unitOfWork.CommitAsync();
 
 				return Ok(new ResponseDto<PaymentResponse>()

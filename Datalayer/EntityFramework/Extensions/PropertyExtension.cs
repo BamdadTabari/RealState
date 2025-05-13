@@ -12,6 +12,9 @@ public static class PropertyExtension
 			|| x.code.ToLower().Contains(filter.Keyword.ToLower().Trim())
 			|| x.city_province_full_name.ToLower().Contains(filter.Keyword.ToLower().Trim()));
 
+		if(filter.BoolFilter != null)
+			query =query.Where(x=>x.is_active == filter.BoolFilter);
+
 		return query;
 	}
 

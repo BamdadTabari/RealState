@@ -47,6 +47,8 @@ public class Property : BaseEntity
 	public long owner_id { get; set; }
 	public User user { get; set; }
 
+	public bool is_active { get; set; }
+
 }
 
 public class PropertyConfiguration : IEntityTypeConfiguration<Property>
@@ -67,7 +69,6 @@ public class PropertyConfiguration : IEntityTypeConfiguration<Property>
 		builder.Property(x => x.bed_room_count).IsRequired();
 		builder.Property(x => x.property_age).IsRequired();
 		builder.Property(x => x.property_floor).IsRequired();
-		builder.Property(x => x.expire_date).IsRequired();
 		builder.Property(x => x.situation_id).IsRequired();
 	}
 }

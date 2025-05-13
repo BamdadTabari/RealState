@@ -209,7 +209,8 @@ public class PublicPropertyController(IUnitOfWork unitOfWork, JwtTokenService to
 			situation_id = src.situation_id,
 			state_enum = src.state_enum,
 			type_enum = src.type_enum,
-			gallery = files
+			gallery = files,
+			is_active = false,
 		});
 
 		await _unitOfWork.CommitAsync();
@@ -446,7 +447,7 @@ public class PublicPropertyController(IUnitOfWork unitOfWork, JwtTokenService to
 		entity.type_enum = src.type_enum;
 		entity.situation_id = src.situation_id;
 		entity.sell_price = src.sell_price;
-		
+		entity.is_active = false;
 
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<PropertyDto>()
@@ -455,6 +456,53 @@ public class PublicPropertyController(IUnitOfWork unitOfWork, JwtTokenService to
 			is_success = true,
 			message = "ملک با موفقیت ایجاد شد",
 			response_code = 201
+		});
+	}
+
+
+	[HttpPost]
+	[Route("delete")]
+	public async Task<IActionResult> Delete([FromBody] long id)
+	{
+		var entity = await _unitOfWork.PropertyRepository.Get(id);
+		if (entity == null)
+			return NotFound(new ResponseDto<PropertyDto>()
+			{
+				data = null,
+				message = "ملک با این ایدی پیدا نشد",
+				is_success=false,
+				response_code = 404
+			});
+		var user = await GetCurrentUser();
+		if (user == null)
+			return NotFound(new ResponseDto<UserDto>()
+			{
+				data = null,
+				message = "کاربر پیدا نشد",
+				is_success = false,
+				response_code = 404
+			});
+		foreach (var file in entity.gallery)
+		{
+			if (System.IO.File.Exists(file))
+			{
+				System.IO.File.Delete(file);
+			}
+		}
+		
+		_unitOfWork.PropertyRepository.Remove(entity);
+		await _unitOfWork.CommitAsync();
+
+		user.property_count++;
+		_unitOfWork.UserRepository.Update(user);
+		await _unitOfWork.CommitAsync();
+
+		return Ok(new ResponseDto<PropertyDto>()
+		{
+			data = null,
+			message = "ملک با موفقیت حذف شد",
+			is_success = true,
+			response_code = 204
 		});
 	}
 }

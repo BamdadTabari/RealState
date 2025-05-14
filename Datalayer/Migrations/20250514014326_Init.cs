@@ -282,6 +282,91 @@ namespace DataLayer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "User",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    mobile = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    is_mobile_confirmed = table.Column<bool>(type: "bit", nullable: false),
+                    email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    password_hash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    failed_login_count = table.Column<int>(type: "int", nullable: false),
+                    lock_out_end_time = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    last_login_date_time = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    security_stamp = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    concurrency_stamp = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    is_locked_out = table.Column<bool>(type: "bit", nullable: false),
+                    is_active = table.Column<bool>(type: "bit", nullable: false),
+                    refresh_token = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    refresh_token_expiry_time = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    is_delete_able = table.Column<bool>(type: "bit", nullable: false),
+                    agency_id = table.Column<long>(type: "bigint", nullable: true),
+                    plan_id = table.Column<long>(type: "bigint", nullable: true),
+                    expre_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    property_count = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    slug = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_User", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_User_Agency_agency_id",
+                        column: x => x.agency_id,
+                        principalTable: "Agency",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_User_Plan_plan_id",
+                        column: x => x.plan_id,
+                        principalTable: "Plan",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    amount = table.Column<long>(type: "bigint", nullable: false),
+                    status = table.Column<int>(type: "int", nullable: false),
+                    ref_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    response_message = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    authority = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    date_paid = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    card_number = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    userid = table.Column<long>(type: "bigint", nullable: true),
+                    mobile = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    plan_id = table.Column<long>(type: "bigint", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    slug = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Order_Plan_plan_id",
+                        column: x => x.plan_id,
+                        principalTable: "Plan",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Order_User_userid",
+                        column: x => x.userid,
+                        principalTable: "User",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Property",
                 columns: table => new
                 {
@@ -306,8 +391,9 @@ namespace DataLayer.Migrations
                     bed_room_count = table.Column<int>(type: "int", nullable: false),
                     property_age = table.Column<int>(type: "int", nullable: false),
                     property_floor = table.Column<int>(type: "int", nullable: false),
-                    expire_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     situation_id = table.Column<long>(type: "bigint", nullable: false),
+                    owner_id = table.Column<long>(type: "bigint", nullable: false),
+                    is_active = table.Column<bool>(type: "bit", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     slug = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
@@ -333,41 +419,38 @@ namespace DataLayer.Migrations
                         principalTable: "PropertySituation",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Property_User_owner_id",
+                        column: x => x.owner_id,
+                        principalTable: "User",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "User",
+                name: "UserRole",
                 columns: table => new
                 {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    user_name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    mobile = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    is_mobile_confirmed = table.Column<bool>(type: "bit", nullable: false),
-                    email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    password_hash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    failed_login_count = table.Column<int>(type: "int", nullable: false),
-                    lock_out_end_time = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    last_login_date_time = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    security_stamp = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    concurrency_stamp = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    is_locked_out = table.Column<bool>(type: "bit", nullable: false),
-                    is_active = table.Column<bool>(type: "bit", nullable: false),
-                    refresh_token = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    refresh_token_expiry_time = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    is_delete_able = table.Column<bool>(type: "bit", nullable: false),
-                    agency_id = table.Column<long>(type: "bigint", nullable: true),
+                    id = table.Column<long>(type: "bigint", nullable: false),
+                    role_id = table.Column<long>(type: "bigint", nullable: false),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
                     created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
                     slug = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_User", x => x.id);
+                    table.PrimaryKey("PK_UserRole", x => new { x.user_id, x.role_id, x.id });
                     table.ForeignKey(
-                        name: "FK_User_Agency_agency_id",
-                        column: x => x.agency_id,
-                        principalTable: "Agency",
+                        name: "FK_UserRole_Role_role_id",
+                        column: x => x.role_id,
+                        principalTable: "Role",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserRole_User_user_id",
+                        column: x => x.user_id,
+                        principalTable: "User",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -401,66 +484,15 @@ namespace DataLayer.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Order",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    amount = table.Column<long>(type: "bigint", nullable: false),
-                    status = table.Column<int>(type: "int", nullable: false),
-                    response_message = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    authority = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    date_paid = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    card_number = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    user_id = table.Column<long>(type: "bigint", nullable: false),
-                    userid = table.Column<long>(type: "bigint", nullable: true),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    slug = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Order", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Order_User_userid",
-                        column: x => x.userid,
-                        principalTable: "User",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserRole",
-                columns: table => new
-                {
-                    id = table.Column<long>(type: "bigint", nullable: false),
-                    role_id = table.Column<long>(type: "bigint", nullable: false),
-                    user_id = table.Column<long>(type: "bigint", nullable: false),
-                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    slug = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserRole", x => new { x.user_id, x.role_id, x.id });
-                    table.ForeignKey(
-                        name: "FK_UserRole_Role_role_id",
-                        column: x => x.role_id,
-                        principalTable: "Role",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserRole_User_user_id",
-                        column: x => x.user_id,
-                        principalTable: "User",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.InsertData(
                 table: "Option",
                 columns: new[] { "id", "created_at", "option_key", "option_value", "slug", "updated_at" },
                 values: new object[] { 1L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "AdminMobile", "09301724389", "AdminMobile", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) });
+
+            migrationBuilder.InsertData(
+                table: "Province",
+                columns: new[] { "id", "created_at", "name", "slug", "updated_at" },
+                values: new object[] { 1L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "مازندران", "مازندران", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.InsertData(
                 table: "Role",
@@ -474,8 +506,38 @@ namespace DataLayer.Migrations
 
             migrationBuilder.InsertData(
                 table: "User",
-                columns: new[] { "id", "agency_id", "concurrency_stamp", "created_at", "email", "failed_login_count", "is_active", "is_delete_able", "is_locked_out", "is_mobile_confirmed", "last_login_date_time", "lock_out_end_time", "mobile", "password_hash", "refresh_token", "refresh_token_expiry_time", "security_stamp", "slug", "updated_at", "user_name" },
-                values: new object[] { 1L, null, "X3JO2EOCURAEBU6HHY6OBYEDD2877FXU", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "info@avatick.com", 0, true, false, false, false, null, null, "09309309393", "omTtMfA5EEJCzjH5t/Q67cRXK5TRwerSqN7sJSm41No=.FRLmTm9jwMcEFnjpjgivJw==", null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "098NTB7E5LFFXREHBSEHDKLI0DOBIKST", "Admin-User", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "admin-user" });
+                columns: new[] { "id", "agency_id", "concurrency_stamp", "created_at", "email", "expre_date", "failed_login_count", "is_active", "is_delete_able", "is_locked_out", "is_mobile_confirmed", "last_login_date_time", "lock_out_end_time", "mobile", "password_hash", "plan_id", "property_count", "refresh_token", "refresh_token_expiry_time", "security_stamp", "slug", "updated_at", "user_name" },
+                values: new object[] { 1L, null, "X3JO2EOCURAEBU6HHY6OBYEDD2877FXU", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "info@amajpanah.com", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, true, false, false, false, null, null, "09309309393", "omTtMfA5EEJCzjH5t/Q67cRXK5TRwerSqN7sJSm41No=.FRLmTm9jwMcEFnjpjgivJw==", null, 0, null, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "098NTB7E5LFFXREHBSEHDKLI0DOBIKST", "Admin-User", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "admin-user" });
+
+            migrationBuilder.InsertData(
+                table: "City",
+                columns: new[] { "id", "created_at", "name", "province_id", "slug", "updated_at" },
+                values: new object[,]
+                {
+                    { 1L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "ساری", 1L, "ساری", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 2L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "بابل", 1L, "بابل", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 3L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "آمل", 1L, "آمل", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 4L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "قائمشهر", 1L, "قائمشهر", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 5L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "تنکابن", 1L, "تنکابن", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 6L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "نوشهر", 1L, "نوشهر", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 7L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "چالوس", 1L, "چالوس", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 8L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "نور", 1L, "نور", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 9L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "جویبار", 1L, "جویبار", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 10L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "رامسر", 1L, "رامسر", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 11L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "بهشهر", 1L, "بهشهر", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 12L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "سوادکوه", 1L, "سوادکوه", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 13L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "عباس‌آباد", 1L, "عباس-آباد", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 14L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "فریدونکنار", 1L, "فریدونکنار", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 15L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "محمودآباد", 1L, "محمودآباد", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 16L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "نکا", 1L, "نكا", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 17L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "سیمرغ", 1L, "سیمرغ", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 18L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "گلوگاه", 1L, "گلوگاه", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 19L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "شهمیرزاد", 1L, "شهمیرزاد", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 20L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "کجور", 1L, "کجور", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 21L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "کلاردشت", 1L, "کلاردشت", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 22L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "املش", 1L, "املش", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 23L, new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified), "میاندورود", 1L, "میاندورود", new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified) }
+                });
 
             migrationBuilder.InsertData(
                 table: "UserRole",
@@ -540,6 +602,12 @@ namespace DataLayer.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Order_plan_id",
+                table: "Order",
+                column: "plan_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Order_slug",
                 table: "Order",
                 column: "slug",
@@ -571,6 +639,11 @@ namespace DataLayer.Migrations
                 name: "IX_Property_cityid",
                 table: "Property",
                 column: "cityid");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Property_owner_id",
+                table: "Property",
+                column: "owner_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Property_situation_id",
@@ -637,6 +710,11 @@ namespace DataLayer.Migrations
                 filter: "[agency_id] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_User_plan_id",
+                table: "User",
+                column: "plan_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_User_slug",
                 table: "User",
                 column: "slug",
@@ -682,9 +760,6 @@ namespace DataLayer.Migrations
                 name: "Otp");
 
             migrationBuilder.DropTable(
-                name: "Plan");
-
-            migrationBuilder.DropTable(
                 name: "PropertyFacilityProperty");
 
             migrationBuilder.DropTable(
@@ -703,16 +778,19 @@ namespace DataLayer.Migrations
                 name: "Role");
 
             migrationBuilder.DropTable(
-                name: "User");
-
-            migrationBuilder.DropTable(
                 name: "PropertyCategory");
 
             migrationBuilder.DropTable(
                 name: "PropertySituation");
 
             migrationBuilder.DropTable(
+                name: "User");
+
+            migrationBuilder.DropTable(
                 name: "Agency");
+
+            migrationBuilder.DropTable(
+                name: "Plan");
 
             migrationBuilder.DropTable(
                 name: "City");

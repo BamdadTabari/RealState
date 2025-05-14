@@ -13,12 +13,16 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 	private readonly JwtTokenService _tokenService = tokenService;
 
+	[HttpPost]
+	[Route("current-user-id")]
 	public async Task<long?> GetCurrentUserId()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
 		var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
 		return user?.id;
 	}
+	[HttpPost]
+	[Route("current-user")]
 	public async Task<User?> GetCurrentUser()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";

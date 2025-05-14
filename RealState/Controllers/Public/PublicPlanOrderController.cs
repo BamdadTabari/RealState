@@ -20,6 +20,8 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 	string authority;
 	string description = "خرید";
 
+	[HttpPost]
+	[Route("current-user-id")]
 	public async Task<long> GetCurrentUserId()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
@@ -27,6 +29,8 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 		return user.id;
 	}
 
+	[HttpPost]
+	[Route("current-user")]
 	public async Task<User> GetCurrentUser()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";

@@ -66,7 +66,7 @@ public class PropertyDto : BaseDto
 	public int property_age { get; set; }
 	[Display(Name = "طبقه")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
-	public int property_floor { get; set; 
+	public int property_floor { get; set; } 
 	public ICollection<PropertyFacilityPropertyDto>? property_facility_properties { get; set; }
 	[Display(Name = "وضعیت")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]

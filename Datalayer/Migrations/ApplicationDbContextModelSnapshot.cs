@@ -560,6 +560,21 @@ namespace DataLayer.Migrations
                     b.Property<DateTime>("date_paid")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("mobile")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("plan_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ref_id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("response_message")
                         .HasColumnType("nvarchar(max)");
 
@@ -580,7 +595,14 @@ namespace DataLayer.Migrations
                     b.Property<long?>("userid")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("id");
+
+                    b.HasIndex("plan_id")
+                        .IsUnique();
 
                     b.HasIndex("slug")
                         .IsUnique();
@@ -710,12 +732,12 @@ namespace DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("expire_date")
-                        .HasColumnType("datetime2");
-
                     b.PrimitiveCollection<string>("gallery")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("is_active")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("is_for_sale")
                         .HasColumnType("bit");
@@ -729,6 +751,9 @@ namespace DataLayer.Migrations
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("owner_id")
+                        .HasColumnType("bigint");
 
                     b.Property<int>("property_age")
                         .HasColumnType("int");
@@ -764,6 +789,8 @@ namespace DataLayer.Migrations
                     b.HasIndex("category_id");
 
                     b.HasIndex("cityid");
+
+                    b.HasIndex("owner_id");
 
                     b.HasIndex("situation_id");
 
@@ -1023,6 +1050,9 @@ namespace DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("expre_date")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("failed_login_count")
                         .HasColumnType("int");
 
@@ -1052,6 +1082,12 @@ namespace DataLayer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<long?>("plan_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("property_count")
+                        .HasColumnType("int");
+
                     b.Property<string>("refresh_token")
                         .HasColumnType("nvarchar(max)");
 
@@ -1080,6 +1116,8 @@ namespace DataLayer.Migrations
                         .IsUnique()
                         .HasFilter("[agency_id] IS NOT NULL");
 
+                    b.HasIndex("plan_id");
+
                     b.HasIndex("slug")
                         .IsUnique();
 
@@ -1094,7 +1132,8 @@ namespace DataLayer.Migrations
                             id = 1L,
                             concurrency_stamp = "X3JO2EOCURAEBU6HHY6OBYEDD2877FXU",
                             created_at = new DateTime(2025, 1, 1, 12, 0, 0, 0, DateTimeKind.Unspecified),
-                            email = "info@avatick.com",
+                            email = "info@amajpanah.com",
+                            expre_date = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             failed_login_count = 0,
                             is_active = true,
                             is_delete_able = false,
@@ -1102,6 +1141,7 @@ namespace DataLayer.Migrations
                             is_mobile_confirmed = false,
                             mobile = "09309309393",
                             password_hash = "omTtMfA5EEJCzjH5t/Q67cRXK5TRwerSqN7sJSm41No=.FRLmTm9jwMcEFnjpjgivJw==",
+                            property_count = 0,
                             refresh_token_expiry_time = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             security_stamp = "098NTB7E5LFFXREHBSEHDKLI0DOBIKST",
                             slug = "Admin-User",
@@ -1188,9 +1228,17 @@ namespace DataLayer.Migrations
 
             modelBuilder.Entity("DataLayer.Order", b =>
                 {
+                    b.HasOne("DataLayer.Plan", "plan")
+                        .WithOne("order")
+                        .HasForeignKey("DataLayer.Order", "plan_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("DataLayer.User", "user")
                         .WithMany()
                         .HasForeignKey("userid");
+
+                    b.Navigation("plan");
 
                     b.Navigation("user");
                 });
@@ -1209,6 +1257,12 @@ namespace DataLayer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("DataLayer.User", "user")
+                        .WithMany("properties")
+                        .HasForeignKey("owner_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("DataLayer.PropertySituation", "situation")
                         .WithMany("properties")
                         .HasForeignKey("situation_id")
@@ -1220,6 +1274,8 @@ namespace DataLayer.Migrations
                     b.Navigation("property_category");
 
                     b.Navigation("situation");
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("DataLayer.PropertyFacilityProperty", b =>
@@ -1248,7 +1304,14 @@ namespace DataLayer.Migrations
                         .HasForeignKey("DataLayer.User", "agency_id")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("DataLayer.Plan", "plan")
+                        .WithMany("users")
+                        .HasForeignKey("plan_id")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("agency");
+
+                    b.Navigation("plan");
                 });
 
             modelBuilder.Entity("DataLayer.UserRole", b =>
@@ -1286,6 +1349,13 @@ namespace DataLayer.Migrations
                     b.Navigation("agency_list");
                 });
 
+            modelBuilder.Entity("DataLayer.Plan", b =>
+                {
+                    b.Navigation("order");
+
+                    b.Navigation("users");
+                });
+
             modelBuilder.Entity("DataLayer.Property", b =>
                 {
                     b.Navigation("property_facility_properties");
@@ -1318,6 +1388,8 @@ namespace DataLayer.Migrations
 
             modelBuilder.Entity("DataLayer.User", b =>
                 {
+                    b.Navigation("properties");
+
                     b.Navigation("user_roles");
                 });
 #pragma warning restore 612, 618

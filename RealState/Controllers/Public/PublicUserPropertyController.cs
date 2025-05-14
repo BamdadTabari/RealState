@@ -15,6 +15,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 
 	[HttpPost]
 	[Route("current-user-id")]
+	[ApiExplorerSettings(IgnoreApi = true)]
 	public async Task<long?> GetCurrentUserId()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
@@ -23,6 +24,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 	}
 	[HttpPost]
 	[Route("current-user")]
+	[ApiExplorerSettings(IgnoreApi = true)]
 	public async Task<User?> GetCurrentUser()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";

@@ -22,6 +22,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 
 	[HttpPost]
 	[Route("current-user-id")]
+	[ApiExplorerSettings(IgnoreApi = true)]
 	public async Task<long> GetCurrentUserId()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
@@ -31,6 +32,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 
 	[HttpPost]
 	[Route("current-user")]
+	[ApiExplorerSettings(IgnoreApi = true)]
 	public async Task<User> GetCurrentUser()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";

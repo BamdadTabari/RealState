@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Controllers\Public\PublicUserPropertyController.cs~RF18bb0e.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Hangfire" Version="1.8.18" />
     <PackageReference Include="Kavenegar" Version="1.2.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.4">

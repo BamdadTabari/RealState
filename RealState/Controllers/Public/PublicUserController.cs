@@ -142,7 +142,12 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			token = _tokenService.GenerateToken(user, role.Select(x => x.role.title).ToList());
 		}
 		while (await _unitOfWork.TokenBlacklistRepository.ExistsAsync(x => x.token == token));
-		var refreshToken = _tokenService.GenerateRefreshToken();
+		var refreshToken = "";
+		do
+		{
+			refreshToken = _tokenService.GenerateRefreshToken();
+		}
+		while (await _unitOfWork.UserRepository.ExistsAsync(x => x.refresh_token == refreshToken));
 
 		// تنظیم توکن در کوکی
 		// ذخیره توکن در کوکی
@@ -153,7 +158,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
 			Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
 		};
-		Response.Cookies.Append("jwt", token, cookieOptions);
+		Response.Cookies.Append("jwt", refreshToken, cookieOptions);
 
 		// حذف تمام OTPهای مرتبط
 		var allPhoneOtps = await _unitOfWork.OtpRepository.GetAllByPhone(src.phone_number);
@@ -173,7 +178,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			data = new LoginResponseDto()
 			{
 				access_token = token,
-				refresh_token = refreshToken,
+				//refresh_token = refreshToken,
 				expire_in = Config.AccessTokenLifetime.TotalMinutes,
 			},
 			is_success = true,
@@ -387,10 +392,15 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			token = _tokenService.GenerateToken(user, role.Select(x => x.role.title).ToList());
 		}
 		while (await _unitOfWork.TokenBlacklistRepository.ExistsAsync(x => x.token == token));
-		var refreshToken = _tokenService.GenerateRefreshToken();
+		var refreshToken = "";
+		do
+		{
+			refreshToken = _tokenService.GenerateRefreshToken();
+		}
+		while (await _unitOfWork.UserRepository.ExistsAsync(x => x.refresh_token == refreshToken));
 
 		// تنظیم توکن در کوکی
-		Response.Cookies.Append("jwt", token, new CookieOptions
+		Response.Cookies.Append("jwt", refreshToken, new CookieOptions
 		{
 			HttpOnly = true, // جلوگیری از دسترسی جاوااسکریپت به کوکی
 			Secure = true,
@@ -414,7 +424,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			data = new LoginResponseDto()
 			{
 				access_token = token,
-				refresh_token = refreshToken,
+				//refresh_token = refreshToken,
 				expire_in = Config.AccessTokenLifetime.TotalMinutes
 			},
 			is_success = true,
@@ -441,55 +451,74 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		var username = JwtHelper.GetUsername(request.token);
 		var user = await _unitOfWork.UserRepository.Get(username);
 
-		// 3. بررسی صحت توکن و تاریخ انقضای Refresh Token
-		if (user == null || user.refresh_token != request.refresh_token || user.refresh_token_expiry_time < DateTime.UtcNow)
+		// 2.1 گرفتن رفرش توکن از کوکی
+
+		if (Request.Cookies.TryGetValue("jwt", out string refreshToken))
+		{
+			// 3. بررسی صحت توکن و تاریخ انقضای Refresh Token
+			if (user == null || user.refresh_token != refreshToken || user.refresh_token_expiry_time < DateTime.UtcNow)
+				return Unauthorized(new ResponseDto<UserDto>()
+				{
+					data = null,
+					is_success = false,
+					message = "توکن نامعتبر است و یا منقضی شده است",
+					response_code = 401
+				});
+
+			// 4. تولید توکن جدید
+			var role = _unitOfWork.UserRoleRepository.GetUserRolesByUserId(user.id);
+			var token = "";
+			do
+			{
+				token = _tokenService.GenerateToken(user, role.Select(x => x.role.title).ToList());
+			}
+			while (await _unitOfWork.TokenBlacklistRepository.ExistsAsync(x => x.token == token));
+			do
+			{
+				refreshToken = _tokenService.GenerateRefreshToken();
+			}
+			while (await _unitOfWork.UserRepository.ExistsAsync(x => x.refresh_token == refreshToken));
+
+			// 5. به روزرسانی Refresh Token در پایگاه داده
+			user.refresh_token = refreshToken;
+			user.refresh_token_expiry_time = DateTime.UtcNow.Add(Config.RefreshTokenLifetime);
+			_unitOfWork.UserRepository.Update(user);
+			await _unitOfWork.CommitAsync();
+
+			// ذخیره توکن در کوکی
+			var cookieOptions = new CookieOptions
+			{
+				HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
+				Secure = true,    // فقط در HTTPS ارسال شود
+				SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
+				Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
+			};
+			Response.Cookies.Append("jwt", refreshToken, cookieOptions);
+
+			// 6. بازگشت توکن‌ها به کاربر
+			return Ok(new ResponseDto<LoginResponseDto>()
+			{
+				data = new LoginResponseDto()
+				{
+					access_token = token,
+					//refresh_token = refreshToken,
+					expire_in = Config.AccessTokenLifetime.TotalMinutes
+				},
+				is_success = true,
+				message = "",
+				response_code = 200
+			});
+		}
+		else
+		{
 			return Unauthorized(new ResponseDto<UserDto>()
 			{
 				data = null,
 				is_success = false,
-				message = "توکن نامعتبر است و یا منقضی شده است",
+				message = "توکن یافت نشد",
 				response_code = 401
 			});
-
-		// 4. تولید توکن جدید
-		var role = _unitOfWork.UserRoleRepository.GetUserRolesByUserId(user.id);
-		var token = "";
-		do
-		{
-			token = _tokenService.GenerateToken(user, role.Select(x => x.role.title).ToList());
 		}
-		while (await _unitOfWork.TokenBlacklistRepository.ExistsAsync(x => x.token == token));
-		var refreshToken = _tokenService.GenerateRefreshToken();
-
-		// 5. به روزرسانی Refresh Token در پایگاه داده
-		user.refresh_token = refreshToken;
-		user.refresh_token_expiry_time = DateTime.UtcNow.Add(Config.RefreshTokenLifetime);
-		_unitOfWork.UserRepository.Update(user);
-		await _unitOfWork.CommitAsync();
-
-		// ذخیره توکن در کوکی
-		var cookieOptions = new CookieOptions
-		{
-			HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
-			Secure = true,    // فقط در HTTPS ارسال شود
-			SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
-			Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
-		};
-		Response.Cookies.Append("jwt", token, cookieOptions);
-
-		// 6. بازگشت توکن‌ها به کاربر
-		return Ok(new ResponseDto<LoginResponseDto>()
-		{
-			data = new LoginResponseDto()
-			{
-				access_token = token,
-				refresh_token = refreshToken,
-				expire_in = Config.AccessTokenLifetime.TotalMinutes
-			},
-			is_success = true,
-			message = "",
-			response_code = 200
-		});
 	}
 
 	[Authorize]
@@ -550,7 +579,8 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		// به‌روزرسانی در دیتابیس
 		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
-
+		// حذف کوکی از مرورگر
+		Response.Cookies.Delete("jwt");
 		return Ok(new ResponseDto<UserDto>()
 		{
 			data = null,

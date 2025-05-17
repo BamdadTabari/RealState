@@ -46,7 +46,7 @@ public class PublicPropertySituationController(IUnitOfWork unitOfWork) : Control
 					city_province_full_name = y.city_province_full_name,
 					code = y.code,
 					description = y.description,
-					gallery = y.gallery,
+					//gallery = y.gallery,
 					is_for_sale = y.is_for_sale,
 					meterage = y.meterage,
 					mortgage_price = y.meterage,

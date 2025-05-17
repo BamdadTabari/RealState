@@ -20,6 +20,8 @@ public interface IRepository<TEntity> where TEntity : class, IBaseEntity
 	Task AddRangeAsync(IEnumerable<TEntity> entities);
 
 	Task<TEntity> AddAsyncReturnid(TEntity entity);
+
+	Task<TEntity?> FindSingle(Expression<Func<TEntity, bool>> predicate);
 }
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IBaseEntity
@@ -111,6 +113,11 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, I
 	public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate)
 	{
 		return DbContext.Set<TEntity>().AnyAsync(predicate);
+	}
+
+	public async Task<TEntity?> FindSingle(Expression<Func<TEntity, bool>> predicate)
+	{
+		return await DbContext.Set<TEntity>().SingleOrDefaultAsync(predicate);
 	}
 	#endregion
 }

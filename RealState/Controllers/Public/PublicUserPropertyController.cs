@@ -434,18 +434,18 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 	//			message = "شهر با این ایدی پیدا نشد",
 	//			response_code = 404
 	//		});
-	//	if(src.gallery_files.Any())
+	//	if (src.gallery != null && src.gallery.Any())
 	//	{
 	//		var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
 	//		if (!Directory.Exists(uploadPath))
 	//		{
 	//			Directory.CreateDirectory(uploadPath);
 	//		}
-	//		foreach(var file in entity.gallery)
+	//		foreach (var file in entity.gallery)
 	//		{
-	//			if (System.IO.File.Exists(file))
+	//			if (System.IO.File.Exists(file.picture))
 	//			{
-	//				System.IO.File.Delete(file);
+	//				System.IO.File.Delete(file.picture);
 	//			}
 	//		}
 	//		List<string> files = new();
@@ -503,49 +503,50 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 	//}
 
 
-	//[HttpPost]
-	//[Route("delete")]
-	//public async Task<IActionResult> Delete([FromBody] long id)
-	//{
-	//	var entity = await _unitOfWork.PropertyRepository.Get(id);
-	//	if (entity == null)
-	//		return NotFound(new ResponseDto<PropertyDto>()
-	//		{
-	//			data = null,
-	//			message = "ملک با این ایدی پیدا نشد",
-	//			is_success=false,
-	//			response_code = 404
-	//		});
-	//	var user = await GetCurrentUser();
-	//	if (user == null)
-	//		return NotFound(new ResponseDto<UserDto>()
-	//		{
-	//			data = null,
-	//			message = "کاربر پیدا نشد",
-	//			is_success = false,
-	//			response_code = 404
-	//		});
-	//	foreach (var file in entity.gallery)
-	//	{
-	//		if (System.IO.File.Exists(file))
-	//		{
-	//			System.IO.File.Delete(file);
-	//		}
-	//	}
-		
-	//	_unitOfWork.PropertyRepository.Remove(entity);
-	//	await _unitOfWork.CommitAsync();
+	[HttpPost]
+	[Route("delete")]
+	public async Task<IActionResult> Delete([FromBody] long id)
+	{
+		var entity = await _unitOfWork.PropertyRepository.Get(id);
+		if (entity == null)
+			return NotFound(new ResponseDto<PropertyDto>()
+			{
+				data = null,
+				message = "ملک با این ایدی پیدا نشد",
+				is_success = false,
+				response_code = 404
+			});
+		var user = await GetCurrentUser();
+		if (user == null)
+			return NotFound(new ResponseDto<UserDto>()
+			{
+				data = null,
+				message = "کاربر پیدا نشد",
+				is_success = false,
+				response_code = 404
+			});
+		foreach (var file in entity.gallery)
+		{
+			if (System.IO.File.Exists(file.picture))
+			{
+				System.IO.File.Delete(file.picture);
+			}
+		}
+		_unitOfWork.PropertyGalleryRepository.RemoveRange(entity.gallery);
+		await _unitOfWork.CommitAsync();
+		_unitOfWork.PropertyRepository.Remove(entity);
+		await _unitOfWork.CommitAsync();
 
-	//	user.property_count++;
-	//	_unitOfWork.UserRepository.Update(user);
-	//	await _unitOfWork.CommitAsync();
+		user.property_count++;
+		_unitOfWork.UserRepository.Update(user);
+		await _unitOfWork.CommitAsync();
 
-	//	return Ok(new ResponseDto<PropertyDto>()
-	//	{
-	//		data = null,
-	//		message = "ملک با موفقیت حذف شد",
-	//		is_success = true,
-	//		response_code = 204
-	//	});
-	//}
+		return Ok(new ResponseDto<PropertyDto>()
+		{
+			data = null,
+			message = "ملک با موفقیت حذف شد",
+			is_success = true,
+			response_code = 204
+		});
+	}
 }

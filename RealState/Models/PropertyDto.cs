@@ -83,7 +83,7 @@ public class PropertyDto : BaseDto
 	public string? video_caption { get; set; }
 
 	[Display(Name = "گالری")]
-	public ICollection<PropertyGalleryDto> gallery { get; set; }
+	public ICollection<PropertyGalleryDto>? gallery { get; set; }
 
 }
 

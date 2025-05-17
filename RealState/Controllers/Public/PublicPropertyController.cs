@@ -1,6 +1,5 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealState.Models;
 
@@ -98,7 +97,19 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 					name = p.property_facility.name,
 				}
 			}).ToList(),
+			gallery = entity.gallery == null ? new List<PropertyGalleryDto>() :
+			entity.gallery.Select(pg => new PropertyGalleryDto()
+			{
+				id = pg.id,
+				created_at = pg.created_at,
+				updated_at = pg.updated_at,
+				slug = pg.slug,
+				picture = pg.picture,
+				alt = pg.alt,
+				property_id = pg.property_id,
+			}).ToList(),
+			video = entity.video,
+			video_caption = entity.video_caption,
 		});
 	}
-
 }

@@ -15,10 +15,10 @@ public class PropertyDto : BaseDto
 	[Display(Name = "کد")]
 	public string code { get; set; }
 
-	[Display(Name = "گالری")]
-	public List<string> gallery { get; set; }
+	
+	//public List<string> gallery { get; set; }
 
-	public List<IFormFile> gallery_files { get; set; }
+	//public List<IFormFile> gallery_files { get; set; }
 
 	[Display(Name = "وضعیت ملک")]
 	public AdStatusEnum state_enum { get; set; }
@@ -74,6 +74,16 @@ public class PropertyDto : BaseDto
 	public PropertySituationDto? situation { get; set; }
 	public long? owner_id { get; set; }
 	public User? user { get; set; }
+
+	[Display(Name = "ویدیو")]
+	public string? video { get; set; }
+	[Display(Name = "ویدیو")]
+	public IFormFile? video_file { get; set; }
+	[Display(Name = "متن ویدیو")]
+	public string? video_caption { get; set; }
+
+	[Display(Name = "گالری")]
+	public ICollection<PropertyGalleryDto> gallery { get; set; }
 
 }
 

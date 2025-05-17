@@ -25,6 +25,7 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		try
 		{
 			return await _queryable.AsNoTracking()
+				.Include(x=>x.gallery)
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)
 				.ThenInclude(x=> x.Select(x=>x.property_facility))
@@ -42,6 +43,7 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		try
 		{
 			return await _queryable
+				.Include(x => x.gallery)
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)
 				.ThenInclude(x => x.Select(x => x.property_facility))
@@ -58,6 +60,7 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		try
 		{
 			return await _queryable
+				.Include(x => x.gallery)
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)
 				.ThenInclude(x => x.Select(x => x.property_facility))
@@ -72,10 +75,11 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 	public async Task<List<Property>> GetProperties(int count)
 	{
 		return await _queryable.AsNoTracking()
+			.Include(x => x.gallery)
 			.Include(x => x.property_category)
-				.Include(x => x.property_facility_properties)
-				.ThenInclude(x => x.Select(x => x.property_facility))
-				.Include(x => x.situation)
+			.Include(x => x.property_facility_properties)
+			.ThenInclude(x => x.Select(x => x.property_facility))
+			.Include(x => x.situation)
 			.Skip(0)
 			.Take(count)
 			.ToListAsync();
@@ -86,6 +90,7 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		try
 		{
 			return await _queryable.AsNoTracking()
+				.Include(x => x.gallery)
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)
 				.ThenInclude(x => x.Select(x => x.property_facility))
@@ -105,6 +110,7 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 			if(userId != null)
 				query = query.Where(x=>x.owner_id == userId);
 			query = query
+				.Include(x => x.gallery)
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)
 				.ThenInclude(x => x.Select(x => x.property_facility))

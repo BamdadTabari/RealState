@@ -8,7 +8,7 @@ public class Property : BaseEntity
 	public string description { get; set; }
 	public string code { get; set; }
 
-	public List<string> gallery { get; set; }
+	//public List<string> gallery { get; set; }
 
 	public AdStatusEnum state_enum { get; set; }
 	public string address { get; set; }
@@ -48,6 +48,11 @@ public class Property : BaseEntity
 	public User user { get; set; }
 
 	public bool is_active { get; set; }
+
+	public string video { get; set; }
+	public string video_caption { get; set; }
+
+	public ICollection<PropertyGallery>? gallery { get; set; }
 
 }
 

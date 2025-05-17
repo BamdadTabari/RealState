@@ -123,7 +123,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 			});
 		}
 		
-		if (src.gallery_files == null || !src.gallery_files.Any())
+		if (src.gallery == null || !src.gallery.Any())
 		{
 			var error = "لطفا گالری تصاویر را پر کنید";
 			return BadRequest(new ResponseDto<PropertyDto>()
@@ -134,6 +134,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				response_code = 400
 			});
 		}
+
 		if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.name))
 		{
 			var error = "ملک با این نام وجود دارد";
@@ -166,24 +167,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				message = "شهر با این ایدی پیدا نشد",
 				response_code = 404
 			});
-		var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
-		if(!Directory.Exists(uploadPath))
-		{
-			Directory.CreateDirectory(uploadPath);
-		}
-		List<string> files = new();
-		foreach(var file in src.gallery_files)
-		{
-			var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-			var imagePath = Path.Combine(uploadPath, fileName);
-
-			// Save Image
-			using (var stream = new FileStream(imagePath, FileMode.Create))
-			{
-				await file.CopyToAsync(stream);
-			}
-			files.Add(imagePath);
-		}
+		
 		var code = "";
 		do
 		{
@@ -191,7 +175,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 		}
 		while(await _unitOfWork.PropertyRepository.ExistsAsync(x=>x.code == code));
 		
-		await _unitOfWork.PropertyRepository.AddAsync(new()
+		var property = await _unitOfWork.PropertyRepository.AddAsyncReturnid(new()
 		{
 			updated_at = DateTime.Now,
 			created_at = DateTime.Now,
@@ -215,13 +199,53 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 			situation_id = src.situation_id,
 			state_enum = src.state_enum,
 			type_enum = src.type_enum,
-			gallery = files,
+			//gallery = files,
 			is_active = false,
 		});
 
 		await _unitOfWork.CommitAsync();
 
+		var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
+		if (!Directory.Exists(uploadPath))
+		{
+			Directory.CreateDirectory(uploadPath);
+		}
+		List<PropertyGallery> files = new();
+		foreach (var file in src.gallery)
+		{
+			if (file.picture_file == null)
+				return BadRequest(new ResponseDto<PropertyDto>()
+				{
+					data = null,
+					message = "مقدار فایل عکس را پر کنید",
+					is_success = false,
+					response_code = 400
+				});
+			var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.picture_file.FileName);
+			var imagePath = Path.Combine(uploadPath, fileName);
+
+			// Save Image
+			using (var stream = new FileStream(imagePath, FileMode.Create))
+			{
+				await file.picture_file.CopyToAsync(stream);
+			}
+			files.Add(new PropertyGallery()
+			{
+				alt = file.alt,
+				created_at = DateTime.UtcNow,
+				updated_at = DateTime.UtcNow,
+				picture = imagePath,
+				property_id = property.id,
+				slug = SlugHelper.GenerateSlug(file.alt + Guid.NewGuid().ToString()),
+			});
+		}
+		await _unitOfWork.PropertyGalleryRepository.AddRangeAsync(files);
+		await _unitOfWork.CommitAsync();
+
 		user.property_count--;
+		_unitOfWork.UserRepository.Update(user);
+		await _unitOfWork.CommitAsync();
+
 		return Ok(new ResponseDto<PropertyDto>()
 		{
 			data = null,
@@ -293,222 +317,235 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 					name= p.property_facility.name,
 				}
 			}).ToList(),
+			gallery = entity.gallery == null ? new List<PropertyGalleryDto>() :
+			entity.gallery.Select(pg => new PropertyGalleryDto()
+			{
+				id = pg.id,
+				created_at = pg.created_at,
+				updated_at = pg.updated_at,
+				slug = pg.slug,
+				picture = pg.picture,
+				alt = pg.alt,
+				property_id = pg.property_id,
+			}).ToList(),
+			video = entity.video,
+			video_caption = entity.video_caption,
 		});
 	}
 
-	[HttpPost]
-	[Route("edit")]
-	public async Task<IActionResult> EditProperty([FromForm] PropertyDto src)
-	{
-		var user = await GetCurrentUser();
-		if (user == null)
-			return NotFound(new ResponseDto<UserDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "کاربر یافت نشد. لطفا ابتدا ثبت نام کنید",
-				response_code = 404
-			});
-		if (user.plan_id == null)
-			return BadRequest(new ResponseDto<UserDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "لطفا ابتدا پلن کاربری خریداری کنید",
-				response_code = 404
-			});
-		if (user.property_count == 0)
-			return BadRequest(new ResponseDto<UserDto>()
-			{
-				data = null,
-				message = "تعداد املاک پلن شما به پایان رسیده است. لطفا پلن خود را شارژ کنید",
-				is_success = false,
-				response_code = 400
-			});
-		if (user.expire_date < DateTime.UtcNow)
-			return BadRequest(new ResponseDto<UserDto>()
-			{
-				data = null,
-				message = "پلن شما منقضی شده است. لطفا پلن خود را شارژ کنید",
-				is_success = false,
-				response_code = 400
-			});
-		var plan = await _unitOfWork.PlanRepository.Get((long)user.plan_id);
-		if (plan == null)
-			return NotFound(new ResponseDto<PlanDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "پلن مورد نظر یافت نشد",
-				response_code = 404
-			});
-		if (!ModelState.IsValid)
-		{
-			var error = string.Join(" | ", ModelState.Values
-				   .SelectMany(v => v.Errors)
-				   .Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				is_success = false,
-				message = error,
-				response_code = 400
-			});
-		}
+	//[HttpPost]
+	//[Route("edit")]
+	//public async Task<IActionResult> EditProperty([FromForm] PropertyDto src)
+	//{
+	//	var user = await GetCurrentUser();
+	//	if (user == null)
+	//		return NotFound(new ResponseDto<UserDto>()
+	//		{
+	//			data = null,
+	//			is_success = false,
+	//			message = "کاربر یافت نشد. لطفا ابتدا ثبت نام کنید",
+	//			response_code = 404
+	//		});
+	//	if (user.plan_id == null)
+	//		return BadRequest(new ResponseDto<UserDto>()
+	//		{
+	//			data = null,
+	//			is_success = false,
+	//			message = "لطفا ابتدا پلن کاربری خریداری کنید",
+	//			response_code = 404
+	//		});
+	//	if (user.property_count == 0)
+	//		return BadRequest(new ResponseDto<UserDto>()
+	//		{
+	//			data = null,
+	//			message = "تعداد املاک پلن شما به پایان رسیده است. لطفا پلن خود را شارژ کنید",
+	//			is_success = false,
+	//			response_code = 400
+	//		});
+	//	if (user.expire_date < DateTime.UtcNow)
+	//		return BadRequest(new ResponseDto<UserDto>()
+	//		{
+	//			data = null,
+	//			message = "پلن شما منقضی شده است. لطفا پلن خود را شارژ کنید",
+	//			is_success = false,
+	//			response_code = 400
+	//		});
+	//	var plan = await _unitOfWork.PlanRepository.Get((long)user.plan_id);
+	//	if (plan == null)
+	//		return NotFound(new ResponseDto<PlanDto>()
+	//		{
+	//			data = null,
+	//			is_success = false,
+	//			message = "پلن مورد نظر یافت نشد",
+	//			response_code = 404
+	//		});
+	//	if (!ModelState.IsValid)
+	//	{
+	//		var error = string.Join(" | ", ModelState.Values
+	//			   .SelectMany(v => v.Errors)
+	//			   .Select(e => e.ErrorMessage));
+	//		return BadRequest(new ResponseDto<PropertyDto>()
+	//		{
+	//			data = null,
+	//			is_success = false,
+	//			message = error,
+	//			response_code = 400
+	//		});
+	//	}
 
-		var entity = await _unitOfWork.PropertyRepository.Get(src.id);
-		if (entity == null)
-			return NotFound(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "ملک با این ایدی پیدا نشد",
-				response_code = 404
-			});
-		if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.name))
-		{
-			var error = "ملک با این نام وجود دارد";
-			return BadRequest(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				is_success = false,
-				message = error,
-				response_code = 400
-			});
-		}
-		var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
-		if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.slug == slug))
-		{
-			var error = "ملک با این نامک وجود دارد";
-			return BadRequest(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				is_success = false,
-				message = error,
-				response_code = 400
-			});
-		}
-		var city = await _unitOfWork.CityRepository.Get(src.city_id);
-		if (city == null)
-			return NotFound(new ResponseDto<CityDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "شهر با این ایدی پیدا نشد",
-				response_code = 404
-			});
-		if(src.gallery_files.Any())
-		{
-			var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
-			if (!Directory.Exists(uploadPath))
-			{
-				Directory.CreateDirectory(uploadPath);
-			}
-			foreach(var file in entity.gallery)
-			{
-				if (System.IO.File.Exists(file))
-				{
-					System.IO.File.Delete(file);
-				}
-			}
-			List<string> files = new();
-			foreach (var file in src.gallery_files)
-			{
-				var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-				var imagePath = Path.Combine(uploadPath, fileName);
+	//	var entity = await _unitOfWork.PropertyRepository.Get(src.id);
+	//	if (entity == null)
+	//		return NotFound(new ResponseDto<PropertyDto>()
+	//		{
+	//			data = null,
+	//			is_success = false,
+	//			message = "ملک با این ایدی پیدا نشد",
+	//			response_code = 404
+	//		});
+	//	if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.name))
+	//	{
+	//		var error = "ملک با این نام وجود دارد";
+	//		return BadRequest(new ResponseDto<PropertyDto>()
+	//		{
+	//			data = null,
+	//			is_success = false,
+	//			message = error,
+	//			response_code = 400
+	//		});
+	//	}
+	//	var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
+	//	if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.slug == slug))
+	//	{
+	//		var error = "ملک با این نامک وجود دارد";
+	//		return BadRequest(new ResponseDto<PropertyDto>()
+	//		{
+	//			data = null,
+	//			is_success = false,
+	//			message = error,
+	//			response_code = 400
+	//		});
+	//	}
+	//	var city = await _unitOfWork.CityRepository.Get(src.city_id);
+	//	if (city == null)
+	//		return NotFound(new ResponseDto<CityDto>()
+	//		{
+	//			data = null,
+	//			is_success = false,
+	//			message = "شهر با این ایدی پیدا نشد",
+	//			response_code = 404
+	//		});
+	//	if(src.gallery_files.Any())
+	//	{
+	//		var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
+	//		if (!Directory.Exists(uploadPath))
+	//		{
+	//			Directory.CreateDirectory(uploadPath);
+	//		}
+	//		foreach(var file in entity.gallery)
+	//		{
+	//			if (System.IO.File.Exists(file))
+	//			{
+	//				System.IO.File.Delete(file);
+	//			}
+	//		}
+	//		List<string> files = new();
+	//		foreach (var file in src.gallery_files)
+	//		{
+	//			var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+	//			var imagePath = Path.Combine(uploadPath, fileName);
 
-				// Save Image
-				using (var stream = new FileStream(imagePath, FileMode.Create))
-				{
-					await file.CopyToAsync(stream);
-				}
-				files.Add(imagePath);
-			}
-			entity.gallery = files;
-		}
-		var code = "";
-		do
-		{
-			code = RandomGenerator.GenerateString(10, AllowedCharacters.Alphanumeric);
-		}
-		while (await _unitOfWork.PropertyRepository.ExistsAsync(x => x.code == code));
+	//			// Save Image
+	//			using (var stream = new FileStream(imagePath, FileMode.Create))
+	//			{
+	//				await file.CopyToAsync(stream);
+	//			}
+	//			files.Add(imagePath);
+	//		}
+	//		entity.gallery = files;
+	//	}
+	//	var code = "";
+	//	do
+	//	{
+	//		code = RandomGenerator.GenerateString(10, AllowedCharacters.Alphanumeric);
+	//	}
+	//	while (await _unitOfWork.PropertyRepository.ExistsAsync(x => x.code == code));
 
-		entity.updated_at = DateTime.UtcNow;
-		entity.slug = slug;
-		entity.rent_price = src.rent_price;
-		entity.meterage = src.meterage;
-		entity.code = code;
-		entity.property_floor = src.property_floor;
-		entity.description = src.description;
-		entity.property_age = src.property_age;
-		entity.address = src.address;
-		entity.bed_room_count = src.bed_room_count;
-		entity.category_id = src.category_id;
-		entity.city_id = src.city_id;
-		entity.city_province_full_name = city.name + $"({city.province.name})";
-		entity.is_for_sale = src.is_for_sale;
-		entity.mortgage_price = src.mortgage_price;
-		entity.name = src.name;
-		entity.state_enum = src.state_enum;
-		entity.type_enum = src.type_enum;
-		entity.situation_id = src.situation_id;
-		entity.sell_price = src.sell_price;
-		entity.is_active = false;
+	//	entity.updated_at = DateTime.UtcNow;
+	//	entity.slug = slug;
+	//	entity.rent_price = src.rent_price;
+	//	entity.meterage = src.meterage;
+	//	entity.code = code;
+	//	entity.property_floor = src.property_floor;
+	//	entity.description = src.description;
+	//	entity.property_age = src.property_age;
+	//	entity.address = src.address;
+	//	entity.bed_room_count = src.bed_room_count;
+	//	entity.category_id = src.category_id;
+	//	entity.city_id = src.city_id;
+	//	entity.city_province_full_name = city.name + $"({city.province.name})";
+	//	entity.is_for_sale = src.is_for_sale;
+	//	entity.mortgage_price = src.mortgage_price;
+	//	entity.name = src.name;
+	//	entity.state_enum = src.state_enum;
+	//	entity.type_enum = src.type_enum;
+	//	entity.situation_id = src.situation_id;
+	//	entity.sell_price = src.sell_price;
+	//	entity.is_active = false;
 
-		await _unitOfWork.CommitAsync();
-		return Ok(new ResponseDto<PropertyDto>()
-		{
-			data = null,
-			is_success = true,
-			message = "ملک با موفقیت ایجاد شد",
-			response_code = 201
-		});
-	}
+	//	await _unitOfWork.CommitAsync();
+	//	return Ok(new ResponseDto<PropertyDto>()
+	//	{
+	//		data = null,
+	//		is_success = true,
+	//		message = "ملک با موفقیت ایجاد شد",
+	//		response_code = 201
+	//	});
+	//}
 
 
-	[HttpPost]
-	[Route("delete")]
-	public async Task<IActionResult> Delete([FromBody] long id)
-	{
-		var entity = await _unitOfWork.PropertyRepository.Get(id);
-		if (entity == null)
-			return NotFound(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				message = "ملک با این ایدی پیدا نشد",
-				is_success=false,
-				response_code = 404
-			});
-		var user = await GetCurrentUser();
-		if (user == null)
-			return NotFound(new ResponseDto<UserDto>()
-			{
-				data = null,
-				message = "کاربر پیدا نشد",
-				is_success = false,
-				response_code = 404
-			});
-		foreach (var file in entity.gallery)
-		{
-			if (System.IO.File.Exists(file))
-			{
-				System.IO.File.Delete(file);
-			}
-		}
+	//[HttpPost]
+	//[Route("delete")]
+	//public async Task<IActionResult> Delete([FromBody] long id)
+	//{
+	//	var entity = await _unitOfWork.PropertyRepository.Get(id);
+	//	if (entity == null)
+	//		return NotFound(new ResponseDto<PropertyDto>()
+	//		{
+	//			data = null,
+	//			message = "ملک با این ایدی پیدا نشد",
+	//			is_success=false,
+	//			response_code = 404
+	//		});
+	//	var user = await GetCurrentUser();
+	//	if (user == null)
+	//		return NotFound(new ResponseDto<UserDto>()
+	//		{
+	//			data = null,
+	//			message = "کاربر پیدا نشد",
+	//			is_success = false,
+	//			response_code = 404
+	//		});
+	//	foreach (var file in entity.gallery)
+	//	{
+	//		if (System.IO.File.Exists(file))
+	//		{
+	//			System.IO.File.Delete(file);
+	//		}
+	//	}
 		
-		_unitOfWork.PropertyRepository.Remove(entity);
-		await _unitOfWork.CommitAsync();
+	//	_unitOfWork.PropertyRepository.Remove(entity);
+	//	await _unitOfWork.CommitAsync();
 
-		user.property_count++;
-		_unitOfWork.UserRepository.Update(user);
-		await _unitOfWork.CommitAsync();
+	//	user.property_count++;
+	//	_unitOfWork.UserRepository.Update(user);
+	//	await _unitOfWork.CommitAsync();
 
-		return Ok(new ResponseDto<PropertyDto>()
-		{
-			data = null,
-			message = "ملک با موفقیت حذف شد",
-			is_success = true,
-			response_code = 204
-		});
-	}
+	//	return Ok(new ResponseDto<PropertyDto>()
+	//	{
+	//		data = null,
+	//		message = "ملک با موفقیت حذف شد",
+	//		is_success = true,
+	//		response_code = 204
+	//	});
+	//}
 }

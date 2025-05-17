@@ -47,7 +47,7 @@ public class OrderController(IUnitOfWork unitOfWork) : ControllerBase
 			{
 				data = null,
 				is_success = false,
-				message = "شهر با این slug پیدا نشد",
+				message = "سفارش با این slug پیدا نشد",
 				response_code = 404
 			});
 		return Ok(new ResponseDto<OrderDto>()

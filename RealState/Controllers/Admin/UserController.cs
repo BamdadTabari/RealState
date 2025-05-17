@@ -208,7 +208,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpGet]
 	[Route("read/{slug}")]
-	public async Task<IActionResult> Detail(string slug)
+	public async Task<IActionResult> Detail([FromRoute]string slug)
 	{
 		var entity = await _unitOfWork.UserRepository.Get(slug);
 		if (entity == null)
@@ -253,7 +253,7 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpPost]
 	[Route("activate")]
-	public async Task<IActionResult> CheckActive(int id)
+	public async Task<IActionResult> CheckActive([FromForm]int id)
 	{
 		var user = await _unitOfWork.UserRepository.GetUser(id);
 		if (user == null)

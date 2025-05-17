@@ -75,7 +75,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 
 	[HttpPost]
 	[Route("payment")]
-	public async Task<IActionResult> SendReq([FromBody] long plan_id)
+	public async Task<IActionResult> SendReq([FromForm] long plan_id)
 	{
 		try
 		{

@@ -145,4 +145,43 @@ public class PropertyController(IUnitOfWork unitOfWork) : ControllerBase
 			response_code = 204
 		});
 	}
+
+	[HttpPost]
+	[Route("delete")]
+	public async Task<IActionResult> Delete([FromForm] long id)
+	{
+		var entity = await _unitOfWork.PropertyRepository.Get(id);
+		if (entity == null)
+			return NotFound(new ResponseDto<PropertyDto>()
+			{
+				data = null,
+				message = "ملک با این ایدی پیدا نشد",
+				is_success = false,
+				response_code = 404
+			});
+		var user = await _unitOfWork.UserRepository.GetUser(entity.user.id);
+		foreach (var file in entity.gallery)
+		{
+			if (System.IO.File.Exists(file.picture))
+			{
+				System.IO.File.Delete(file.picture);
+			}
+		}
+		_unitOfWork.PropertyGalleryRepository.RemoveRange(entity.gallery);
+		await _unitOfWork.CommitAsync();
+		_unitOfWork.PropertyRepository.Remove(entity);
+		await _unitOfWork.CommitAsync();
+
+		user.property_count++;
+		_unitOfWork.UserRepository.Update(user);
+		await _unitOfWork.CommitAsync();
+
+		return Ok(new ResponseDto<PropertyDto>()
+		{
+			data = null,
+			message = "ملک با موفقیت حذف شد",
+			is_success = true,
+			response_code = 204
+		});
+	}
 }

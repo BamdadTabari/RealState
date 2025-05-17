@@ -7,7 +7,7 @@ using RaelState.Models;
 using RealState.Models;
 
 namespace RealState.Controllers.Admin;
-[Route("api/[controller]")]
+[Route("api/property-facility")]
 [ApiController]
 [Authorize(Roles = "Admin,MainAdmin")]
 public class PropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase

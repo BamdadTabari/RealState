@@ -84,7 +84,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 	[AllowAnonymous]
 	[HttpPost]
 	[Route("verify-phone")]
-	public async Task<IActionResult> VerifyPhone(VerifyPhoneDto src)
+	public async Task<IActionResult> VerifyPhone([FromForm]VerifyPhoneDto src)
 	{
 		if (!ModelState.IsValid)
 		{
@@ -340,7 +340,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 	[AllowAnonymous]
 	[HttpPost]
 	[Route("verify-phone-register")]
-	public async Task<IActionResult> VerifyPhoneRegister(VerifyPhoneDto src)
+	public async Task<IActionResult> VerifyPhoneRegister([FromForm] VerifyPhoneDto src)
 	{
 		if (!ModelState.IsValid)
 		{

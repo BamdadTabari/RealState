@@ -45,7 +45,7 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		if (data.Count() == 0)
 			return Ok(new ResponseDto<List<PropertySituationDto>>()
 			{
-				data = null,
+				data = new List<PropertySituationDto>(),
 				is_success = true,
 				message = "مقدار وضعیت ملک در دیتابیس وجود ندارد.",
 				response_code = 200

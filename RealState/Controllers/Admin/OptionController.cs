@@ -69,7 +69,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
     [HttpGet]
     [Route("read/{slug}")]
-    public async Task<IActionResult> Detail([FromForm] string slug)
+    public async Task<IActionResult> Detail([FromRoute] string slug)
     {
         var entity = await _unitOfWork.OptionRepository.Get(slug);
         if (entity == null)

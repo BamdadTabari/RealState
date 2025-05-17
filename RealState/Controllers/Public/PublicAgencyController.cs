@@ -13,6 +13,7 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 
 	[HttpPost]
 	[Route("x")]
+	[ApiExplorerSettings(IgnoreApi = true)]
 	public async Task<long> GetCurrentUserId()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
@@ -22,6 +23,7 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 
 	[HttpPost]
 	[Route("y")]
+	[ApiExplorerSettings(IgnoreApi = true)]
 	public async Task<User> GetCurrentUser()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";

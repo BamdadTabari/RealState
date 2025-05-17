@@ -43,6 +43,7 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		try
 		{
 			return await _queryable
+				.Include(x=>x.user)
 				.Include(x => x.gallery)
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)

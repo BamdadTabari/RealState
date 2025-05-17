@@ -51,7 +51,7 @@ public class User : BaseEntity
 	public ICollection<Property> properties { get; set; }
 
 
-	public DateTime expre_date { get; set; }
+	public DateTime expire_date { get; set; }
 	public int property_count { get; set; }
 	#endregion
 }

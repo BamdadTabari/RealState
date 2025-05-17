@@ -92,7 +92,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				is_success = false,
 				response_code = 400
 			});
-		if (user.expre_date < DateTime.UtcNow)
+		if (user.expire_date < DateTime.UtcNow)
 			return BadRequest(new ResponseDto<UserDto>()
 			{
 				data = null,
@@ -325,7 +325,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				is_success = false,
 				response_code = 400
 			});
-		if (user.expre_date < DateTime.UtcNow)
+		if (user.expire_date < DateTime.UtcNow)
 			return BadRequest(new ResponseDto<UserDto>()
 			{
 				data = null,

@@ -52,7 +52,7 @@ public class UserDto : BaseDto
 	public long? plan_id { get; set; }
 	public Plan plan { get; set; }
 
-	public DateTime expre_date { get; set; }
+	public DateTime expire_date { get; set; }
 	public int property_count { get; set; }
 	#endregion
 }

@@ -163,6 +163,8 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		user.refresh_token = refreshToken;
 		user.refresh_token_expiry_time = DateTime.UtcNow.Add(Config.RefreshTokenLifetime);
 		user.is_mobile_confirmed = true;
+		user.expire_date = DateTime.UtcNow.AddMonths(1);
+		user.property_count = 5;
 		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
 

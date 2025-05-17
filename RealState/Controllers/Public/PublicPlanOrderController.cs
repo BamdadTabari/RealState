@@ -243,7 +243,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 						response_code = 404
 					});
 				var user = await GetCurrentUser();
-				user.expre_date = DateTime.Now.AddMonths(plan.plan_months);
+				user.expire_date = DateTime.Now.AddMonths(plan.plan_months);
 				user.property_count = plan.property_count;
 				_unitOfWork.UserRepository.Update(user);
 				await _unitOfWork.CommitAsync();

@@ -21,6 +21,8 @@ public interface IUnitOfWork : IDisposable
 	IPropertySituationRepository PropertySituationRepository { get; }
 	IProvinceRepository ProvinceRepository { get; }
 	IPropertyGalleryRepository PropertyGalleryRepository { get; }
+	ITicketRepository TicketRepository { get; }
+	ITicketReplyRepository TicketReplyRepository { get; }
 	Task<bool> CommitAsync();
 }
 
@@ -50,6 +52,8 @@ public class UnitOfWork : IUnitOfWork
 		PropertySituationRepository = new PropertySituationRepository(_context);
 		ProvinceRepository = new ProvinceRepository(_context);
 		PropertyGalleryRepository = new PropertyGalleryRepository(_context);
+		TicketRepository = new TicketRepository(_context);
+		TicketReplyRepository = new TicketReplyRepository(_context);
 	}
 
 	public IBlogCategoryRepository BlogCategoryRepository { get; }
@@ -72,6 +76,8 @@ public class UnitOfWork : IUnitOfWork
 	public IPropertySituationRepository PropertySituationRepository { get; set; }
 	public IProvinceRepository ProvinceRepository { get; set; }
 	public IPropertyGalleryRepository PropertyGalleryRepository { get; set; }
+	public ITicketRepository TicketRepository { get; set; }
+	public ITicketReplyRepository TicketReplyRepository { get; set; }
 	public async Task<bool> CommitAsync() => await _context.SaveChangesAsync() > 0;
 
 	// dispose and add to garbage collector

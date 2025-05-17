@@ -29,7 +29,7 @@ public static class RandomGenerator
 		return new Random().Next(min, max);
 	}
 
-	public static string GenerateDiscountCode(int length = 8)
+	public static string GenerateCode(int length = 8)
 	{
 		const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 		var random = new Random();

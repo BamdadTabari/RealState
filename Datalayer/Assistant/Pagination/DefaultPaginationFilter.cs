@@ -10,6 +10,7 @@ public class DefaultPaginationFilter : PaginationFilter
 	public bool? BoolFilter { get; set; }
 	public AdStatusEnum? AdStatusType { get; set; }
 	public TypeEnum? Type { get; set; }
+	public TicketStatus? TicketStatus { get; set; }
 	public double? Min { get; set; }
 	public double? Max { get; set; }
 	public SortByEnum SortBy { get; set; } = SortByEnum.CreationDate;

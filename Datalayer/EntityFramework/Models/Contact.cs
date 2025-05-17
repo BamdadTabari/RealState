@@ -7,7 +7,6 @@ public class Contact : BaseEntity
 	public string message { get; set; }
 	public long user_id { get; set; }
 	public User user { get; set; }
-	public bool is_admin { get; set; }
 }
 public class ContactConfiguration : IEntityTypeConfiguration<Contact>
 {

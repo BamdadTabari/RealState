@@ -8,6 +8,8 @@ public class Contact : BaseEntity
 	public string email { get; set; }
 	public string phone { get; set; }
 	public string message { get; set; }
+	public long user_id { get; set; }
+	public User user { get; set; }
 }
 public class ContactConfiguration : IEntityTypeConfiguration<Contact>
 {

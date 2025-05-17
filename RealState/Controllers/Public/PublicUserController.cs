@@ -433,6 +433,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		});
 	}
 
+	[AllowAnonymous]
 	[HttpPost]
 	[Route("user-refresh-token")]
 	public async Task<IActionResult> Refresh()

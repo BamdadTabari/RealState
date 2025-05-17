@@ -185,7 +185,6 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
     [HttpPost]
     [Route("refresh-token")]
-	[Authorize(Roles = "Admin,MainAdmin")]
 	public async Task<IActionResult> Refresh()
     {
 

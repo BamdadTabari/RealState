@@ -551,22 +551,54 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 404
 			});
 
-		// پاک کردن رفرش توکن و زمان انقضای آن
-		user.refresh_token = null;
-		user.refresh_token_expiry_time = DateTime.MinValue;
-
-		// به‌روزرسانی در دیتابیس
-		_unitOfWork.UserRepository.Update(user);
-		await _unitOfWork.CommitAsync();
-		// حذف کوکی از مرورگر
-		Response.Cookies.Delete("jwt");
-		return Ok(new ResponseDto<UserDto>()
+		// بررسی اینکه هدر Authorization وجود داره یا نه
+		if (Request.Headers.TryGetValue("Authorization", out var authorizationHeader))
 		{
-			data = null,
-			is_success = true,
-			message = "با موفقیت از سیستم خارج شدید.",
-			response_code = 200
-		});
+			// مقدار هدر معمولاً به شکل "Bearer {access_token}" هست
+			var token = authorizationHeader.ToString().Replace("Bearer ", "", StringComparison.OrdinalIgnoreCase).Trim();
+
+			if (string.IsNullOrWhiteSpace(token))
+				return BadRequest(new ResponseDto<UserDto>()
+				{
+					data = null,
+					is_success = false,
+					message = "داشتن توکن الزامی است",
+					response_code = 400
+				});
+
+			await _unitOfWork.TokenBlacklistRepository.AddAsync(new BlacklistedToken
+			{
+				token = token,
+				expiry_date = DateTime.UtcNow.AddDays(Config.AccessTokenLifetime.TotalDays),
+				slug = SlugHelper.GenerateSlug(token)
+			});
+
+			// حذف کوکی از مرورگر
+			Response.Cookies.Delete("jwt");
+			user.refresh_token = null;
+			user.refresh_token_expiry_time = DateTime.MinValue;
+
+			_unitOfWork.UserRepository.Update(user);
+			await _unitOfWork.CommitAsync();
+
+			return Ok(new ResponseDto<UserDto>()
+			{
+				data = null,
+				is_success = true,
+				response_code = 204,
+				message = "با موفقیت خارج شدید."
+			});
+		}
+		else
+		{
+			return Unauthorized(new ResponseDto<UserDto>()
+			{
+				data = null,
+				is_success = true,
+				response_code = 401,
+				message = "توکن در هدر وجود ندارد."
+			});
+		}
 	}
 
 }

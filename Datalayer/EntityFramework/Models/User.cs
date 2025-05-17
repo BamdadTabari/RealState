@@ -53,6 +53,8 @@ public class User : BaseEntity
 
 	public DateTime expire_date { get; set; }
 	public int property_count { get; set; }
+
+	public ICollection<Contact> contacts { get; set; }
 	#endregion
 }
 

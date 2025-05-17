@@ -1,20 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DataLayer;
 using RaelState.Assistant;
+using System.ComponentModel.DataAnnotations;
 
 namespace RealState.Models;
 
 public class ContactDto : BaseDto
 {
-    [Display(Name = "نام کامل")]
-    [Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
-    public string full_name { get; set; }
-    [Display(Name = "ایمیل")]
-    [Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
-    public string email { get; set; }
-    [Display(Name = "شماره تماس")]
-    [Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
-    public string phone { get; set; }
     [Display(Name = "متن پیام")]
     [Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
     public string message { get; set; }
+	[Display(Name = "کاربر")]
+	public long user_id { get; set; }
+	public User user { get; set; }
+	[Display(Name = "آیا ادمین است؟")]
+	public bool is_admin { get; set; }
 }

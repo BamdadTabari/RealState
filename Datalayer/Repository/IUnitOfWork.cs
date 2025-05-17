@@ -4,7 +4,6 @@ public interface IUnitOfWork : IDisposable
 	IBlogCategoryRepository BlogCategoryRepository { get; }
 	IBlogRepository BlogRepository { get; }
 	IOrderRepository OrderRepository { get; }
-	IContactRepository ContactRepository { get; }
 	IOtpRepository OtpRepository { get; }
 	ITokenBlacklistRepository TokenBlacklistRepository { get; }
 	IUserRepo UserRepository { get; }
@@ -35,7 +34,6 @@ public class UnitOfWork : IUnitOfWork
 		BlogCategoryRepository = new BlogCategoryRepository(_context);
 		BlogRepository = new BlogRepository(_context);
 		OrderRepository = new OrderRepository(_context);
-		ContactRepository = new ContactRepository(_context);
 		OtpRepository = new OtpRepository(_context);
 		TokenBlacklistRepository = new TokenBlacklistRepo(_context);
 		UserRepository = new UserRepo(_context);
@@ -59,7 +57,6 @@ public class UnitOfWork : IUnitOfWork
 	public IBlogCategoryRepository BlogCategoryRepository { get; }
 	public IBlogRepository BlogRepository { get; }
 	public IOrderRepository OrderRepository { get; }
-	public IContactRepository ContactRepository { get; }
 	public IOtpRepository OtpRepository { get; }
 	public ITokenBlacklistRepository TokenBlacklistRepository { get; }
 	public IUserRepo UserRepository { get; }

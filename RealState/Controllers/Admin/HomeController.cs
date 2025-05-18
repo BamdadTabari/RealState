@@ -12,7 +12,7 @@ public class HomeController(IUnitOfWork unitOfWork) : ControllerBase
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
 	[HttpGet]
-	[Route("index")]
+	[Route("dashboard")]
 	public IActionResult Index()
 	{
 		var userCount = _unitOfWork.UserRepository.Count();

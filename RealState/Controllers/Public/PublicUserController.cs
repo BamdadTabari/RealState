@@ -1,13 +1,10 @@
 ﻿using DataLayer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Assistant;
-using RaelState.Models;
 using RealState.Models;
 using System.Security.Claims;
 using TicketApi.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RealState.Controllers.Public;
 [Route("api/public/user")]

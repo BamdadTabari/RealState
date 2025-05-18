@@ -81,12 +81,12 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				message = "کاربر یافت نشد. لطفا ابتدا ثبت نام کنید",
 				response_code = 404
 			});
-		if (user.plan_id ==  null)
+		if (user.is_licensed ==  false)
 			return BadRequest(new ResponseDto<UserDto>()
 			{
 				data = null,
 				is_success = false,
-				message = "لطفا ابتدا پلن کاربری خریداری کنید",
+				message = "ابتدا احراز هویت خود را تکمیل کنید",
 				response_code = 404
 			});
 		if (user.property_count == 0)
@@ -104,15 +104,6 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				message = "پلن شما منقضی شده است. لطفا پلن خود را شارژ کنید",
 				is_success = false,
 				response_code = 400
-			});
-		var plan = await _unitOfWork.PlanRepository.Get((long)user.plan_id);
-		if (plan == null)
-			return NotFound(new ResponseDto<PlanDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "پلن مورد نظر یافت نشد",
-				response_code = 404 
 			});
 		if (!ModelState.IsValid)
 		{
@@ -369,12 +360,12 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				message = "کاربر یافت نشد. لطفا ابتدا ثبت نام کنید",
 				response_code = 404
 			});
-		if (user.plan_id == null)
+		if (user.is_licensed == false)
 			return BadRequest(new ResponseDto<UserDto>()
 			{
 				data = null,
 				is_success = false,
-				message = "لطفا ابتدا پلن کاربری خریداری کنید",
+				message = "ابتدا احراز هویت خود را تکمیل کنید",
 				response_code = 404
 			});
 		if (user.property_count == 0)
@@ -392,15 +383,6 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				message = "پلن شما منقضی شده است. لطفا پلن خود را شارژ کنید",
 				is_success = false,
 				response_code = 400
-			});
-		var plan = await _unitOfWork.PlanRepository.Get((long)user.plan_id);
-		if (plan == null)
-			return NotFound(new ResponseDto<PlanDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "پلن مورد نظر یافت نشد",
-				response_code = 404
 			});
 		if (!ModelState.IsValid)
 		{

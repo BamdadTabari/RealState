@@ -614,9 +614,9 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 	[Authorize]
 	[HttpPost]
 	[Route("upload-license")]
-	public async Task<IActionResult> UploadLicense([FromForm]IFormFile file)
+	public async Task<IActionResult> UploadLicense([FromForm]LicenseDto src)
 	{
-		if (file == null)
+		if (src.file == null)
 			return BadRequest(new ResponseDto<string>()
 			{
 				data = null,
@@ -645,13 +645,13 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		}
 
 		// Build file name
-		var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+		var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(src.file.FileName);
 		var imagePath = Path.Combine(uploadPath, newFileName);
 
 		// Save Image
 		using (var stream = new FileStream(imagePath, FileMode.Create))
 		{
-			await file.CopyToAsync(stream);
+			await src.file.CopyToAsync(stream);
 		}
 
 		user.license = imagePath;

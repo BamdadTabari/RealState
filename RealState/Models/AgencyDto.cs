@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using RaelState.Assistant;
 using System.ComponentModel.DataAnnotations;
 
@@ -19,11 +20,11 @@ public class AgencyDto : BaseDto
 	public string? agency_name { get; set; }
 
 	[Display(Name = "نام کامل شهر و استان")]
-	public string city_province_full_name { get; set; }
+	public string? city_province_full_name { get; set; }
 	[Display(Name = "شهر")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public long city_id { get; set; }
 	public CityDto? city { get; set; }
-
+	[ValidateNever]
 	public UserDto? user { get; set; }
 }

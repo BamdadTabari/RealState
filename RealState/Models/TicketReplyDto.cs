@@ -19,12 +19,12 @@ public class TicketReplyDto : BaseDto
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public long ticket_id { get; set; }
 
-	public TicketDto? Ticket { get; set; }
+	//public TicketDto? Ticket { get; set; }
 	public bool is_admin { get; set; }
 
 	[Display(Name = "کاربر")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public long user_id { get; set; }
 
-	public UserDto? user { get; set; }
+	//public UserDto? user { get; set; }
 }

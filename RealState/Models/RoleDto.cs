@@ -12,7 +12,7 @@ public class RoleDto : BaseDto
 
     #region Navigations
 
-    public ICollection<UserRoleDto>? user_roles { get; set; }
+    //public ICollection<UserRoleDto>? user_roles { get; set; }
 
     #endregion
 }

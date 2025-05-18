@@ -1,4 +1,5 @@
-﻿using RaelState.Assistant;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using RaelState.Assistant;
 using System.ComponentModel.DataAnnotations;
 
 namespace RealState.Models;
@@ -14,5 +15,6 @@ public class PropertyGalleryDto : BaseDto
 	public string alt { get; set; }
 	[Display(Name = "ملک")]
 	public long? property_id { get; set; }
-	public PropertyDto? property { get; set; }
+	//[ValidateNever]
+	//public PropertyDto? property { get; set; }
 }

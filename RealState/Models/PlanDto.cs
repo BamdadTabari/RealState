@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using RaelState.Assistant;
 using System.ComponentModel.DataAnnotations;
 
@@ -22,5 +23,6 @@ public class PlanDto : BaseDto
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public int plan_months { get; set; }
 
-	public Order? order { get; set; }
+	//[ValidateNever]
+	//public Order? order { get; set; }
 }

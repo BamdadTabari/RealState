@@ -1,4 +1,5 @@
-﻿using RaelState.Assistant;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using RaelState.Assistant;
 using RaelState.Models;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,7 +14,8 @@ public class CityDto : BaseDto
     [Display(Name = "استان")]
     [Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
     public long province_id { get; set; }
-    public ProvinceDto? province { get; set; }
-
+	[ValidateNever]
+	public ProvinceDto? province { get; set; }
+	[ValidateNever]
 	public ICollection<AgencyDto>? agency_list { get; set; }
 }

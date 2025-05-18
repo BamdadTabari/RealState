@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using RaelState.Assistant;
+using System.ComponentModel.DataAnnotations;
 
 namespace RaelState.Models;
 
@@ -34,5 +35,6 @@ public class BlogDto : BaseDto
     public long blog_category_id { get; set; }
 
     [Display(Name = "دسته بندی مقاله")]
-    public BlogCategoryDto? blog_category { get; set; }
+	[ValidateNever]
+	public BlogCategoryDto? blog_category { get; set; }
 }

@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using RaelState.Assistant;
 using System.ComponentModel.DataAnnotations;
 
@@ -46,13 +47,16 @@ public class UserDto : BaseDto
 	#endregion
 
 	#region Navigations
+	[ValidateNever]
 	public ICollection<UserRoleDto>? user_roles { get; set; }
-	public AgencyDto? agency { get; set; }
+	//[ValidateNever]
+	//public AgencyDto? agency { get; set; } = new ();
 
-	public ICollection<PropertyDto>? properties { get; set; }
+	//public ICollection<PropertyDto>? properties { get; set; }
 
 	public long? plan_id { get; set; }
-	public Plan plan { get; set; }
+	//[ValidateNever]
+	//public PlanDto? plan { get; set; } = new();
 
 	public DateTime expire_date { get; set; }
 	public int property_count { get; set; }

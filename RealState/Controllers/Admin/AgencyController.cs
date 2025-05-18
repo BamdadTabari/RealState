@@ -46,7 +46,7 @@ public class AgencyController(IUnitOfWork unitOfWork) : ControllerBase
 		if (data.Count() == 0)
 			return Ok(new ResponseDto<List<AgencyDto>>()
 			{
-				data = null,
+				data = new List<AgencyDto>(),
 				is_success = true,
 				message = "مقدار آژانس املاک در دیتابیس وجود ندارد.",
 				response_code = 200

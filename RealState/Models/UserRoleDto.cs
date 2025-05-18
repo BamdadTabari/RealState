@@ -13,6 +13,6 @@ public class UserRoleDto : BaseDto
     [Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
     public long user_id { get; set; }
 
-    public UserDto? user { get; set; }
-    public RoleDto? role { get; set; }
+    //public UserDto? user { get; set; }
+    //public RoleDto? role { get; set; }
 }

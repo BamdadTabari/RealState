@@ -17,4 +17,7 @@ public class UserForRegistrationCommand
 	public string phone_number { get; set; }
 
 	public AgencyDto Agency { get; set; }
+
+	[Display(Name = "آیا آژانس املاک است؟")]
+	public bool is_agency { get; set; }
 }

@@ -40,7 +40,8 @@ public class UserDto : BaseDto
 	public bool is_active { get; set; }
 	public string? refresh_token { get; set; }
 	public DateTime refresh_token_expiry_time { get; set; }
-
+	public bool is_agency { get; set; }
+	public string? license { get; set; }
 	#endregion
 
 	#region Navigations

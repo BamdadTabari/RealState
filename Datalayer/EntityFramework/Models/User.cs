@@ -36,6 +36,9 @@ public class User : BaseEntity
 	public string? refresh_token { get; set; }
 	public DateTime refresh_token_expiry_time { get; set; }
 
+	public bool is_agency { get; set; }
+	public bool is_licensed { get; set; }
+	public string? license { get; set; }
 	public bool is_delete_able { get; set; } = true;
 	#endregion
 

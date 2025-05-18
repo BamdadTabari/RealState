@@ -19,6 +19,16 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 	private readonly JwtTokenService _tokenService = tokenService;
 
 	[HttpPost]
+	[Route("current-user")]
+	[ApiExplorerSettings(IgnoreApi = true)]
+	public async Task<User?> GetCurrentUser()
+	{
+		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
+		var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
+		return user;
+	}
+
+	[HttpPost]
 	[Route("user-login")]
 	public async Task<IActionResult> Login([FromForm] LoginDto dto)
 	{
@@ -273,11 +283,14 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			security_stamp = StampGenerator.CreateSecurityStamp(32),
 			failed_login_count = 0,
 			is_active = true,
+			is_licensed = false,
+			is_delete_able = true,
 			is_locked_out = false,
 			is_mobile_confirmed = false,
 			last_login_date_time = DateTime.Now,
 			mobile = request.phone_number,
-			slug = slug
+			slug = slug,
+			is_agency = request.is_agency,
 		};
 		await _unitOfWork.UserRepository.AddAsync(user);
 		await _unitOfWork.CommitAsync();
@@ -599,6 +612,62 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				message = "توکن در هدر وجود ندارد."
 			});
 		}
+	}
+
+	[Authorize]
+	[HttpPost]
+	[Route("upload-license")]
+	public async Task<IActionResult> UploadLicense([FromForm]IFormFile file)
+	{
+		if (file == null)
+			return BadRequest(new ResponseDto<string>()
+			{
+				data = null,
+				message = "لطفا فایل را آپلود کنید",
+				is_success = false,
+				response_code = 400
+			});
+
+		var user = await GetCurrentUser();
+		if(user == null)
+			return NotFound(new ResponseDto<string>()
+			{
+				data = null,
+				message = "کاربر یافت نشد",
+				is_success = false,
+				response_code = 404
+			});
+
+		// Define the directory for uploads 
+		var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
+
+		// Create directory if not Exist
+		if (!Directory.Exists(uploadPath))
+		{
+			Directory.CreateDirectory(uploadPath);
+		}
+
+		// Build file name
+		var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+		var imagePath = Path.Combine(uploadPath, newFileName);
+
+		// Save Image
+		using (var stream = new FileStream(imagePath, FileMode.Create))
+		{
+			await file.CopyToAsync(stream);
+		}
+
+		user.license = imagePath;
+		_unitOfWork.UserRepository.Update(user);
+		await _unitOfWork.CommitAsync();
+
+		return Ok(new ResponseDto<string>()
+		{
+			data = null,
+			message = "تصویر با موفقیت آپلود شد. منتظر تایید ادمین باشید",
+			is_success = true,
+			response_code = 204
+		});
 	}
 
 }

@@ -93,7 +93,8 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 			last_login_date_time = DateTime.Now,
 			password_hash = PasswordHasher.Hash(src.password),
 			mobile = src.mobile,
-			slug = slug
+			slug = slug,
+			is_licensed = true,
 		};
 		await _unitOfWork.UserRepository.AddAsync(user);
 		await _unitOfWork.CommitAsync();
@@ -171,6 +172,8 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		entity.updated_at = DateTime.Now;
 		entity.email = src.email;
 		entity.is_active = src.is_active;
+		entity.is_licensed = true;
+
 		_unitOfWork.UserRepository.Update(entity);
 		await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<UserDto>()
@@ -244,6 +247,10 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 					role_id = y.role_id,
 					user_id = y.user_id
 				}).ToList(),
+				is_agency = entity.is_agency,
+				license	= entity.license,
+				is_licensed = entity.is_licensed,
+			   
 			},
 			is_success = true,
 			message = "",
@@ -273,6 +280,32 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 			data = null,
 			is_success = true,
 			message = "وضعیت کاربر تغییر کرد",
+			response_code = 200
+		});
+	}
+
+	[HttpPost]
+	[Route("licensed")]
+	public async Task<IActionResult> CheckLicense([FromForm] int id)
+	{
+		var user = await _unitOfWork.UserRepository.GetUser(id);
+		if (user == null)
+			return NotFound(new ResponseDto<UserDto>()
+			{
+				data = null,
+				is_success = false,
+				message = "کاربر با این ایدی وجود ندارد",
+				response_code = 404
+			});
+		user.is_licensed = !user.is_licensed;
+		_unitOfWork.UserRepository.Update(user);
+		await _unitOfWork.CommitAsync();
+		_unitOfWork.Dispose();
+		return Ok(new ResponseDto<UserDto>()
+		{
+			data = null,
+			is_success = true,
+			message = "کاربر احراز هویت شد",
 			response_code = 200
 		});
 	}

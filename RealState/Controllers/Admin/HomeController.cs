@@ -17,7 +17,7 @@ public class HomeController(IUnitOfWork unitOfWork) : ControllerBase
 	{
 		var userCount = _unitOfWork.UserRepository.Count();
 		var propertyCount = _unitOfWork.PropertyRepository.Count();
-		var ticketCount = _unitOfWork.TicketRepository.Count();
+		var ticketCount = _unitOfWork.TicketRepository.Count(x=>x.status == TicketStatus.Open);
 		var pendingPropertiesCount = _unitOfWork.PropertyRepository.Count(x=>x.state_enum == AdStatusEnum.NotConfirmed);
 
 		return Ok(new ResponseDto<DashboardDto>()

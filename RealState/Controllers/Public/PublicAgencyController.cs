@@ -35,7 +35,8 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 	[Route("mine")]
 	public async Task<IActionResult> UserAgency()
 	{
-		var agency = await _unitOfWork.AgencyRepository.GetByUserId(await GetCurrentUserId());
+		var user = await GetCurrentUser();
+		var agency = await _unitOfWork.AgencyRepository.GetByUserId(user.id);
 		if (agency == null)
 			return NotFound(new ResponseDto<AgencyDto>()
 			{
@@ -49,7 +50,7 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 			id = agency.id,
 			agency_name = agency.agency_name,
 			city_id = agency.city_id,
-			city_province_full_name = city.name + $"({city.province.name})",
+			city_province_full_name = agency.city_province_full_name,
 			created_at = agency.created_at,
 			updated_at = agency.updated_at,
 			slug = agency.slug,
@@ -67,14 +68,22 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 			},
 			user = new UserDto()
 			{
-				id = agency.user.id,
-				created_at = agency.user.created_at,
-				updated_at = agency.user.updated_at,
-				slug = agency.user.slug,
-				email = agency.user.email,
-				is_active = agency.user.is_active,
-				mobile = agency.user.mobile,
-				user_name = agency.user.user_name,
+				id = user.id,
+				created_at = user.created_at,
+				updated_at = user.updated_at,
+				slug = user.slug,
+				email = user.email,
+				is_active = user.is_active,
+				mobile = user.mobile,
+				user_name = user.user_name,
+				expire_date = user.expire_date,
+				failed_login_count = user.failed_login_count,
+				is_agency = user.is_agency,
+				is_licensed = user.is_licensed,
+				is_locked_out = user.is_locked_out,
+				is_mobile_confirmed = user.is_mobile_confirmed,
+				last_login_date_time = user.last_login_date_time,
+				property_count = user.property_count,
 			}
 		});
 	}

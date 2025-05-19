@@ -13,6 +13,7 @@ public class Agency : BaseEntity
 	public long city_id { get; set; }
 	public City  city { get; set; }
 
+	public long	user_id { get; set; }
 	public User user { get; set; }
 }
 
@@ -29,5 +30,12 @@ public class AgencyConfiguration : IEntityTypeConfiguration<Agency>
 		builder.Property(x => x.phone).IsRequired();
 		builder.Property(x => x.city_province_full_name).IsRequired();
 		builder.Property(x => x.city_id).IsRequired();
+
+		builder
+			.HasOne(x => x.user)
+			.WithOne(x => x.agency)
+			.HasForeignKey<Agency>(x => x.user_id)
+			.OnDelete(DeleteBehavior.Restrict);
+
 	}
 }

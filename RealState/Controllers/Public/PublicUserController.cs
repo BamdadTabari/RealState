@@ -245,7 +245,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			});
 		}
 
-		var slug = request.Agency.slug ?? SlugHelper.GenerateSlug(request.user_name);
+		var slug = SlugHelper.GenerateSlug(request.user_name);
 		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "کاربر با این نامک وجود دارد";
@@ -257,7 +257,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-		var agencySlug = request.Agency.slug ?? SlugHelper.GenerateSlug(request.Agency.full_name + Guid.NewGuid().ToString());
+		var agencySlug = SlugHelper.GenerateSlug(request.Agency.full_name + Guid.NewGuid().ToString());
 		if (await _unitOfWork.AgencyRepository.ExistsAsync(x => x.slug == agencySlug))
 		{
 			var error = "آژانس املاک با این نامک وجود دارد";
@@ -322,6 +322,8 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			full_name = request.Agency.full_name,
 			mobile = request.Agency.mobile,
 			slug = agencySlug,
+			phone = request.Agency.phone,
+			user_id = user.id,
 		});
 		await _unitOfWork.CommitAsync();
 
@@ -439,7 +441,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				expire_in = Config.AccessTokenLifetime.TotalMinutes
 			},
 			is_success = true,
-			message = "",
+			message = "ثبت نام موفقیت آمیز بود",
 			response_code = 200
 		});
 	}

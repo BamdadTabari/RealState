@@ -98,7 +98,7 @@ public class AgencyRepository : Repository<Agency>, IAgencyRepository
 	{
 		try
 		{
-			return await _queryable.Include(x => x.user).Include(x => x.city).AsNoTracking().SingleOrDefaultAsync(x => x.user.id == id);
+			return await _queryable.Include(x => x.user).Include(x => x.city).AsNoTracking().SingleOrDefaultAsync(x => x.user_id == id);
 		}
 		catch
 		{

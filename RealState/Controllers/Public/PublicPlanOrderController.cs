@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -126,6 +127,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 					email = user.email,
 					username = user.user_name,
 					plan_id = plan.id,
+					order_status = OrderStatusEnum.InProgress,
 				};
 				await _unitOfWork.OrderRepository.AddAsync(entity);
 				await _unitOfWork.CommitAsync();
@@ -231,6 +233,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 				ord.ref_id = refid;
 				ord.card_number = jodata["data"]["card_pan"].ToString(); // شماره کارت
 				ord.response_message = response.Content.ToString();
+				ord.order_status = OrderStatusEnum.Success;
 				_unitOfWork.OrderRepository.Update(ord);
 				await _unitOfWork.CommitAsync();
 				var plan = await _unitOfWork.PlanRepository.Get(ord.plan_id);
@@ -271,6 +274,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 				ord.ref_id = "پرداخت انجام نشده است";
 				ord.card_number = "پرداخت انجام نشده است"; // شماره کارت
 				ord.response_message = response.Content.ToString();
+				ord.order_status = OrderStatusEnum.Fail;
 				_unitOfWork.OrderRepository.Update(ord);
 				await _unitOfWork.CommitAsync();
 				return BadRequest(new ResponseDto<PaymentResponse>()

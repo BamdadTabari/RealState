@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DataLayer.Assistant.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DataLayer;
@@ -19,6 +20,8 @@ public class Order : BaseEntity
 
 	public long plan_id { get; set; }
 	public Plan plan { get; set; }
+
+	public OrderStatusEnum order_status { get; set; }
 }
 public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {

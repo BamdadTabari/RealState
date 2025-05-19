@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using RealState.Models;
 
 namespace RealState.Controllers.Admin;
-[Route("admin/ticket")]
+[Route("api/ticket")]
 [ApiController]
 [Authorize(Roles = "Admin,MainAdmin")]
 public class TicketController(IUnitOfWork unitOfWork) : ControllerBase

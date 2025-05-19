@@ -70,7 +70,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 			{
 				data = null,
 				is_success = false,
-				message = "رمز عبور اشتباه است.",
+				message = "رمز عبور یا نام کاربری اشتباه است.",
 				response_code = 401
 			});
 		}

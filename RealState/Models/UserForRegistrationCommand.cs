@@ -10,8 +10,8 @@ public class UserForRegistrationCommand
 	[Required(ErrorMessage = "لطفا مقدار {0} را وارد کنید")]
 	public string user_name { get; set; }
 
-	[Display(Name = "ایمیل")]
-	public string email { get; set; }
+	//[Display(Name = "ایمیل")]
+	//public string email { get; set; }
 	[Display(Name = "شماره تماس")]
 	[Required(ErrorMessage = "لطفا مقدار {0} را وارد کنید")]
 	public string phone_number { get; set; }

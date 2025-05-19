@@ -275,7 +275,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			updated_at = DateTime.Now,
 			created_at = DateTime.Now,
 			user_name = request.user_name,
-			email = request.email,
+			email = "",
 			concurrency_stamp = StampGenerator.CreateSecurityStamp(32),
 			security_stamp = StampGenerator.CreateSecurityStamp(32),
 			failed_login_count = 0,

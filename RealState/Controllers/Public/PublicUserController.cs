@@ -285,6 +285,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			is_locked_out = false,
 			is_mobile_confirmed = false,
 			last_login_date_time = DateTime.Now,
+			password_hash = "",
 			mobile = request.phone_number,
 			slug = slug,
 			is_agency = request.is_agency,

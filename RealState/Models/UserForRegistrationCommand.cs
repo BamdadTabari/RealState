@@ -11,7 +11,6 @@ public class UserForRegistrationCommand
 	public string user_name { get; set; }
 
 	[Display(Name = "ایمیل")]
-	[Required(ErrorMessage = "لطفا مقدار {0} را وارد کنید")]
 	public string email { get; set; }
 	[Display(Name = "شماره تماس")]
 	[Required(ErrorMessage = "لطفا مقدار {0} را وارد کنید")]

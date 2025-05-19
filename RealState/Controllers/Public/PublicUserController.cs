@@ -222,17 +222,17 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.email == request.email))
-		{
-			var error = "ایمیل موجود است";
-			return BadRequest(new ResponseDto<UserDto>()
-			{
-				data = null,
-				is_success = false,
-				message = error,
-				response_code = 400
-			});
-		}
+		//if (await _unitOfWork.UserRepository.ExistsAsync(x => x.email == request.email))
+		//{
+		//	var error = "ایمیل موجود است";
+		//	return BadRequest(new ResponseDto<UserDto>()
+		//	{
+		//		data = null,
+		//		is_success = false,
+		//		message = error,
+		//		response_code = 400
+		//	});
+		//}
 		if (await _unitOfWork.UserRepository.AnyExistUserName(request.user_name))
 		{
 			var error = "نام کاربری موجود است";

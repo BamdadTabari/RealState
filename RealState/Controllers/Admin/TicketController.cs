@@ -112,6 +112,9 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 			updated_at = DateTime.UtcNow,
 			slug = SlugHelper.GenerateSlug(code),
 			is_admin = true,
+			status = TicketStatus.Open,
+			subject = src.subject,
+			ticket_code = code,
 		};
 
 		if (src.picture_file != null)
@@ -138,10 +141,6 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 
 		await _unitOfWork.TicketRepository.AddAsync(ticket);
-
-		// به‌روزرسانی وضعیت تیکت
-		ticket.status = TicketStatus.Answered;
-		_unitOfWork.TicketRepository.Update(ticket);
 
 		await _unitOfWork.CommitAsync();
 

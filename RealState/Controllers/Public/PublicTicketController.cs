@@ -139,6 +139,9 @@ public class PublicTicketController(IUnitOfWork unitOfWork, JwtTokenService toke
 			updated_at = DateTime.UtcNow,
 			is_admin = false,
 			slug = SlugHelper.GenerateSlug(code),
+			status = TicketStatus.Open,
+			subject = src.subject,
+			ticket_code = code,
 		};
 
 		if (src.picture_file != null)
@@ -165,11 +168,6 @@ public class PublicTicketController(IUnitOfWork unitOfWork, JwtTokenService toke
 		}
 
 		await _unitOfWork.TicketRepository.AddAsync(ticket);
-
-		// به‌روزرسانی وضعیت تیکت
-		ticket.status = TicketStatus.Answered;
-		_unitOfWork.TicketRepository.Update(ticket);
-
 		await _unitOfWork.CommitAsync();
 
 		return Ok(new ResponseDto<TicketDto>()

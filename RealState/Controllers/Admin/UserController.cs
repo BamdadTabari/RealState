@@ -301,12 +301,25 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
 		_unitOfWork.Dispose();
-		return Ok(new ResponseDto<UserDto>()
+		if(user.is_licensed)
 		{
-			data = null,
-			is_success = true,
-			message = "کاربر احراز هویت شد",
-			response_code = 200
-		});
+			return Ok(new ResponseDto<UserDto>()
+			{
+				data = null,
+				is_success = true,
+				message = "کاربر احراز هویت شد",
+				response_code = 200
+			});
+		}
+		else
+		{
+			return Ok(new ResponseDto<UserDto>()
+			{
+				data = null,
+				is_success = true,
+				message = "کاربر غیر فعال شد",
+				response_code = 200
+			});
+		}
 	}
 }

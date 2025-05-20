@@ -12,6 +12,9 @@ public static class UserExtension
 			|| x.mobile.ToLower().Contains(filter.Keyword.ToLower().Trim())
 			|| x.user_name.ToLower().Contains(filter.Keyword.ToLower().Trim()));
 
+		if (filter.BoolFilter != null)
+			query = query.Where(x => x.is_active == filter.BoolFilter);
+
 		return query;
 	}
 

@@ -630,8 +630,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 
 		var user = await GetCurrentUser();
 		if(user == null)
-			return NotFound(new 
-				<string>()
+			return NotFound(new ResponseDto<string>()
 			{
 				data = null,
 				message = "کاربر یافت نشد",

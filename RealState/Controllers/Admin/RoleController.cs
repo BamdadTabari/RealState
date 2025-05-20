@@ -189,8 +189,8 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 
         await _unitOfWork.RoleRepository.AddAsync(new Role()
         {
-            created_at = DateTime.UtcNow,
-            updated_at = DateTime.UtcNow,
+            created_at = DateTime.Now,
+            updated_at = DateTime.Now,
             slug = slug,
             title = src.title,
         });
@@ -256,7 +256,7 @@ public class RoleController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 
         entity.slug = slug;
-        entity.updated_at = DateTime.UtcNow;
+        entity.updated_at = DateTime.Now;
         entity.title = src.title;
         
         _unitOfWork.RoleRepository.Update(entity);

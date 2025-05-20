@@ -108,8 +108,8 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 		{
 			message = src.message,
 			user_id = src.user_id,
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
 			slug = SlugHelper.GenerateSlug(code),
 			is_admin = true,
 			status = TicketStatus.Open,
@@ -186,8 +186,8 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 			ticket_id = src.ticket_id,
 			message = src.message,
 			user_id = src.user_id,
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
 			is_admin = true,
 			slug = SlugHelper.GenerateSlug(src.message + Guid.NewGuid().ToString()),
 		};

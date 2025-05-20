@@ -163,7 +163,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
 			Secure = true,    // فقط در HTTPS ارسال شود
 			SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
-			Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
+			Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
 		};
 		Response.Cookies.Append("jwt", refreshToken, cookieOptions);
 
@@ -173,9 +173,9 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		await _unitOfWork.CommitAsync();
 		// ذخیره RefreshToken در دیتابیس برای بررسی بعدی
 		user.refresh_token = refreshToken;
-		user.refresh_token_expiry_time = DateTime.UtcNow.Add(Config.RefreshTokenLifetime);
+		user.refresh_token_expiry_time = DateTime.Now.Add(Config.RefreshTokenLifetime);
 		user.is_mobile_confirmed = true;
-		user.expire_date = DateTime.UtcNow.AddMonths(1);
+		user.expire_date = DateTime.Now.AddMonths(1);
 		user.property_count = 5;
 		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
@@ -315,8 +315,8 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		await _unitOfWork.AgencyRepository.AddAsync(new Agency()
 		{
 			agency_name = request.Agency.agency_name ?? "",
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
 			city_id = request.Agency.city_id,
 			city_province_full_name = city.name + $"({city.province.name})",
 			full_name = request.Agency.full_name,
@@ -418,7 +418,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			HttpOnly = true, // جلوگیری از دسترسی جاوااسکریپت به کوکی
 			Secure = true,
 			SameSite = SameSiteMode.Strict,
-			Expires = DateTimeOffset.UtcNow.AddDays(10) // زمان انقضا
+			Expires = DateTimeOffset.Now.AddDays(10) // زمان انقضا
 		});
 
 		// حذف تمام OTPهای مرتبط
@@ -427,7 +427,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		await _unitOfWork.CommitAsync();
 		// ذخیره RefreshToken در دیتابیس برای بررسی بعدی
 		user.refresh_token = refreshToken;
-		user.refresh_token_expiry_time = DateTime.UtcNow.Add(Config.RefreshTokenLifetime);
+		user.refresh_token_expiry_time = DateTime.Now.Add(Config.RefreshTokenLifetime);
 		user.is_mobile_confirmed = true;
 		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
@@ -455,7 +455,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		if (Request.Cookies.TryGetValue("jwt", out string refreshToken))
 		{
 			var user = await _unitOfWork.UserRepository.FindSingle(x => x.refresh_token == refreshToken);
-			if (user == null || user.refresh_token_expiry_time < DateTime.UtcNow)
+			if (user == null || user.refresh_token_expiry_time < DateTime.Now)
 				return Unauthorized(new ResponseDto<UserDto>()
 				{
 					data = null,
@@ -582,7 +582,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			await _unitOfWork.TokenBlacklistRepository.AddAsync(new BlacklistedToken
 			{
 				token = token,
-				expiry_date = DateTime.UtcNow.AddDays(Config.AccessTokenLifetime.TotalDays),
+				expiry_date = DateTime.Now.AddDays(Config.AccessTokenLifetime.TotalDays),
 				slug = SlugHelper.GenerateSlug(token)
 			});
 

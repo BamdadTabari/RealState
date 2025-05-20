@@ -97,7 +97,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				is_success = false,
 				response_code = 400
 			});
-		if (user.expire_date < DateTime.UtcNow)
+		if (user.expire_date < DateTime.Now)
 			return BadRequest(new ResponseDto<UserDto>()
 			{
 				data = null,
@@ -246,8 +246,8 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 			files.Add(new PropertyGallery()
 			{
 				alt = file.alt,
-				created_at = DateTime.UtcNow,
-				updated_at = DateTime.UtcNow,
+				created_at = DateTime.Now,
+				updated_at = DateTime.Now,
 				picture = imagePath,
 				property_id = property.id,
 				slug = SlugHelper.GenerateSlug(file.alt + Guid.NewGuid().ToString()),
@@ -376,7 +376,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				is_success = false,
 				response_code = 400
 			});
-		if (user.expire_date < DateTime.UtcNow)
+		if (user.expire_date < DateTime.Now)
 			return BadRequest(new ResponseDto<UserDto>()
 			{
 				data = null,
@@ -477,8 +477,8 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				files.Add(new PropertyGallery()
 				{
 					alt = file.alt,
-					created_at = DateTime.UtcNow,
-					updated_at = DateTime.UtcNow,
+					created_at = DateTime.Now,
+					updated_at = DateTime.Now,
 					picture = imagePath,
 					property_id = entity.id,
 					slug = SlugHelper.GenerateSlug(file.alt + Guid.NewGuid().ToString()),
@@ -517,7 +517,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 		}
 		while (await _unitOfWork.PropertyRepository.ExistsAsync(x => x.code == code));
 
-		entity.updated_at = DateTime.UtcNow;
+		entity.updated_at = DateTime.Now;
 		entity.slug = slug;
 		entity.rent_price = src.rent_price;
 		entity.meterage = src.meterage;

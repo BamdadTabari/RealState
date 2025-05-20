@@ -260,8 +260,8 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 
 		await _unitOfWork.CityRepository.AddAsync(new City()
 		{
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
 			slug = slug,
 			name = src.name,
 			province_id = src.province_id,
@@ -329,7 +329,7 @@ public class CityController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 
 		entity.slug = slug;
-		entity.updated_at = DateTime.UtcNow;
+		entity.updated_at = DateTime.Now;
 		entity.name = src.name;
 		entity.province_id = src.province_id;
 

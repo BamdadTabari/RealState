@@ -204,8 +204,8 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 
 		await _unitOfWork.PlanRepository.AddAsync(new Plan()
 		{
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
 			slug = slug,
 			name = src.name,
 			property_count = src.property_count,
@@ -275,7 +275,7 @@ public class PlanController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 
 		entity.slug = slug;
-		entity.updated_at = DateTime.UtcNow;
+		entity.updated_at = DateTime.Now;
 		entity.name = src.name;
 		entity.description = src.description;
 		entity.price = src.price;

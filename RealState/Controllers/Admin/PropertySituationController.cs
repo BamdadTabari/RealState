@@ -273,8 +273,8 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 
 		await _unitOfWork.PropertySituationRepository.AddAsync(new PropertySituation()
 		{
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
 			slug = slug,
 			name = src.name,
 		});
@@ -341,7 +341,7 @@ public class PropertySituationController(IUnitOfWork unitOfWork) : ControllerBas
 		}
 
 		entity.slug = slug;
-		entity.updated_at = DateTime.UtcNow;
+		entity.updated_at = DateTime.Now;
 		entity.name = src.name;
 
 		_unitOfWork.PropertySituationRepository.Update(entity);

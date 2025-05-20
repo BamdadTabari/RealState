@@ -195,8 +195,8 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 
         await _unitOfWork.OptionRepository.AddAsync(new Option()
         {
-            created_at = DateTime.UtcNow,
-            updated_at = DateTime.UtcNow,
+            created_at = DateTime.Now,
+            updated_at = DateTime.Now,
             slug = slug,
             option_key = src.option_key,
             option_value = src.option_value,
@@ -263,7 +263,7 @@ public class OptionController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 
         entity.slug = slug;
-        entity.updated_at = DateTime.UtcNow;
+        entity.updated_at = DateTime.Now;
         entity.option_value = src.option_value;
         entity.option_key = src.option_key;
 

@@ -45,7 +45,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 		    });
 
 		// بررسی قفل شدن کاربر
-		if (user.is_locked_out && user.lock_out_end_time > DateTime.UtcNow)
+		if (user.is_locked_out && user.lock_out_end_time > DateTime.Now)
 		    return Unauthorized(new ResponseDto<UserDto>()
 		    {
 			    data = null,
@@ -60,7 +60,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
             if (user.failed_login_count >= 5)
             {
                 user.is_locked_out = true;
-                user.lock_out_end_time = DateTime.UtcNow.AddMinutes(1); // قفل موقت
+                user.lock_out_end_time = DateTime.Now.AddMinutes(1); // قفل موقت
             }
 
             _unitOfWork.UserRepository.Update(user);
@@ -77,7 +77,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 
         // موفقیت در ورود
         user.failed_login_count = 0;
-        user.last_login_date_time = DateTime.UtcNow;
+        user.last_login_date_time = DateTime.Now;
         var role = _unitOfWork.UserRoleRepository.GetUserRolesByUserId(user.id);
         var token = "";
         do
@@ -94,7 +94,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 		
 
         user.refresh_token = refreshToken;
-        user.refresh_token_expiry_time = DateTime.UtcNow.Add(Config.AdminRefreshTokenLifetime);
+        user.refresh_token_expiry_time = DateTime.Now.Add(Config.AdminRefreshTokenLifetime);
 
         _unitOfWork.UserRepository.Update(user);
         await _unitOfWork.CommitAsync();
@@ -105,7 +105,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
             HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
             Secure = true,    // فقط در HTTPS ارسال شود
             SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
-            Expires = DateTime.UtcNow.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
+            Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
         };
 
         Response.Cookies.Append("jwt", refreshToken, cookieOptions);
@@ -166,7 +166,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 			await _unitOfWork.TokenBlacklistRepository.AddAsync(new BlacklistedToken
 			{
 				token = token,
-				expiry_date = DateTime.UtcNow.AddDays(Config.AccessTokenLifetime.TotalDays),
+				expiry_date = DateTime.Now.AddDays(Config.AccessTokenLifetime.TotalDays),
 				slug = SlugHelper.GenerateSlug(token)
 			});
 
@@ -206,7 +206,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 		if (Request.Cookies.TryGetValue("jwt", out string refreshToken))
 		{
 			var user = await _unitOfWork.UserRepository.FindSingle(x=>x.refresh_token == refreshToken);
-			if (user == null ||  user.refresh_token_expiry_time < DateTime.UtcNow)
+			if (user == null ||  user.refresh_token_expiry_time < DateTime.Now)
 				return Unauthorized(new ResponseDto<UserDto>()
 				{
 					data = null,

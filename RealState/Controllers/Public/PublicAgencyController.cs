@@ -128,7 +128,7 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 			});
 		}
 
-		entity.updated_at = DateTime.UtcNow;
+		entity.updated_at = DateTime.Now;
 		entity.mobile = src.mobile;
 		entity.phone = src.phone;
 		entity.agency_name = src.agency_name;

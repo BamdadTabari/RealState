@@ -135,8 +135,8 @@ public class PublicTicketController(IUnitOfWork unitOfWork, JwtTokenService toke
 		{
 			message = src.message,
 			user_id = (long)userId,
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
 			is_admin = false,
 			slug = SlugHelper.GenerateSlug(code),
 			status = TicketStatus.Open,
@@ -220,8 +220,8 @@ public class PublicTicketController(IUnitOfWork unitOfWork, JwtTokenService toke
 			ticket_id = src.ticket_id,
 			message = src.message,
 			user_id = (long)userId,
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
 			is_admin = false,
 			slug = SlugHelper.GenerateSlug(src.message + Guid.NewGuid().ToString()),
 		};

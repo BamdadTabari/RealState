@@ -249,8 +249,8 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
             name = src.name,
             slug = slug,
             description = src.description,
-            created_at = DateTime.UtcNow,
-            updated_at = DateTime.UtcNow,
+            created_at = DateTime.Now,
+            updated_at = DateTime.Now,
         });
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<BlogCategoryDto>()
@@ -316,7 +316,7 @@ public class BlogCategoryController(IUnitOfWork unitOfWork) : ControllerBase
         entity.slug = slug;
         entity.name = src.name;
         entity.description = src.description;
-        entity.updated_at = DateTime.UtcNow;
+        entity.updated_at = DateTime.Now;
         _unitOfWork.BlogCategoryRepository.Update(entity);
         await _unitOfWork.CommitAsync();
 		return Ok(new ResponseDto<BlogCategoryDto>()

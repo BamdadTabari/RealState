@@ -215,8 +215,8 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 
 		await _unitOfWork.ProvinceRepository.AddAsync(new Province()
 		{
-			created_at = DateTime.UtcNow,
-			updated_at = DateTime.UtcNow,
+			created_at = DateTime.Now,
+			updated_at = DateTime.Now,
 			slug = slug,
 			name = src.name,
 		});
@@ -282,7 +282,7 @@ public class ProvinceController(IUnitOfWork unitOfWork) : ControllerBase
 		}
 
 		entity.slug = slug;
-		entity.updated_at = DateTime.UtcNow;
+		entity.updated_at = DateTime.Now;
 		entity.name = src.name;
 		
 		_unitOfWork.ProvinceRepository.Update(entity);

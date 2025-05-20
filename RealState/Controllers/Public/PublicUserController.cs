@@ -244,7 +244,15 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-
+		var city = await _unitOfWork.CityRepository.Get(request.Agency.city_id);
+		if (city == null)
+			return NotFound(new ResponseDto<CityDto>()
+			{
+				data = null,
+				is_success = false,
+				message = "شهر پیدا نشد",
+				response_code = 404
+			});
 		var slug = SlugHelper.GenerateSlug(request.user_name);
 		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug))
 		{
@@ -303,15 +311,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			user_id = user.id,
 		});
 		await _unitOfWork.CommitAsync();
-		var city = await _unitOfWork.CityRepository.Get(request.Agency.city_id);
-		if (city == null)
-			return NotFound(new ResponseDto<CityDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "شهر پیدا نشد",
-				response_code = 404
-			});
+		
 		await _unitOfWork.AgencyRepository.AddAsync(new Agency()
 		{
 			agency_name = request.Agency.agency_name ?? "",

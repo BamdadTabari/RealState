@@ -9,7 +9,8 @@ public static class TicketExtension
 		if (!string.IsNullOrEmpty(filter.Keyword))
 			query = query.Where(x => x.subject.ToLower().ToLower().Contains(filter.Keyword.ToLower().Trim())
 			|| x.slug.ToLower().ToLower().Contains(filter.Keyword.ToLower().Trim())
-			|| x.message.ToLower().ToLower().Contains(filter.Keyword.ToLower().Trim()));
+			|| x.message.ToLower().ToLower().Contains(filter.Keyword.ToLower().Trim())
+			|| x.ticket_code.ToLower().ToLower().Contains(filter.Keyword.ToLower().Trim()));
 
 		if (filter.TicketStatus != null)
 			query = query.Where(x => x.status == filter.TicketStatus);

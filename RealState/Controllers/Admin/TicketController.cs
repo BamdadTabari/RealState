@@ -91,7 +91,7 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 		if (!ModelState.IsValid)
 		{
 			var error = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<TicketReply>()
+			return BadRequest(new ResponseDto<TicketDto>()
 			{
 				data = null,
 				is_success = false,
@@ -99,6 +99,23 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
+		if(src.user_id == 0)
+			return BadRequest(new ResponseDto<TicketDto>()
+			{
+				data = null,
+				message = "آیدی کاربر را وارد کنید",
+				is_success = false,
+				response_code = 400
+			});
+		var user = await _unitOfWork.UserRepository.GetUser(src.user_id);
+		if (user == null)
+			return NotFound(new ResponseDto<TicketDto>()
+			{
+				data = null,
+				message = "کاربر یافت نشد",
+				is_success = false,
+				response_code = 404
+			});
 		var code = "";
 		do
 		{
@@ -180,7 +197,23 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 404
 			});
 		}
-
+		if (src.user_id == 0)
+			return BadRequest(new ResponseDto<TicketDto>()
+			{
+				data = null,
+				message = "آیدی کاربر را وارد کنید",
+				is_success = false,
+				response_code = 400
+			});
+		var user = await _unitOfWork.UserRepository.GetUser(src.user_id);
+		if (user == null)
+			return NotFound(new ResponseDto<TicketDto>()
+			{
+				data = null,
+				message = "کاربر یافت نشد",
+				is_success = false,
+				response_code = 404
+			});
 		var reply = new TicketReply()
 		{
 			ticket_id = src.ticket_id,

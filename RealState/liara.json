@@ -1,7 +1,0 @@
-{
-  "port": 80,
-
-  "dotnet": {
-    "version": 10
-  }
-}

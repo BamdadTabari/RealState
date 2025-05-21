@@ -21,7 +21,11 @@ var jwtSection = builder.Configuration.GetSection("JWT");
 var jwtConfig = jwtSection.Get<SecurityTokenConfig>();
 builder.Services.AddSingleton(jwtConfig);
 
-builder.Services.AddControllers()
+builder.Services.AddControllers(options =>
+	{
+		options.RespectBrowserAcceptHeader = true; // به Accept header احترام بگذار
+		options.ReturnHttpNotAcceptable = true;    // اگر Accept پشتیبانی نشد، 406 برگردون
+	})
 	.AddJsonOptions(options =>
 	{
 		options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;

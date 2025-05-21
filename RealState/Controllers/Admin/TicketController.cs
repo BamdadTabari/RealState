@@ -49,7 +49,7 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 404
 			});
 		}
-
+		var user = await _unitOfWork.UserRepository.GetUser(ticket.user_id);
 		return Ok(new ResponseDto<TicketDto>()
 		{
 			data = new TicketDto()
@@ -65,6 +65,7 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 				ticket_code = ticket.ticket_code,
 				subject = ticket.subject,
 				user_id = ticket.user_id,
+				user_name = user.user_name,
 				replies = ticket.replies == null ? new List<TicketReplyDto>() :
 				ticket.replies.Select(x => new TicketReplyDto()
 				{

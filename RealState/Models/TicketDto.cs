@@ -23,6 +23,7 @@ public class TicketDto : BaseDto
 
 	[Display(Name = "کاربر")]
 	public long user_id { get; set; } // شناسه کاربر
+	public string? user_name { get; set; }
 	public bool is_admin { get; set; }
 	//public UserDto? user { get; set; } // نویگیشن به کاربر
 	[ValidateNever]

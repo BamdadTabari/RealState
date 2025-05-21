@@ -244,7 +244,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-		var city = await _unitOfWork.CityRepository.Get(request.Agency.city_id);
+		var city = await _unitOfWork.CityRepository.Get(request.city_id);
 		if (city == null)
 			return NotFound(new ResponseDto<CityDto>()
 			{
@@ -265,7 +265,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-		var agencySlug = SlugHelper.GenerateSlug(request.Agency.full_name + Guid.NewGuid().ToString());
+		var agencySlug = SlugHelper.GenerateSlug(request.full_name + Guid.NewGuid().ToString());
 		if (await _unitOfWork.AgencyRepository.ExistsAsync(x => x.slug == agencySlug))
 		{
 			var error = "آژانس املاک با این نامک وجود دارد";
@@ -314,15 +314,15 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		
 		await _unitOfWork.AgencyRepository.AddAsync(new Agency()
 		{
-			agency_name = request.Agency.agency_name ?? "",
+			agency_name = request.agency_name ?? "",
 			created_at = DateTime.Now,
 			updated_at = DateTime.Now,
-			city_id = request.Agency.city_id,
+			city_id = request.city_id,
 			city_province_full_name = city.name + $"({city.province.name})",
-			full_name = request.Agency.full_name,
-			mobile = request.Agency.mobile,
+			full_name = request.full_name,
+			mobile = request.agency_mobile,
 			slug = agencySlug,
-			phone = request.Agency.phone,
+			phone = request.agency_phone,
 			user_id = user.id,
 		});
 		await _unitOfWork.CommitAsync();

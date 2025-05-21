@@ -257,5 +257,31 @@ public class TicketController(IUnitOfWork unitOfWork) : ControllerBase
 			response_code = 204
 		});
 	}
+
+
+	[HttpPost]
+	[Route("delete")]
+	public async Task<IActionResult> Delete([FromForm] long ticketId)
+	{
+		var ticket = await _unitOfWork.TicketRepository.Get(ticketId);
+		if (ticket == null)
+			return NotFound(new ResponseDto<TicketDto>()
+			{
+				data = null,
+				message = "تیکت یافت نشد",
+				is_success = false,
+				response_code = 404
+			});
+
+		_unitOfWork.TicketRepository.Remove(ticket);
+		await _unitOfWork.CommitAsync();
+		return Ok(new ResponseDto<TicketDto>()
+		{
+			data = null,
+			message = "تیکت حذف شد",
+			is_success = true,
+			response_code = 204
+		});
+	}
 }
 

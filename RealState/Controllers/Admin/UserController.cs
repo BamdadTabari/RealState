@@ -38,6 +38,20 @@ public class UserController(IUnitOfWork unitOfWork) : ControllerBase
 		});
 	}
 
+
+	[HttpGet]
+	[Route("all")]
+	public async Task<IActionResult> GetAllUsers()
+	{
+		return Ok(new ResponseDto<List<User>>()
+		{
+			data = await _unitOfWork.UserRepository.GetAll(),
+			message = "",
+			is_success = true,
+			response_code = 200,
+		});
+	}
+
 	[HttpPost]
 	[Route("create")]
 	public async Task<IActionResult> Create([FromForm] AdminUserForRegistrationCommand src)

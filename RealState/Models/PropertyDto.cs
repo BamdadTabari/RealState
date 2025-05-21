@@ -77,7 +77,8 @@ public class PropertyDto : BaseDto
 	//[ValidateNever]
 	//public PropertySituationDto? situation { get; set; }
 	public long? owner_id { get; set; }
-	public User? user { get; set; }
+	//[ValidateNever]
+	//public User? user { get; set; }
 
 	[Display(Name = "ویدیو")]
 	public string? video { get; set; }

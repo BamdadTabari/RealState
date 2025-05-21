@@ -24,7 +24,7 @@ public class HomeController(IUnitOfWork unitOfWork) : ControllerBase
 		var archiveProperties = _unitOfWork.PropertyRepository.Count(x => x.state_enum == AdStatusEnum.Archived);
 
 		var ticketCount = _unitOfWork.TicketRepository.Count();
-		var closedTicketCount = _unitOfWork.TicketRepository.Count(x=>x.status == TicketStatus.Closed);
+		var openTicketCount = _unitOfWork.TicketRepository.Count(x=>x.status == TicketStatus.Open);
 		var repliedTicketCount = _unitOfWork.TicketRepository.Count(x => x.status == TicketStatus.Answered);
 
 		var orders = _unitOfWork.OrderRepository.Count();
@@ -45,7 +45,7 @@ public class HomeController(IUnitOfWork unitOfWork) : ControllerBase
 
 				tickets = ticketCount,
 				replied_tickets = repliedTicketCount,
-				closed_tickets = closedTicketCount,
+				open_tickets = openTicketCount,
 
 				orders = orders,
 				failed_orders = failedOrders,

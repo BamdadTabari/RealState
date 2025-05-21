@@ -3,7 +3,7 @@
 public class DashboardDto
 {
 	public int tickets { get; set; }
-	public int closed_tickets { get; set; }
+	public int open_tickets { get; set; }
 	public int replied_tickets { get; set; }
 
 	public int properties { get; set; }

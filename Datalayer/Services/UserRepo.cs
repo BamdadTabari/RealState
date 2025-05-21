@@ -5,6 +5,7 @@ public interface IUserRepo : IRepository<User>
 {
 	Task<User?> GetUser(string usernameOrEmail);
 	Task<User?> Get(string slug);
+	Task<List<User>> GetAll();
 	Task<User?> GetUserByPhone(string phone);
 	Task<User?> GetUser(long id);
 	Task<bool> AnyExistUserName(string username);
@@ -65,6 +66,11 @@ public class UserRepo : Repository<User>, IUserRepo
 		{
 			return null;
 		}
+	}
+
+	public async Task<List<User>> GetAll()
+	{
+		return await _queryable.ToListAsync();
 	}
 
 	public PaginatedList<User> GetPaginated(DefaultPaginationFilter filter)

@@ -670,4 +670,16 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		});
 	}
 
+	[HttpGet]
+	[Route("all")]
+	public async Task<IActionResult> GetAllUsers()
+	{
+		return Ok(new ResponseDto<List<User>>()
+		{
+			data = await _unitOfWork.UserRepository.GetAll(),
+			message = "",
+			is_success = true,
+			response_code = 200,
+		});
+	}
 }

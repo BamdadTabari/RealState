@@ -21,7 +21,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 	public async Task<User?> GetCurrentUser()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
-		var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
+		var user = await _unitOfWork.UserRepository.GetUser(long.Parse(userId));
 		return user;
 	}
 

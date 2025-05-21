@@ -27,7 +27,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 	public async Task<long> GetCurrentUserId()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
-		var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
+		var user = await _unitOfWork.UserRepository.GetUser(long.Parse(userId));
 		return user.id;
 	}
 
@@ -37,7 +37,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 	public async Task<User> GetCurrentUser()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
-		var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
+		var user = await _unitOfWork.UserRepository.GetUser(long.Parse(userId));
 		return user;
 	}
 

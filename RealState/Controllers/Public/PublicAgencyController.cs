@@ -17,7 +17,7 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 	public async Task<long> GetCurrentUserId()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
-		var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
+		var user = await _unitOfWork.UserRepository.GetUser(long.Parse(userId));
 		return user.id;
 	}
 
@@ -27,7 +27,7 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 	public async Task<User> GetCurrentUser()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
-		var user = await _unitOfWork.UserRepository.GetUser(int.Parse(userId));
+		var user = await _unitOfWork.UserRepository.GetUser(long.Parse(userId));
 		return user;
 	}
 

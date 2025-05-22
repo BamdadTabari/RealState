@@ -350,7 +350,54 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		});
 	}
 
+	[HttpPost]
+	[Route("resend-otp")]
+	public async Task<IActionResult> ResendOtp([FromForm] string phoneNumber)
+	{
+		var user = await _unitOfWork.UserRepository.GetUserByPhone(phoneNumber);
+		if (user == null)
+			return NotFound(new ResponseDto<string>()
+			{
+				data = null,
+				is_success = false,
+				message = "کاربر پیدا نشد",
+				response_code = 404
+			});
 
+
+		if (user == null || user.is_active == false)
+		{
+			var error = "کاربر پیدا نشد یا توسط ادمین غیر فعال شده";
+			return BadRequest(new ResponseDto<string>()
+			{
+				data = null,
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
+
+		// تولید کد OTP
+		var otpCode = new Random().Next(1000, 9999);
+		await _unitOfWork.OtpRepository.AddAsync(new Otp
+		{
+			phone = phoneNumber,
+			otp_code = otpCode,
+			slug = SlugHelper.GenerateSlug(phoneNumber + StampGenerator.CreateSecurityStamp(10))
+		});
+		await _unitOfWork.CommitAsync();
+
+		// ارسال OTP
+		SMSClass.SendOtp(phoneNumber, otpCode.ToString());
+
+		return Ok(new ResponseDto<string>()
+		{
+			data = phoneNumber,
+			is_success = true,
+			message = $"پبامک ورود به شماره {phoneNumber} فرستاده شد.",
+			response_code = 204
+		});
+	}
 	//[AllowAnonymous]
 	//[HttpPost]
 	//[Route("verify-phone-register")]

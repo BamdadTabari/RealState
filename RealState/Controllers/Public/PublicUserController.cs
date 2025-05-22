@@ -210,7 +210,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.mobile == request.phone_number))
+		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.mobile == request.mobile))
 		{
 			var error = " شماره تلفن موجود است لطفا وارد شوید";
 			return BadRequest(new ResponseDto<UserDto>()
@@ -293,7 +293,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			is_mobile_confirmed = false,
 			last_login_date_time = DateTime.Now,
 			password_hash = "",
-			mobile = request.phone_number,
+			mobile = request.mobile,
 			slug = slug,
 			is_agency = request.is_agency,
 			property_count = 5,
@@ -332,19 +332,19 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		var otpCode = new Random().Next(1000, 9999);
 		await _unitOfWork.OtpRepository.AddAsync(new Otp
 		{
-			phone = request.phone_number,
+			phone = request.mobile,
 			otp_code = otpCode,
-			slug = SlugHelper.GenerateSlug(request.phone_number + Guid.NewGuid().ToString())
+			slug = SlugHelper.GenerateSlug(request.mobile + Guid.NewGuid().ToString())
 		});
 		await _unitOfWork.CommitAsync();
 
 		// ارسال OTP
-		SMSClass.SendOtp(request.phone_number, otpCode.ToString());
+		SMSClass.SendOtp(request.mobile, otpCode.ToString());
 
 		return Ok(new ResponseDto<string>()
 		{
-			data = request.phone_number,
-			message = $"پبامک ورود به شماره {request.phone_number} فرستاده شد.",
+			data = request.mobile,
+			message = $"پبامک ورود به شماره {request.mobile} فرستاده شد.",
 			is_success = true,
 			response_code = 200
 		});
@@ -352,9 +352,9 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 
 	[HttpPost]
 	[Route("resend-otp")]
-	public async Task<IActionResult> ResendOtp([FromForm] string phone_number)
+	public async Task<IActionResult> ResendOtp([FromForm] string mobile)
 	{
-		var user = await _unitOfWork.UserRepository.GetUserByPhone(phone_number);
+		var user = await _unitOfWork.UserRepository.GetUserByPhone(mobile);
 		if (user == null)
 			return NotFound(new ResponseDto<string>()
 			{
@@ -381,20 +381,20 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		var otpCode = new Random().Next(1000, 9999);
 		await _unitOfWork.OtpRepository.AddAsync(new Otp
 		{
-			phone = phone_number,
+			phone = mobile,
 			otp_code = otpCode,
-			slug = SlugHelper.GenerateSlug(phone_number + StampGenerator.CreateSecurityStamp(10))
+			slug = SlugHelper.GenerateSlug(mobile + StampGenerator.CreateSecurityStamp(10))
 		});
 		await _unitOfWork.CommitAsync();
 
 		// ارسال OTP
-		SMSClass.SendOtp(phone_number, otpCode.ToString());
+		SMSClass.SendOtp(mobile, otpCode.ToString());
 
 		return Ok(new ResponseDto<string>()
 		{
-			data = phone_number,
+			data = mobile,
 			is_success = true,
-			message = $"پبامک ورود به شماره {phone_number} فرستاده شد.",
+			message = $"پبامک ورود به شماره {mobile} فرستاده شد.",
 			response_code = 204
 		});
 	}

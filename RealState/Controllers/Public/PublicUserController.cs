@@ -79,9 +79,9 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		// ارسال OTP
 		SMSClass.SendOtp(dto.phone_number, otpCode.ToString());
 
-		return Ok(new ResponseDto<UserDto>()
+		return Ok(new ResponseDto<string>()
 		{
-			data = null,
+			data = dto.phone_number,
 			is_success = true,
 			message = $"پبامک ورود به شماره {dto.phone_number} فرستاده شد.",
 			response_code = 204
@@ -341,9 +341,9 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		// ارسال OTP
 		SMSClass.SendOtp(request.phone_number, otpCode.ToString());
 
-		return Ok(new ResponseDto<UserDto>()
+		return Ok(new ResponseDto<string>()
 		{
-			data = null,
+			data = request.phone_number,
 			message = $"پبامک ورود به شماره {request.phone_number} فرستاده شد.",
 			is_success = true,
 			response_code = 200

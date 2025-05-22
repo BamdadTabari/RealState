@@ -96,18 +96,29 @@ builder.Services.AddSwaggerGen(c =>
 	});
 });
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowSpecific",
+//        policy =>
+//        {
+//			policy.WithOrigins("http://localhost:5173", "http://localhost:5184", "http://localhost:3000", "http://89.40.242.246:3000",
+//				"http://89.40.242.246:5173")
+//				  .AllowAnyHeader()
+//				  .AllowAnyMethod()
+//				  .AllowCredentials();
+//        });
+//});
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecific",
-        policy =>
-        {
-			policy.WithOrigins("http://localhost:5173", "http://localhost:5184", "http://localhost:3000")
+	options.AddPolicy("AllowSpecific",
+		policy =>
+		{
+			policy
+				  .AllowAnyOrigin()
 				  .AllowAnyHeader()
-				  .AllowAnyMethod()
-				  .AllowCredentials();
-        });
+				  .AllowAnyMethod();
+		});
 });
-
 // In middleware:
 
 // Repositories and services
@@ -193,7 +204,7 @@ app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
 	options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-	options.InjectJavascript("/swagger/swagger-authtoken.js");
+	//options.InjectJavascript("/swagger/swagger-authtoken.js");
 });
 //}
 

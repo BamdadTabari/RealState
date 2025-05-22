@@ -43,7 +43,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			});
 		}
 
-		var user = await _unitOfWork.UserRepository.GetUserByPhone(dto.phone_number);
+		var user = await _unitOfWork.UserRepository.GetUserByPhone(dto.mobile);
 		if (user == null)
 			return NotFound(new ResponseDto<UserDto>()
 			{
@@ -70,20 +70,20 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		var otpCode = new Random().Next(1000, 9999);
 		await _unitOfWork.OtpRepository.AddAsync(new Otp
 		{
-			phone = dto.phone_number,
+			phone = dto.mobile,
 			otp_code = otpCode,
-			slug = SlugHelper.GenerateSlug(dto.phone_number + StampGenerator.CreateSecurityStamp(10))
+			slug = SlugHelper.GenerateSlug(dto.mobile + StampGenerator.CreateSecurityStamp(10))
 		});
 		await _unitOfWork.CommitAsync();
 
 		// ارسال OTP
-		SMSClass.SendOtp(dto.phone_number, otpCode.ToString());
+		SMSClass.SendOtp(dto.mobile, otpCode.ToString());
 
 		return Ok(new ResponseDto<string>()
 		{
-			data = dto.phone_number,
+			data = dto.mobile,
 			is_success = true,
-			message = $"پبامک ورود به شماره {dto.phone_number} فرستاده شد.",
+			message = $"پبامک ورود به شماره {dto.mobile} فرستاده شد.",
 			response_code = 204
 		});
 	}
@@ -106,7 +106,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-		var otp = await _unitOfWork.OtpRepository.GetByPhone(src.phone_number);
+		var otp = await _unitOfWork.OtpRepository.GetByPhone(src.mobile);
 		if (otp == null)
 		{
 			var error = "کد وارد شده منقضی شده است. لطفاً دوباره تلاش کنید";
@@ -132,7 +132,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		}
 
 		// تأیید کاربر
-		var user = await _unitOfWork.UserRepository.GetUserByPhone(src.phone_number);
+		var user = await _unitOfWork.UserRepository.GetUserByPhone(src.mobile);
 
 		if (user == null)
 			return NotFound(new ResponseDto<UserDto>()
@@ -168,7 +168,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		Response.Cookies.Append("jwt", refreshToken, cookieOptions);
 
 		// حذف تمام OTPهای مرتبط
-		var allPhoneOtps = await _unitOfWork.OtpRepository.GetAllByPhone(src.phone_number);
+		var allPhoneOtps = await _unitOfWork.OtpRepository.GetAllByPhone(src.mobile);
 		_unitOfWork.OtpRepository.RemoveRange(allPhoneOtps);
 		await _unitOfWork.CommitAsync();
 		// ذخیره RefreshToken در دیتابیس برای بررسی بعدی

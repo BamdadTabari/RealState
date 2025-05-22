@@ -9,5 +9,5 @@ public class VerifyPhoneDto
 	public int confirm_code { get; set; }
 	[Display(Name = "شماره تماس")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
-	public string phone_number { get; set; }
+	public string mobile { get; set; }
 }

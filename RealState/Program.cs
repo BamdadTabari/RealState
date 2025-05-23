@@ -51,11 +51,11 @@ builder.Services.AddControllers(options =>
 // Controllers
 builder.Services.AddControllers();
 // Database connection
-string connectionString = builder.Environment.IsDevelopment()
-	? builder.Configuration.GetConnectionString("ServerDbConnection")
-	: builder.Configuration.GetConnectionString("ProductionDbConnection");
+//string connectionString = builder.Environment.IsDevelopment()
+//	? builder.Configuration.GetConnectionString("ServerDbConnection")
+//	: builder.Configuration.GetConnectionString("ProductionDbConnection");
 
-//string connectionString = builder.Configuration.GetConnectionString("ProductionDbConnection");
+string connectionString = builder.Configuration.GetConnectionString("ProductionDbConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(connectionString).EnableDetailedErrors());
@@ -96,29 +96,29 @@ builder.Services.AddSwaggerGen(c =>
 	});
 });
 
-//builder.Services.AddCors(options =>
-//{
-//    options.AddPolicy("AllowSpecific",
-//        policy =>
-//        {
-//			policy.WithOrigins("http://localhost:5173", "http://localhost:5184", "http://localhost:3000", "http://89.40.242.246:3000",
-//				"http://89.40.242.246:5173")
-//				  .AllowAnyHeader()
-//				  .AllowAnyMethod()
-//				  .AllowCredentials();
-//        });
-//});
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowSpecific",
 		policy =>
 		{
-			policy
-				  .AllowAnyOrigin()
+			policy.WithOrigins("http://localhost:5173", "http://localhost:5184", "http://localhost:3000", "http://89.40.242.246:3000",
+				"http://89.40.242.246:5173", "http://91.107.129.210:3000")
 				  .AllowAnyHeader()
-				  .AllowAnyMethod();
+				  .AllowAnyMethod()
+				  .AllowCredentials();
 		});
 });
+//builder.Services.AddCors(options =>
+//{
+//	options.AddPolicy("AllowSpecific",
+//		policy =>
+//		{
+//			policy
+//				  .AllowAnyOrigin()
+//				  .AllowAnyHeader()
+//				  .AllowAnyMethod();
+//		});
+//});
 // In middleware:
 
 // Repositories and services

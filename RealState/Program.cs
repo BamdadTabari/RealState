@@ -23,8 +23,8 @@ builder.Services.AddSingleton(jwtConfig);
 
 builder.Services.AddControllers(options =>
 	{
-		options.RespectBrowserAcceptHeader = true; // به Accept header احترام بگذار
-		options.ReturnHttpNotAcceptable = true;    // اگر Accept پشتیبانی نشد، 406 برگردون
+		//options.RespectBrowserAcceptHeader = true; // به Accept header احترام بگذار
+		//options.ReturnHttpNotAcceptable = true;    // اگر Accept پشتیبانی نشد، 406 برگردون
 	})
 	.AddJsonOptions(options =>
 	{
@@ -51,11 +51,11 @@ builder.Services.AddControllers(options =>
 // Controllers
 builder.Services.AddControllers();
 // Database connection
-//string connectionString = builder.Environment.IsDevelopment()
-//	? builder.Configuration.GetConnectionString("ServerDbConnection")
-//	: builder.Configuration.GetConnectionString("ProductionDbConnection");
+string connectionString = builder.Environment.IsDevelopment()
+	? builder.Configuration.GetConnectionString("ServerDbConnection")
+	: builder.Configuration.GetConnectionString("ProductionDbConnection");
 
-string connectionString = builder.Configuration.GetConnectionString("ProductionDbConnection");
+//string connectionString = builder.Configuration.GetConnectionString("ProductionDbConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(connectionString).EnableDetailedErrors());

@@ -73,6 +73,7 @@ public class PublicBlogController(IUnitOfWork unitOfWork) : ControllerBase
 		{
 			Keyword = search_term,
 			SortBy = sort_by,
+			BoolFilter = true
 		};
 		var data = _unitOfWork.BlogRepository.GetPaginated(filter, category_id);
 		return Ok(new ResponseDto<PaginatedList<Blog>>()

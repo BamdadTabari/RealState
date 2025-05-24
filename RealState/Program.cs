@@ -7,10 +7,17 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RaelState.Assistant;
+using RealState.Assistant;
+using Serilog;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+Log.Logger = new LoggerConfiguration()
+	.WriteTo.Console()
+	.WriteTo.File("Logs/requests.txt", rollingInterval: RollingInterval.Day)
+	.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +30,7 @@ builder.Services.AddSingleton(jwtConfig);
 
 builder.Services.AddControllers(options =>
 	{
-		//options.RespectBrowserAcceptHeader = true; // به Accept header احترام بگذار
+		options.RespectBrowserAcceptHeader = true; // به Accept header احترام بگذار
 		//options.ReturnHttpNotAcceptable = true;    // اگر Accept پشتیبانی نشد، 406 برگردون
 	})
 	.AddJsonOptions(options =>
@@ -96,29 +103,40 @@ builder.Services.AddSwaggerGen(c =>
 	});
 });
 
-builder.Services.AddCors(options =>
-{
-	options.AddPolicy("AllowSpecific",
-		policy =>
-		{
-			policy.WithOrigins("http://localhost:5173", "http://localhost:5184", "http://localhost:3000", "http://89.40.242.246:3000",
-				"http://89.40.242.246:5173", "http://91.107.129.210:3000")
-				  .AllowAnyHeader()
-				  .AllowAnyMethod()
-				  .AllowCredentials();
-		});
-});
 //builder.Services.AddCors(options =>
 //{
 //	options.AddPolicy("AllowSpecific",
 //		policy =>
 //		{
-//			policy
-//				  .AllowAnyOrigin()
+//			policy.WithOrigins("http://localhost:5173", "http://localhost:5184", "http://localhost:3000", "http://89.40.240.13:3000",
+//				"http://89.40.240.13:5173", "http://91.107.129.210:3000")
 //				  .AllowAnyHeader()
-//				  .AllowAnyMethod();
+//				  .AllowAnyMethod()
+//				  .AllowCredentials();
 //		});
 //});
+//builder.Services.AddCors(options =>
+//{
+//	options.AddPolicy("AllowSpecific",
+//		policy =>
+//		{
+//			policy.WithOrigins("http://localhost:5173")
+//				  .AllowAnyHeader()
+//				  .AllowAnyMethod()
+//				  .AllowCredentials();
+//		});
+//});
+builder.Services.AddCors(options =>
+{
+	options.AddDefaultPolicy(policy =>
+	{
+		policy
+			.SetIsOriginAllowed(_ => true) // فقط برای تست!
+			.AllowAnyHeader()
+			.AllowAnyMethod()
+			.AllowCredentials();
+	});
+});
 // In middleware:
 
 // Repositories and services
@@ -182,7 +200,8 @@ var app = builder.Build();
 
 
 // Middlewares
-app.UseCors("AllowSpecific");
+//app.UseCors("AllowSpecific");
+app.UseCors();
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
@@ -190,7 +209,12 @@ app.UseStaticFiles(new StaticFileOptions
 	FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "images")),
 	RequestPath = "/images"
 });
-
+app.UseStaticFiles(new StaticFileOptions
+{
+	FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Logs")),
+	RequestPath = "/logs"
+});
+app.UseMiddleware<LoggingMiddleware>();
 app.UseRouting();
 app.UseSession();
 app.UseAuthentication();

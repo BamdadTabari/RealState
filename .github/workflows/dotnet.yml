@@ -1,0 +1,42 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+
+      - name: Publish project
+        run: dotnet publish -c Release -o ./publish
+
+      - name: Deploy via PowerShell over WinRM
+        uses: AutoModality/powershell-ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          inlineScript: |
+            Remove-Item -Recurse -Force "C:\Users\Administrator\Desktop\workspace\amaj"
+            Copy-Item -Path "C:\Users\your-github-user\actions-runner\_work\your-repo-name\your-repo-name\publish\*" -Destination "C:\Users\Administrator\Desktop\workspace\amaj" -Recurse
+            iisreset

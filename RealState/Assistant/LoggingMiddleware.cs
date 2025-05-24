@@ -12,12 +12,17 @@ public class LoggingMiddleware
 		Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
 	}
 
+
 	public async Task Invoke(HttpContext context)
 	{
-		var logLine = $"{DateTime.Now}: {context.Request.Method} {context.Request.Path}{Environment.NewLine}";
+		var method = context.Request.Method;
+		var path = context.Request.Path;
+		var origin = context.Request.Headers["Origin"].ToString();
+
+		var logLine = $"{DateTime.Now}: {method} {path} | Origin: {origin}";
+
 		var logPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs", "requests.txt");
 		Directory.CreateDirectory(Path.GetDirectoryName(logPath)!);
-
 		byte[] bytes = System.Text.Encoding.UTF8.GetBytes(logLine);
 
 		using (var stream = new FileStream(logPath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite, 4096, true))

@@ -163,7 +163,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			HttpOnly = true,
 			Secure = false, // موقتا غیر فعال کن برای تست
 			SameSite = SameSiteMode.Lax, // یا None اگر لازم بود
-			Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)
+			Expires = DateTime.Now.AddMinutes(Config.RefreshTokenLifetime.TotalMinutes)
 		};
 		Response.Cookies.Append("jwtUser", refreshToken, cookieOptions);
 

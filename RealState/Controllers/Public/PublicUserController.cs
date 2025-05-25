@@ -160,10 +160,10 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		// ذخیره توکن در کوکی
 		var cookieOptions = new CookieOptions
 		{
-			HttpOnly = true,  // فقط از طریق جاوا اسکریپت دسترسی نداشته باشد
-			Secure = true,    // فقط در HTTPS ارسال شود
-			SameSite = SameSiteMode.None,  // تنظیمات سیاست کوکی
-			Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)  // زمان انقضا توکن
+			HttpOnly = true,
+			Secure = false, // موقتا غیر فعال کن برای تست
+			SameSite = SameSiteMode.None, // یا None اگر لازم بود
+			Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)
 		};
 		Response.Cookies.Append("jwt", refreshToken, cookieOptions);
 
@@ -535,9 +535,9 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			var cookieOptions = new CookieOptions
 			{
 				HttpOnly = true,
-				Secure = true,
-				SameSite = SameSiteMode.None,
-				Expires = user.refresh_token_expiry_time
+				Secure = false, // موقتا غیر فعال کن برای تست
+				SameSite = SameSiteMode.None, // یا None اگر لازم بود
+				Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)
 			};
 
 			Response.Cookies.Append("jwt", newRefreshToken, cookieOptions);

@@ -162,10 +162,10 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		{
 			HttpOnly = true,
 			Secure = false, // موقتا غیر فعال کن برای تست
-			SameSite = SameSiteMode.None, // یا None اگر لازم بود
+			SameSite = SameSiteMode.Lax, // یا None اگر لازم بود
 			Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)
 		};
-		Response.Cookies.Append("jwt", refreshToken, cookieOptions);
+		Response.Cookies.Append("jwtUser", refreshToken, cookieOptions);
 
 		// حذف تمام OTPهای مرتبط
 		var allPhoneOtps = await _unitOfWork.OtpRepository.GetAllByPhone(src.mobile);
@@ -536,11 +536,11 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			{
 				HttpOnly = true,
 				Secure = false, // موقتا غیر فعال کن برای تست
-				SameSite = SameSiteMode.None, // یا None اگر لازم بود
+				SameSite = SameSiteMode.Lax, // یا None اگر لازم بود
 				Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)
 			};
 
-			Response.Cookies.Append("jwt", newRefreshToken, cookieOptions);
+			Response.Cookies.Append("jwtUser", newRefreshToken, cookieOptions);
 			return Ok(new ResponseDto<LoginResponseDto>()
 			{
 				data = new LoginResponseDto()
@@ -656,7 +656,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			});
 
 			// حذف کوکی از مرورگر
-			Response.Cookies.Delete("jwt");
+			Response.Cookies.Delete("jwtUser");
 			user.refresh_token = null;
 			user.refresh_token_expiry_time = DateTime.MinValue;
 

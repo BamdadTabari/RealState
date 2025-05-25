@@ -104,7 +104,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 		{
 			HttpOnly = true,
 			Secure = false, // موقتا غیر فعال کن برای تست
-			SameSite = SameSiteMode.None, // یا None اگر لازم بود
+			SameSite = SameSiteMode.Lax, // یا None اگر لازم بود
 			Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)
 		};
 
@@ -239,7 +239,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 			{
 				HttpOnly = true,
 				Secure = false, // موقتا غیر فعال کن برای تست
-				SameSite = SameSiteMode.None, // یا None اگر لازم بود
+				SameSite = SameSiteMode.Lax, // یا None اگر لازم بود
 				Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)
 			};
 

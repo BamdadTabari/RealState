@@ -500,7 +500,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 	public async Task<IActionResult> Refresh()
 	{
 
-		if (Request.Cookies.TryGetValue("jwt", out string refreshToken))
+		if (Request.Cookies.TryGetValue("jwtUser", out string refreshToken))
 		{
 			var user = await _unitOfWork.UserRepository.FindSingle(x => x.refresh_token == refreshToken);
 			if (user == null || user.refresh_token_expiry_time < DateTime.Now)

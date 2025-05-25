@@ -540,7 +540,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			//	Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)
 			//};
 
-			Response.Cookies.Append("jwtUser", newRefreshToken, cookieOptions);
+			//Response.Cookies.Append("jwtUser", newRefreshToken, cookieOptions);
 			return Ok(new ResponseDto<LoginResponseDto>()
 			{
 				data = new LoginResponseDto()

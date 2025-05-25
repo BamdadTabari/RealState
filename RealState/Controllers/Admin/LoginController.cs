@@ -222,7 +222,28 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
 				token = _tokenService.GenerateToken(user, role.Select(x => x.role.title).ToList());
 			}
 			while (await _unitOfWork.TokenBlacklistRepository.ExistsAsync(x => x.token == token));
-			
+			var newRefreshToken = "";
+			do
+			{
+				newRefreshToken = _tokenService.GenerateRefreshToken();
+			}
+			while (await _unitOfWork.UserRepository.ExistsAsync(x => x.refresh_token == newRefreshToken));
+
+			user.refresh_token = newRefreshToken;
+			user.refresh_token_expiry_time = DateTime.Now.Add(Config.AdminRefreshTokenLifetime);
+
+			_unitOfWork.UserRepository.Update(user);
+			await _unitOfWork.CommitAsync();
+
+			var cookieOptions = new CookieOptions
+			{
+				HttpOnly = true,
+				Secure = true,
+				SameSite = SameSiteMode.None,
+				Expires = user.refresh_token_expiry_time
+			};
+
+			Response.Cookies.Append("jwt", newRefreshToken, cookieOptions);
 			return Ok(new ResponseDto<LoginResponseDto>()
 			{
 				data = new LoginResponseDto()

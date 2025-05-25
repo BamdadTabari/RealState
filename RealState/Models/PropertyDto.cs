@@ -30,7 +30,7 @@ public class PropertyDto : BaseDto
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public TypeEnum type_enum { get; set; }
 	[Display(Name = "نام کامل شهر و استان")]
-	public string city_province_full_name { get; set; }
+	public string? city_province_full_name { get; set; }
 	[Display(Name = "شهر")]
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public long city_id { get; set; }

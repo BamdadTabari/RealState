@@ -202,7 +202,7 @@ public class LoginController(IUnitOfWork unitOfWork, JwtTokenService jwtTokenSer
     [Route("refresh-token")]
 	public async Task<IActionResult> Refresh()
     {
-
+		 
 		if (Request.Cookies.TryGetValue("jwt", out string refreshToken))
 		{
 			var user = await _unitOfWork.UserRepository.FindSingle(x=>x.refresh_token == refreshToken);

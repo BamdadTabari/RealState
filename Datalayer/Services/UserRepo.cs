@@ -109,7 +109,7 @@ public class UserRepo : Repository<User>, IUserRepo
 	{
 		try
 		{
-			return await _queryable.SingleOrDefaultAsync(x => x.id == id);
+			return await _queryable.Include(x=>x.agency).SingleOrDefaultAsync(x => x.id == id);
 		}
 		catch
 		{

@@ -49,8 +49,8 @@ public class UserDto : BaseDto
 	#region Navigations
 	[ValidateNever]
 	public ICollection<UserRoleDto>? user_roles { get; set; }
-	//[ValidateNever]
-	//public AgencyDto? agency { get; set; } = new ();
+	[ValidateNever]
+	public AgencyDto? agency { get; set; } = new();
 
 	//public ICollection<PropertyDto>? properties { get; set; }
 

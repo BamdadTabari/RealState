@@ -88,7 +88,6 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		});
 	}
 
-	[AllowAnonymous]
 	[HttpPost]
 	[Route("verify-phone")]
 	public async Task<IActionResult> VerifyPhone([FromForm]VerifyPhoneDto src)
@@ -221,17 +220,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				response_code = 400
 			});
 		}
-		//if (await _unitOfWork.UserRepository.ExistsAsync(x => x.email == request.email))
-		//{
-		//	var error = "ایمیل موجود است";
-		//	return BadRequest(new ResponseDto<UserDto>()
-		//	{
-		//		data = null,
-		//		is_success = false,
-		//		message = error,
-		//		response_code = 400
-		//	});
-		//}
+		
 		if (await _unitOfWork.UserRepository.AnyExistUserName(request.user_name))
 		{
 			var error = "نام کاربری موجود است";
@@ -398,103 +387,6 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			response_code = 204
 		});
 	}
-	//[AllowAnonymous]
-	//[HttpPost]
-	//[Route("verify-phone-register")]
-	//public async Task<IActionResult> VerifyPhoneRegister([FromForm] VerifyPhoneDto src)
-	//{
-	//	if (!ModelState.IsValid)
-	//	{
-	//		var error = string.Join(" | ", ModelState.Values
-	//			.SelectMany(v => v.Errors)
-	//			.Select(e => e.ErrorMessage));
-	//		return BadRequest(error);
-	//	}
-	//	var otp = await _unitOfWork.OtpRepository.GetByPhone(src.phone_number);
-	//	if (otp == null)
-	//	{
-	//		var error = "کد وارد شده منقضی شده است. لطفاً دوباره تلاش کنید";
-	//		return BadRequest(new ResponseDto<UserDto>()
-	//		{
-	//			data = null,
-	//			is_success = false,
-	//			message = error,
-	//			response_code = 400
-	//		});
-	//	}
-
-	//	if (otp.otp_code != src.confirm_code)
-	//	{
-	//		var error = "مقدار نامعتبر است";
-	//		return BadRequest(new ResponseDto<UserDto>()
-	//		{
-	//			data = null,
-	//			is_success = false,
-	//			message = error,
-	//			response_code = 400
-	//		});
-	//	}
-
-	//	// get user by phone
-	//	var user = await _unitOfWork.UserRepository.GetUserByPhone(src.phone_number);
-	//	if (user == null)
-	//		return BadRequest(new ResponseDto<UserDto>()
-	//		{
-	//			data = null,
-	//			is_success = false,
-	//			message = "کاربر با این شماره تلفن وجود ندارد",
-	//			response_code = 400
-	//		});
-
-	//	var role = _unitOfWork.UserRoleRepository.GetUserRolesByUserId(user.id);
-	//	var token = "";
-	//	do
-	//	{
-	//		token = _tokenService.GenerateToken(user, role.Select(x => x.role.title).ToList());
-	//	}
-	//	while (await _unitOfWork.TokenBlacklistRepository.ExistsAsync(x => x.token == token));
-	//	var refreshToken = "";
-	//	do
-	//	{
-	//		refreshToken = _tokenService.GenerateRefreshToken();
-	//	}
-	//	while (await _unitOfWork.UserRepository.ExistsAsync(x => x.refresh_token == refreshToken));
-
-	//	// تنظیم توکن در کوکی
-	//	Response.Cookies.Append("jwt", refreshToken, new CookieOptions
-	//	{
-	//		HttpOnly = true, // جلوگیری از دسترسی جاوااسکریپت به کوکی
-	//		Secure = true,
-	//		SameSite = SameSiteMode.Strict,
-	//		Expires = DateTimeOffset.Now.AddDays(10) // زمان انقضا
-	//	});
-
-	//	// حذف تمام OTPهای مرتبط
-	//	var allPhoneOtps = await _unitOfWork.OtpRepository.GetAllByPhone(src.phone_number);
-	//	_unitOfWork.OtpRepository.RemoveRange(allPhoneOtps);
-	//	await _unitOfWork.CommitAsync();
-	//	// ذخیره RefreshToken در دیتابیس برای بررسی بعدی
-	//	user.refresh_token = refreshToken;
-	//	user.refresh_token_expiry_time = DateTime.Now.Add(Config.RefreshTokenLifetime);
-	//	user.is_mobile_confirmed = true;
-	//	_unitOfWork.UserRepository.Update(user);
-	//	await _unitOfWork.CommitAsync();
-
-	//	return Ok(new ResponseDto<LoginResponseDto>()
-	//	{
-	//		data = new LoginResponseDto()
-	//		{
-	//			access_token = token,
-	//			//refresh_token = refreshToken,
-	//			expire_in = Config.AccessTokenLifetime.TotalMinutes
-	//		},
-	//		is_success = true,
-	//		message = "ثبت نام موفقیت آمیز بود",
-	//		response_code = 200
-	//	});
-	//}
-
-	[AllowAnonymous]
 	[HttpPost]
 	[Route("user-refresh-token")]
 	public async Task<IActionResult> Refresh()
@@ -519,28 +411,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 				token = _tokenService.GenerateToken(user, role.Select(x => x.role.title).ToList());
 			}
 			while (await _unitOfWork.TokenBlacklistRepository.ExistsAsync(x => x.token == token));
-			//var newRefreshToken = "";
-			//do
-			//{
-			//	newRefreshToken = _tokenService.GenerateRefreshToken();
-			//}
-			//while (await _unitOfWork.UserRepository.ExistsAsync(x => x.refresh_token == newRefreshToken));
-
-			//user.refresh_token = newRefreshToken;
-			//user.refresh_token_expiry_time = DateTime.Now.Add(Config.AdminRefreshTokenLifetime);
-
-			//_unitOfWork.UserRepository.Update(user);
-			//await _unitOfWork.CommitAsync();
-
-			//var cookieOptions = new CookieOptions
-			//{
-			//	HttpOnly = true,
-			//	Secure = false, // موقتا غیر فعال کن برای تست
-			//	SameSite = SameSiteMode.Lax, // یا None اگر لازم بود
-			//	Expires = DateTime.Now.AddMinutes(Config.AccessTokenLifetime.TotalMinutes)
-			//};
-
-			//Response.Cookies.Append("jwtUser", newRefreshToken, cookieOptions);
+			
 			return Ok(new ResponseDto<LoginResponseDto>()
 			{
 				data = new LoginResponseDto()
@@ -738,4 +609,6 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 			response_code = 204
 		});
 	}
+
+
 }

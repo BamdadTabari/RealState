@@ -48,7 +48,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 	{
 		var plans = await _unitOfWork.PlanRepository.GetAll();
 		if (plans.Count <= 0)
-			return NotFound(new ResponseDto<List<PlanDto>>()
+			return Ok(new ResponseDto<List<PlanDto>>()
 			{
 				data = new List<PlanDto>(),
 				message = "مقدار پلن در دیتابیس وجود ندارد",

@@ -22,6 +22,7 @@ public interface IRepository<TEntity> where TEntity : class, IBaseEntity
 	Task<TEntity> AddAsyncReturnid(TEntity entity);
 
 	Task<TEntity?> FindSingle(Expression<Func<TEntity, bool>> predicate);
+	Task<List<TEntity>> FindList(Expression<Func<TEntity, bool>> predicate);
 }
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IBaseEntity
@@ -118,6 +119,11 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, I
 	public async Task<TEntity?> FindSingle(Expression<Func<TEntity, bool>> predicate)
 	{
 		return await DbContext.Set<TEntity>().SingleOrDefaultAsync(predicate);
+	}
+
+	public async Task<List<TEntity>> FindList(Expression<Func<TEntity, bool>> predicate)
+	{
+		return await DbContext.Set<TEntity>().Where(predicate).ToListAsync();
 	}
 	#endregion
 }

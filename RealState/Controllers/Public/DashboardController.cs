@@ -17,42 +17,77 @@ public class DashboardController(IUnitOfWork unitOfWork, JwtTokenService tokenSe
 	[HttpPost]
 	[Route("current-user")]
 	[ApiExplorerSettings(IgnoreApi = true)]
-	public async Task<User?> GetCurrentUser()
+	public long GetCurrentUserId()
 	{
 		var userId = _tokenService.GetUserIdFromClaims(User) ?? "0";
-		var user = await _unitOfWork.UserRepository.GetUser(long.Parse(userId));
-		return user;
+		return long.Parse(userId);
 	}
-	//[HttpGet]
-	//[Route("list")]
-	//public async Task<IActionResult> UserProperties(string? search_term,
-	//	SortByEnum sort_by = SortByEnum.CreationDate,
-	//	int page = 1,
-	//	int page_size = 10)
-	//{
-	//	var user = await GetCurrentUser();
-	//	if (userId == null)
-	//		return NotFound(new ResponseDto<UserDto>()
-	//		{
-	//			data = null,
-	//			is_success = false,
-	//			message = "کاربر یافت نشد",
-	//			response_code = 404
-	//		});
+	[HttpGet]
+	[Route("data")]
+	public async Task<IActionResult> Data()
+	{
+		var userId =  GetCurrentUserId();
+		var user = await _unitOfWork.UserRepository.GetUser(userId);
+		if (user == null)
+			return NotFound(new ResponseDto<UserDashboard>()
+			{
+				data = new UserDashboard(),
+				is_success = false,
+				message = "کاربر یافت نشد",
+				response_code = 404
+			});
+		var allProperties = await _unitOfWork.PropertyRepository.FindList(x => x.owner_id == userId);
+		var planId = (long)user.plan_id;
+		if(planId == null || planId == 0)
+		{
+			return Ok(new ResponseDto<UserDashboard>()
+			{
+				data = new UserDashboard()
+				{
+					ads = allProperties.Count(),
+					archived_ads = allProperties.Count(x => x.state_enum == AdStatusEnum.Archived),
+					rent_ads = allProperties.Count(x => x.type_enum == TypeEnum.Rental),
+					sell_ads = allProperties.Count(x => x.type_enum == TypeEnum.Sell),
+					days_until_expire = (DateTime.Now - user.expire_date).TotalDays,
+					plan_monthes = 1,
+					plan_property_count = 5,
+					remain_properties = user.property_count,
+				},
+				is_success= true,
+				message = "Ok",
+				response_code = 200
+			});
+		}
+		else
+		{
+			var plan = await _unitOfWork.PlanRepository.Get(planId);
+			if (plan == null)
+				return NotFound(new ResponseDto<UserDashboard>()
+				{
+					data = new UserDashboard(),
+					is_success = false,
+					message = "پلن کاربری یافت نشد",
+					response_code = 404
+				});
 
-	//	var filter = new DefaultPaginationFilter(page, page_size)
-	//	{
-	//		Keyword = search_term,
-	//		SortBy = sort_by,
-	//	};
-	//	var data = _unitOfWork.PropertyRepository.GetPaginated(filter, userId);
-	//	return Ok(new ResponseDto<PaginatedList<Property>>()
-	//	{
-	//		data = data,
-	//		is_success = true,
-	//		message = "",
-	//		response_code = 200
-	//	});
-	//}
+			return Ok(new ResponseDto<UserDashboard>()
+			{
+				data = new UserDashboard()
+				{
+					ads = allProperties.Count(),
+					archived_ads = allProperties.Count(x => x.state_enum == AdStatusEnum.Archived),
+					rent_ads = allProperties.Count(x => x.type_enum == TypeEnum.Rental),
+					sell_ads = allProperties.Count(x => x.type_enum == TypeEnum.Sell),
+					days_until_expire = (DateTime.Now - user.expire_date).TotalDays,
+					plan_monthes = plan.plan_months,
+					plan_property_count = plan.property_count,
+					remain_properties = user.property_count,
+				},
+				is_success= true,
+				message = "Ok",
+				response_code = 200
+			});
+		}
+	}
 
 }

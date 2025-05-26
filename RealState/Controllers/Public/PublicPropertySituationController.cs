@@ -1,4 +1,5 @@
 ﻿using DataLayer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealState.Models;
 

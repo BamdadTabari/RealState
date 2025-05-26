@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
@@ -8,6 +9,7 @@ using RealState.Models;
 namespace RealState.Controllers.Public;
 [Route("api/public/user-property")]
 [ApiController]
+[Authorize]
 public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenService tokenService) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;

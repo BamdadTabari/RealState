@@ -1,11 +1,12 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealState.Models;
 
 namespace RealState.Controllers.Public;
-[Route("api/public-facility")]
+[Route("api/public/facility")]
 [ApiController]
 public class PublicPropertyFacilityController(IUnitOfWork unitOfWork) : ControllerBase
 {

@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealState.Models;
 

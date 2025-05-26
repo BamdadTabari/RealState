@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -10,7 +11,7 @@ using RestSharp;
 using System.Text;
 
 namespace RealState.Controllers.Public;
-[Route("api/public-plan-order")]
+[Route("api/public/plan-order")]
 [ApiController]
 public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService tokenService) : ControllerBase
 {

@@ -159,7 +159,7 @@ public class ProfileController(JwtTokenService tokenService, IUnitOfWork unitOfW
 
 	[HttpGet]
 	[Route("edit-user")]
-	public async Task<IActionResult> EditUser([FromForm] EditAgencyCommand src)
+	public async Task<IActionResult> EditUser([FromForm] EditUserCommand src)
 	{
 		if (!ModelState.IsValid)
 		{
@@ -174,40 +174,20 @@ public class ProfileController(JwtTokenService tokenService, IUnitOfWork unitOfW
 				response_code = 400
 			});
 		}
-		var agency = await _unitOfWork.AgencyRepository.Get(src.agency_id);
-		if (agency == null)
-			return NotFound(new ResponseDto<EditAgencyCommand>()
+		var user = await _unitOfWork.UserRepository.GetUser(src.id);
+		if (user == null)
+			return NotFound(new ResponseDto<EditUserCommand>()
 			{
 				data = null,
 				is_success = false,
-				message = "آژانس یافت نشد",
+				message = "کاربر یافت نشد",
 				response_code = 404
 			});
 
-		var city = await _unitOfWork.CityRepository.Get(src.city_id);
-		if (city == null)
-			return NotFound(new ResponseDto<CityDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "شهر پیدا نشد",
-				response_code = 404
-			});
-		var userId = GetCurrentUserId();
-		var user = await _unitOfWork.UserRepository.GetUser(userId);
-		if (user == null)
-			return NotFound(new ResponseDto<CityDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "کاربر پیدا نشد",
-				response_code = 404
-			});
-		var agencySlug = SlugHelper.GenerateSlug(src.full_name + Guid.NewGuid().ToString());
-		if (await _unitOfWork.AgencyRepository.ExistsAsync(x => x.slug == agencySlug))
+		if ((await _unitOfWork.UserRepository.ExistsAsync(x => x.mobile == src.mobile)) && user.mobile != src.mobile)
 		{
-			var error = "آژانس املاک با این نامک وجود دارد";
-			return BadRequest(new ResponseDto<AgencyDto>()
+			var error = " شماره تلفن موجود است";
+			return BadRequest(new ResponseDto<EditUserCommand>()
 			{
 				data = null,
 				is_success = false,
@@ -216,17 +196,33 @@ public class ProfileController(JwtTokenService tokenService, IUnitOfWork unitOfW
 			});
 		}
 
-		agency.updated_at = DateTime.Now;
-		agency.slug = agencySlug;
-		agency.mobile = src.agency_mobile;
-		agency.phone = src.agency_phone;
-		agency.agency_name = src.agency_name;
-		agency.city_id = src.city_id;
-		agency.city_province_full_name = city.name + $"({city.province.name})";
-		agency.full_name = src.full_name;
-		agency.user_id = user.id;
+		if ((await _unitOfWork.UserRepository.AnyExistUserName(src.user_name)) && user.user_name != src.user_name)
+		{
+			var error = "نام کاربری موجود است";
+			return BadRequest(new ResponseDto<EditUserCommand>()
+			{
+				data = null,
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
+		var slug = SlugHelper.GenerateSlug(src.user_name);
+		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug))
+		{
+			var error = "کاربر با این نامک وجود دارد";
+			return BadRequest(new ResponseDto<EditUserCommand>()
+			{
+				data = null,
+				is_success = false,
+				message = error,
+				response_code = 400
+			});
+		}
 
-		_unitOfWork.AgencyRepository.Update(agency);
+		user.user_name = src.user_name;
+		user.is_agency = src.is_agency;
+		_unitOfWork.UserRepository.Update(user);
 		await _unitOfWork.CommitAsync();
 
 		return Ok(new ResponseDto<string>()

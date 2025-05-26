@@ -7,7 +7,7 @@ using RealState.Models;
 namespace RealState.Controllers.Public;
 [Route("api/public/profile")]
 [ApiController]
-public class ProfileController(JwtTokenService tokenService, IUnitOfWork unitOfWork) : ControllerBase
+public class PublicProfileController(JwtTokenService tokenService, IUnitOfWork unitOfWork) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 	public static readonly SecurityTokenConfig Config = new();

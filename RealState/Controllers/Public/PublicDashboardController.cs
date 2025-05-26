@@ -9,7 +9,7 @@ namespace RealState.Controllers.Public;
 [Route("api/public/dashboard")]
 [ApiController]
 [Authorize]
-public class DashboardController(IUnitOfWork unitOfWork, JwtTokenService tokenService) : ControllerBase
+public class PublicDashboardController(IUnitOfWork unitOfWork, JwtTokenService tokenService) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;
 	private readonly JwtTokenService _tokenService = tokenService;
@@ -37,8 +37,8 @@ public class DashboardController(IUnitOfWork unitOfWork, JwtTokenService tokenSe
 				response_code = 404
 			});
 		var allProperties = await _unitOfWork.PropertyRepository.FindList(x => x.owner_id == userId);
-		var planId = (long)user.plan_id;
-		if(planId == null || planId == 0)
+		var planId = user.plan_id != null ? (long)user.plan_id: 0;
+		if(planId == 0)
 		{
 			return Ok(new ResponseDto<UserDashboard>()
 			{
@@ -48,7 +48,7 @@ public class DashboardController(IUnitOfWork unitOfWork, JwtTokenService tokenSe
 					archived_ads = allProperties.Count(x => x.state_enum == AdStatusEnum.Archived),
 					rent_ads = allProperties.Count(x => x.type_enum == TypeEnum.Rental),
 					sell_ads = allProperties.Count(x => x.type_enum == TypeEnum.Sell),
-					days_until_expire = (DateTime.Now - user.expire_date).TotalDays,
+					days_until_expire = Math.Round((user.expire_date - DateTime.Now).TotalDays),
 					plan_monthes = 1,
 					plan_property_count = 5,
 					remain_properties = user.property_count,
@@ -78,7 +78,7 @@ public class DashboardController(IUnitOfWork unitOfWork, JwtTokenService tokenSe
 					archived_ads = allProperties.Count(x => x.state_enum == AdStatusEnum.Archived),
 					rent_ads = allProperties.Count(x => x.type_enum == TypeEnum.Rental),
 					sell_ads = allProperties.Count(x => x.type_enum == TypeEnum.Sell),
-					days_until_expire = (DateTime.Now - user.expire_date).TotalDays,
+					days_until_expire = Math.Round((user.expire_date - DateTime.Now).TotalDays),
 					plan_monthes = plan.plan_months,
 					plan_property_count = plan.property_count,
 					remain_properties = user.property_count,

@@ -302,7 +302,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		});
 		await _unitOfWork.CommitAsync();
 		
-		await _unitOfWork.AgencyRepository.AddAsync(new Agency()
+		var agency = await _unitOfWork.AgencyRepository.AddAsyncReturnid(new Agency()
 		{
 			agency_name = request.agency_name ?? "",
 			created_at = DateTime.Now,
@@ -317,6 +317,9 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		});
 		await _unitOfWork.CommitAsync();
 
+		user.agency_id = agency.id;
+		_unitOfWork.UserRepository.Update(user);
+		await _unitOfWork.CommitAsync();
 		// تولید کد OTP
 		var otpCode = new Random().Next(1000, 9999);
 		await _unitOfWork.OtpRepository.AddAsync(new Otp

@@ -75,7 +75,7 @@ public class PublicProfileController(JwtTokenService tokenService, IUnitOfWork u
 		});
 	}
 
-	[HttpGet]
+	[HttpPost]
 	[Route("edit-agency")]
 	public async Task<IActionResult> EditAgency([FromForm] EditAgencyCommand src)
 	{
@@ -157,7 +157,7 @@ public class PublicProfileController(JwtTokenService tokenService, IUnitOfWork u
 	}
 
 
-	[HttpGet]
+	[HttpPost]
 	[Route("edit-user")]
 	public async Task<IActionResult> EditUser([FromForm] EditUserCommand src)
 	{
@@ -196,7 +196,7 @@ public class PublicProfileController(JwtTokenService tokenService, IUnitOfWork u
 			});
 		}
 		var slug = SlugHelper.GenerateSlug(src.user_name);
-		if (await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug))
+		if ((await _unitOfWork.UserRepository.ExistsAsync(x => x.slug == slug)) && src.user_name != user.user_name)
 		{
 			var error = "کاربر با این نامک وجود دارد";
 			return BadRequest(new ResponseDto<EditUserCommand>()

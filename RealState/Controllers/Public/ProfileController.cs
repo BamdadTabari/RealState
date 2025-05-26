@@ -184,18 +184,6 @@ public class ProfileController(JwtTokenService tokenService, IUnitOfWork unitOfW
 				response_code = 404
 			});
 
-		if ((await _unitOfWork.UserRepository.ExistsAsync(x => x.mobile == src.mobile)) && user.mobile != src.mobile)
-		{
-			var error = " شماره تلفن موجود است";
-			return BadRequest(new ResponseDto<EditUserCommand>()
-			{
-				data = null,
-				is_success = false,
-				message = error,
-				response_code = 400
-			});
-		}
-
 		if ((await _unitOfWork.UserRepository.AnyExistUserName(src.user_name)) && user.user_name != src.user_name)
 		{
 			var error = "نام کاربری موجود است";

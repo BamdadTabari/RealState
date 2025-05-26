@@ -7,7 +7,9 @@ public class UserDashboard
 	public int rent_ads { get; set; }
 	public int archived_ads { get; set; }
 
-	public int plan_monthes { get; set; }
+	public string plan_name { get; set; }
+	public string plan_description { get; set; }
+	public int plan_months { get; set; }
 	public int plan_property_count { get; set; }
 
 

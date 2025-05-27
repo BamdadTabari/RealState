@@ -94,7 +94,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 			var user = await GetCurrentUser();
 			amount = (long)plan.price * 10; // تبدیل تومان به ریال
 			var userRequest = HttpContext.Request;
-			var callbackUrl = $"{userRequest.Scheme}://{userRequest.Host}/Order/VerifyByHttpClient";
+			var callbackUrl = $"{userRequest.Scheme}://{userRequest.Host}/api/public/plan-order/verify-payment";
 			RequestParameters Parameters = new(merchant, amount, description, callbackUrl, "", "");
 
 			var client = new RestClient(URLs.requestUrl);

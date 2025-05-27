@@ -34,8 +34,8 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
 		builder
 			.HasOne(x=>x.plan)
-			.WithOne(x=>x.order)
-			.HasForeignKey<Order>(x=>x.plan_id)
+			.WithMany(x=>x.orders)
+			.HasForeignKey(x=>x.plan_id)
 			.OnDelete(DeleteBehavior.Restrict);
 	}
 }

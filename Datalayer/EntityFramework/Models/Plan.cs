@@ -11,7 +11,7 @@ public class Plan : BaseEntity
 	public int plan_months { get; set; }
 
 	public ICollection<User> users { get; set; }
-	public Order? order { get; set; }
+	public ICollection<Order> orders { get; set; }
 }
 public class PlanConfiguration : IEntityTypeConfiguration<Plan>
 {

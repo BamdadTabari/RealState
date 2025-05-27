@@ -129,6 +129,7 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 					username = user.user_name,
 					plan_id = plan.id,
 					order_status = OrderStatusEnum.InProgress,
+					ref_id = ""
 				};
 				await _unitOfWork.OrderRepository.AddAsync(entity);
 				await _unitOfWork.CommitAsync();

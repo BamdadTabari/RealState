@@ -399,6 +399,9 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 		{
 			var user = await _unitOfWork.UserRepository.FindSingle(x => x.refresh_token == refreshToken);
 			if (user == null || user.refresh_token_expiry_time < DateTime.Now)
+			{
+				// حذف کوکی از مرورگر
+				Response.Cookies.Delete("jwtUser");
 				return Unauthorized(new ResponseDto<UserDto>()
 				{
 					data = null,
@@ -406,6 +409,7 @@ public class PublicUserController(JwtTokenService tokenService, IUnitOfWork unit
 					message = "توکن نامعتبر است و یا منقضی شده است",
 					response_code = 401
 				});
+			}
 
 			var role = _unitOfWork.UserRoleRepository.GetUserRolesByUserId(user.id);
 			var token = "";

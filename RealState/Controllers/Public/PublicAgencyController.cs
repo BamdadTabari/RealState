@@ -1,4 +1,5 @@
-﻿using DataLayer;
+﻿using Azure.Core;
+using DataLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -116,7 +117,15 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 				message = "آژانس املاک با این ایدی پیدا نشد",
 				response_code = 404
 			});
-
+		var city = await _unitOfWork.CityRepository.Get(src.city_id);
+		if (city == null)
+			return NotFound(new ResponseDto<CityDto>()
+			{
+				data = null,
+				is_success = false,
+				message = "شهر پیدا نشد",
+				response_code = 404
+			});
 		var agencySlug = src.slug ?? SlugHelper.GenerateSlug(src.full_name + Guid.NewGuid().ToString());
 		if (await _unitOfWork.AgencyRepository.ExistsAsync(x => x.slug == agencySlug))
 		{
@@ -135,9 +144,20 @@ public class PublicAgencyController(IUnitOfWork unitOfWork, JwtTokenService toke
 		entity.phone = src.phone;
 		entity.agency_name = src.agency_name;
 		entity.city_id = src.city_id;
-		//entity.city_province_full_name =  
+		entity.city_province_full_name = city.name + $"({city.province.name})";
+		entity.full_name = src.full_name;
+		entity.slug = agencySlug;
 
-		return Ok();
+		_unitOfWork.AgencyRepository.Update(entity);
+		await _unitOfWork.CommitAsync();
+
+		return Ok(new ResponseDto<string>()
+		{
+			data = null,
+			message = "ویرایش آژانس با موفقیت انجام شد",
+			is_success = true,
+			response_code = 204
+		});
 	}
 
 }

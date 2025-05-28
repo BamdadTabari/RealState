@@ -10,6 +10,8 @@ public class City : BaseEntity
 	public Province province { get; set; }
 
 	public ICollection<Agency> agency_list { get; set; }
+
+	public ICollection<Property> properties { get; set; }
 }
 
 

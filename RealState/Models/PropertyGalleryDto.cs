@@ -14,7 +14,8 @@ public class PropertyGalleryDto : BaseDto
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public string alt { get; set; }
 	[Display(Name = "ملک")]
-	public long? property_id { get; set; }
+	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
+	public long property_id { get; set; }
 	//[ValidateNever]
 	//public PropertyDto? property { get; set; }
 }

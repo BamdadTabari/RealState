@@ -75,5 +75,10 @@ public class PropertyConfiguration : IEntityTypeConfiguration<Property>
 		builder.Property(x => x.property_age).IsRequired();
 		builder.Property(x => x.property_floor).IsRequired();
 		builder.Property(x => x.situation_id).IsRequired();
+
+		builder.HasOne(x=>x.city)
+			.WithMany(x=>x.properties)
+			.HasForeignKey(x=>x.city_id)
+			.OnDelete(DeleteBehavior.Restrict);
 	}
 }

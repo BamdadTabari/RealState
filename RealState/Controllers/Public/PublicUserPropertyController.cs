@@ -69,44 +69,187 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 	[Route("create")]
 	public async Task<IActionResult> CreateProperty([FromForm] PropertyDto src)
 	{
+		try
+		{
+			var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
+			if (!Directory.Exists(uploadPath))
+			{
+				Directory.CreateDirectory(uploadPath);
+			}
+			var user = await GetCurrentUser();
+			if (user == null)
+				return NotFound(new ResponseDto<UserDto>()
+				{
+					data = null,
+					is_success = false,
+					message = "کاربر یافت نشد. لطفا ابتدا ثبت نام کنید",
+					response_code = 404
+				});
+			if (user.is_licensed == false)
+				return BadRequest(new ResponseDto<UserDto>()
+				{
+					data = null,
+					is_success = false,
+					message = "ابتدا احراز هویت خود را تکمیل کنید",
+					response_code = 404
+				});
+			if (user.property_count == 0)
+				return BadRequest(new ResponseDto<UserDto>()
+				{
+					data = null,
+					message = "تعداد املاک پلن شما به پایان رسیده است. لطفا پلن خود را شارژ کنید",
+					is_success = false,
+					response_code = 400
+				});
+			if (user.expire_date < DateTime.Now)
+				return BadRequest(new ResponseDto<UserDto>()
+				{
+					data = null,
+					message = "پلن شما منقضی شده است. لطفا پلن خود را شارژ کنید",
+					is_success = false,
+					response_code = 400
+				});
+			if (!ModelState.IsValid)
+			{
+				var error = string.Join(" | ", ModelState.Values
+					   .SelectMany(v => v.Errors)
+					   .Select(e => e.ErrorMessage));
+				return BadRequest(new ResponseDto<PropertyDto>()
+				{
+					data = null,
+					is_success = false,
+					message = error,
+					response_code = 400
+				});
+			}
+
+			if (await _unitOfWork.PropertyRepository.ExistsAsync(x => x.name == src.name))
+			{
+				var error = "ملک با این نام وجود دارد";
+				return BadRequest(new ResponseDto<PropertyDto>()
+				{
+					data = null,
+					is_success = false,
+					message = error,
+					response_code = 400
+				});
+			}
+			var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
+			if (await _unitOfWork.PropertyRepository.ExistsAsync(x => x.slug == slug))
+			{
+				var error = "ملک با این نامک وجود دارد";
+				return BadRequest(new ResponseDto<PropertyDto>()
+				{
+					data = null,
+					is_success = false,
+					message = error,
+					response_code = 400
+				});
+			}
+			var city = await _unitOfWork.CityRepository.Get(src.city_id);
+			if (city == null)
+				return NotFound(new ResponseDto<CityDto>()
+				{
+					data = null,
+					is_success = false,
+					message = "شهر با این ایدی پیدا نشد",
+					response_code = 404
+				});
+			var filePath = "";
+			if (src.video_file != null)
+			{
+				var allowedExtensions = new[] { ".mp4", ".mov", ".avi", ".wmv", ".flv", ".mkv", ".webm", ".mpeg" };
+				var ext = Path.GetExtension(src.video_file.FileName).ToLower();
+				if (!allowedExtensions.Contains(ext))
+					return BadRequest(new ResponseDto<PropertyDto>()
+					{
+						data = null,
+						is_success = false,
+						message = "نوع فایل ویدیو نامعتبر است",
+						response_code = 400
+					});
+
+				var fileName = Guid.NewGuid() + Path.GetExtension(src.video_file.FileName);
+				filePath = Path.Combine(uploadPath, fileName);
+
+				using (var stream = new FileStream(filePath, FileMode.Create))
+				{
+					await src.video_file.CopyToAsync(stream);
+				}
+			}
+			var code = "";
+			do
+			{
+				code = RandomGenerator.GenerateString(10, AllowedCharacters.Alphanumeric);
+			}
+			while (await _unitOfWork.PropertyRepository.ExistsAsync(x => x.code == code));
+
+			var property = await _unitOfWork.PropertyRepository.AddAsyncReturnid(new()
+			{
+				updated_at = DateTime.Now,
+				created_at = DateTime.Now,
+				name = src.name,
+				slug = slug,
+				address = src.address,
+				bed_room_count = src.bed_room_count,
+				category_id = src.category_id,
+				city_id = src.city_id,
+				city_province_full_name = city.name + $"({city.province.name})",
+				code = code,
+				description = src.description,
+				is_for_sale = src.is_for_sale,
+				meterage = src.meterage,
+				mortgage_price = src.meterage,
+				owner_id = user.id,
+				property_age = src.property_age,
+				rent_price = src.rent_price,
+				property_floor = src.property_floor,
+				sell_price = src.sell_price,
+				situation_id = src.situation_id,
+				state_enum = src.state_enum,
+				type_enum = src.type_enum,
+				//gallery = files,
+				is_active = false,
+				video = filePath,
+				video_caption = src.video_caption ?? ""
+			});
+
+			await _unitOfWork.CommitAsync();
+
+			user.property_count--;
+			_unitOfWork.UserRepository.Update(user);
+			await _unitOfWork.CommitAsync();
+
+			return Ok(new ResponseDto<long>()
+			{
+				data = property.id,
+				is_success = true,
+				message = "ملک با موفقیت ایجاد شد",
+				response_code = 201
+			});
+		}
+		catch (Exception ex)
+		{
+			return BadRequest(new ResponseDto<string>()
+			{
+				data = ex.Message,
+				message = ex.Message,
+				is_success = false,
+				response_code = 500
+			});
+		}
+	}
+
+
+	[HttpPost]
+	[Route("upload-images")]
+	public async Task<IActionResult> UploadImages([FromForm] List<PropertyGalleryDto> src)
+	{
 		var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
 		if (!Directory.Exists(uploadPath))
 		{
 			Directory.CreateDirectory(uploadPath);
 		}
-		var user = await GetCurrentUser();
-		if (user == null)
-			return NotFound(new ResponseDto<UserDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "کاربر یافت نشد. لطفا ابتدا ثبت نام کنید",
-				response_code = 404
-			});
-		if (user.is_licensed ==  false)
-			return BadRequest(new ResponseDto<UserDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "ابتدا احراز هویت خود را تکمیل کنید",
-				response_code = 404
-			});
-		if (user.property_count == 0)
-			return BadRequest(new ResponseDto<UserDto>()
-			{
-				data = null,
-				message = "تعداد املاک پلن شما به پایان رسیده است. لطفا پلن خود را شارژ کنید",
-				is_success = false,
-				response_code = 400
-			});
-		if (user.expire_date < DateTime.Now)
-			return BadRequest(new ResponseDto<UserDto>()
-			{
-				data = null,
-				message = "پلن شما منقضی شده است. لطفا پلن خود را شارژ کنید",
-				is_success = false,
-				response_code = 400
-			});
 		if (!ModelState.IsValid)
 		{
 			var error = string.Join(" | ", ModelState.Values
@@ -120,8 +263,8 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				response_code = 400
 			});
 		}
-		
-		if (src.gallery == null || !src.gallery.Any())
+
+		if (src == null || !src.Any())
 		{
 			var error = "لطفا گالری تصاویر را پر کنید";
 			return BadRequest(new ResponseDto<PropertyDto>()
@@ -132,102 +275,8 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				response_code = 400
 			});
 		}
-
-		if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.name))
-		{
-			var error = "ملک با این نام وجود دارد";
-			return BadRequest(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				is_success = false,
-				message = error,
-				response_code = 400
-			});
-		}
-		var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
-		if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.slug == slug))
-		{
-			var error = "ملک با این نامک وجود دارد";
-			return BadRequest(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				is_success = false,
-				message = error,
-				response_code = 400
-			});
-		}
-		var city = await _unitOfWork.CityRepository.Get(src.city_id);
-		if (city == null)
-			return NotFound(new ResponseDto<CityDto>()
-			{
-				data = null,
-				is_success = false,
-				message = "شهر با این ایدی پیدا نشد",
-				response_code = 404
-			});
-		var filePath = "";
-		if (src.video_file != null)
-		{
-			var allowedExtensions = new[] { ".mp4", ".mov", ".avi", ".wmv", ".flv", ".mkv", ".webm", ".mpeg" };
-			var ext = Path.GetExtension(src.video_file.FileName).ToLower();
-			if (!allowedExtensions.Contains(ext))
-				return BadRequest(new ResponseDto<PropertyDto>()
-				{
-					data = null,
-					is_success = false,
-					message = "نوع فایل ویدیو نامعتبر است",
-					response_code = 400
-				});
-
-			var fileName = Guid.NewGuid() + Path.GetExtension(src.video_file.FileName);
-			filePath = Path.Combine(uploadPath, fileName);
-
-			using (var stream = new FileStream(filePath, FileMode.Create))
-			{
-				await src.video_file.CopyToAsync(stream);
-			}
-		}
-		var code = "";
-		do
-		{
-			code = RandomGenerator.GenerateString(10, AllowedCharacters.Alphanumeric);
-		}
-		while(await _unitOfWork.PropertyRepository.ExistsAsync(x=>x.code == code));
-		
-		var property = await _unitOfWork.PropertyRepository.AddAsyncReturnid(new()
-		{
-			updated_at = DateTime.Now,
-			created_at = DateTime.Now,
-			name = src.name,
-			slug = slug,
-			address = src.address,
-			bed_room_count = src.bed_room_count,
-			category_id = src.category_id,
-			city_id = src.city_id,
-			city_province_full_name = city.name + $"({city.province.name})",
-			code = code,
-			description = src.description,
-			is_for_sale = src.is_for_sale,
-			meterage = src.meterage,
-			mortgage_price = src.meterage,
-			owner_id = user.id,
-			property_age = src.property_age,
-			rent_price = src.rent_price,
-			property_floor = src.property_floor,
-			sell_price = src.sell_price,
-			situation_id = src.situation_id,
-			state_enum = src.state_enum,
-			type_enum = src.type_enum,
-			//gallery = files,
-			is_active = false,
-			video = filePath,
-			video_caption = src.video_caption ?? ""
-		});
-
-		await _unitOfWork.CommitAsync();
-
 		List<PropertyGallery> files = new();
-		foreach (var file in src.gallery)
+		foreach (var file in src)
 		{
 			if (file.picture_file == null)
 				return BadRequest(new ResponseDto<PropertyDto>()
@@ -251,22 +300,18 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				created_at = DateTime.Now,
 				updated_at = DateTime.Now,
 				picture = imagePath,
-				property_id = property.id,
+				property_id = file.property_id,
 				slug = SlugHelper.GenerateSlug(file.alt + Guid.NewGuid().ToString()),
 			});
 		}
 		await _unitOfWork.PropertyGalleryRepository.AddRangeAsync(files);
 		await _unitOfWork.CommitAsync();
 
-		user.property_count--;
-		_unitOfWork.UserRepository.Update(user);
-		await _unitOfWork.CommitAsync();
-
 		return Ok(new ResponseDto<PropertyDto>()
 		{
 			data = null,
 			is_success = true,
-			message = "ملک با موفقیت ایجاد شد",
+			message = "تصویر با موفقیت ایجاد شد",
 			response_code = 201
 		});
 	}
@@ -409,7 +454,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				message = "ملک با این ایدی پیدا نشد",
 				response_code = 404
 			});
-		if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.name == src.name))
+		if (await _unitOfWork.PropertyRepository.ExistsAsync(x => x.name == src.name))
 		{
 			var error = "ملک با این نام وجود دارد";
 			return BadRequest(new ResponseDto<PropertyDto>()
@@ -421,7 +466,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 			});
 		}
 		var slug = src.slug ?? SlugHelper.GenerateSlug(src.name);
-		if (await _unitOfWork.BlogRepository.ExistsAsync(x => x.slug == slug))
+		if (await _unitOfWork.PropertyRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "ملک با این نامک وجود دارد";
 			return BadRequest(new ResponseDto<PropertyDto>()

@@ -108,18 +108,24 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		try
 		{
 			IQueryable<Property> query = _queryable;
-			if(userId != null)
-				query = query.Where(x=>x.owner_id == userId);
+
+			if (userId != null)
+				query = query.Where(x => x.owner_id == userId);
+
 			query = query
 				.Include(x => x.gallery)
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)
-				.ThenInclude(x => x.Select(x => x.property_facility))
+					.ThenInclude(pfp => pfp.property_facility)
 				.Include(x => x.situation)
-				.AsNoTracking().Skip((filter.Page - 1) * filter.PageSize)
-						.Take(filter.PageSize)
-						.ApplyFilter(filter).ApplySort(filter.SortBy);
+				.AsNoTracking()
+				.Skip((filter.Page - 1) * filter.PageSize)
+				.Take(filter.PageSize)
+				.ApplyFilter(filter)
+				.ApplySort(filter.SortBy);
+
 			var dataTotalCount = _queryable.Count();
+
 			return new PaginatedList<Property>([.. query], dataTotalCount, filter.Page, filter.PageSize);
 		}
 		catch

@@ -101,7 +101,7 @@ public class PropertyController(IUnitOfWork unitOfWork) : ControllerBase
 					name = p.property_facility.name,
 				}
 			}).ToList(),
-				gallery = entity.gallery == null ? new List<PropertyGalleryDto>() :
+				images = entity.gallery == null ? new List<PropertyGalleryDto>() :
 			entity.gallery.Select(pg => new PropertyGalleryDto()
 			{
 				id = pg.id,

@@ -212,7 +212,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				//gallery = files,
 				is_active = false,
 				video = filePath,
-				video_caption = src.video_caption ?? ""
+				video_caption = src.video_caption ?? "",
 			});
 
 			await _unitOfWork.CommitAsync();

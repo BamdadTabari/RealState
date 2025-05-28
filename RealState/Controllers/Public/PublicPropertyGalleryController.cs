@@ -122,10 +122,6 @@ public class PublicPropertyGalleryController(IUnitOfWork unitOfWork, JwtTokenSer
 			});
 			await _unitOfWork.CommitAsync();
 
-			user.property_count--;
-			_unitOfWork.UserRepository.Update(user);
-			await _unitOfWork.CommitAsync();
-
 			return Ok(new ResponseDto<string>()
 			{
 				data = null,

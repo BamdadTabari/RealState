@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using RaelState.Assistant;
+﻿using RaelState.Assistant;
 using System.ComponentModel.DataAnnotations;
 
 namespace RealState.Models;
@@ -14,8 +13,9 @@ public class PropertyGalleryDto : BaseDto
 	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
 	public string alt { get; set; }
 	[Display(Name = "ملک")]
-	[Required(ErrorMessage = "لطفا مقدار {0}را وارد کنید.")]
-	public long property_id { get; set; }
+	public long? property_id { get; set; }
+
+	public long? user_id { get; set; }
 	//[ValidateNever]
 	//public PropertyDto? property { get; set; }
 }

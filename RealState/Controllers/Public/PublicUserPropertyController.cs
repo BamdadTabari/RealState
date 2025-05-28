@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RaelState.Models;
 using RealState.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RealState.Controllers.Public;
 [Route("api/public/user-property")]
@@ -215,7 +216,13 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 			});
 
 			await _unitOfWork.CommitAsync();
-
+			var images = await _unitOfWork.PropertyGalleryRepository.FindList(x=> src.gallery.Contains(x.id));
+			foreach ( var image in images )
+			{
+				image.property_id = property.id;
+				_unitOfWork.PropertyGalleryRepository.Update(image);
+			}
+			await _unitOfWork.CommitAsync();
 			user.property_count--;
 			_unitOfWork.UserRepository.Update(user);
 			await _unitOfWork.CommitAsync();
@@ -238,82 +245,6 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 				response_code = 500
 			});
 		}
-	}
-
-
-	[HttpPost]
-	[Route("upload-images")]
-	public async Task<IActionResult> UploadImages([FromForm] List<PropertyGalleryDto> src)
-	{
-		var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
-		if (!Directory.Exists(uploadPath))
-		{
-			Directory.CreateDirectory(uploadPath);
-		}
-		if (!ModelState.IsValid)
-		{
-			var error = string.Join(" | ", ModelState.Values
-				   .SelectMany(v => v.Errors)
-				   .Select(e => e.ErrorMessage));
-			return BadRequest(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				is_success = false,
-				message = error,
-				response_code = 400
-			});
-		}
-
-		if (src == null || !src.Any())
-		{
-			var error = "لطفا گالری تصاویر را پر کنید";
-			return BadRequest(new ResponseDto<PropertyDto>()
-			{
-				data = null,
-				is_success = false,
-				message = error,
-				response_code = 400
-			});
-		}
-		List<PropertyGallery> files = new();
-		foreach (var file in src)
-		{
-			if (file.picture_file == null)
-				return BadRequest(new ResponseDto<PropertyDto>()
-				{
-					data = null,
-					message = "مقدار فایل عکس را پر کنید",
-					is_success = false,
-					response_code = 400
-				});
-			var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.picture_file.FileName);
-			var imagePath = Path.Combine(uploadPath, fileName);
-
-			// Save Image
-			using (var stream = new FileStream(imagePath, FileMode.Create))
-			{
-				await file.picture_file.CopyToAsync(stream);
-			}
-			files.Add(new PropertyGallery()
-			{
-				alt = file.alt,
-				created_at = DateTime.Now,
-				updated_at = DateTime.Now,
-				picture = imagePath,
-				property_id = file.property_id,
-				slug = SlugHelper.GenerateSlug(file.alt + Guid.NewGuid().ToString()),
-			});
-		}
-		await _unitOfWork.PropertyGalleryRepository.AddRangeAsync(files);
-		await _unitOfWork.CommitAsync();
-
-		return Ok(new ResponseDto<PropertyDto>()
-		{
-			data = null,
-			is_success = true,
-			message = "تصویر با موفقیت ایجاد شد",
-			response_code = 201
-		});
 	}
 
 	[HttpGet]
@@ -378,7 +309,7 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 					name= p.property_facility.name,
 				}
 			}).ToList(),
-			gallery = entity.gallery == null ? new List<PropertyGalleryDto>() :
+			images = entity.gallery == null ? new List<PropertyGalleryDto>() :
 			entity.gallery.Select(pg => new PropertyGalleryDto()
 			{
 				id = pg.id,
@@ -491,49 +422,6 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 		{
 			Directory.CreateDirectory(uploadPath);
 		}
-		if (src.gallery != null && src.gallery.Any())
-		{
-			foreach (var file in entity.gallery)
-			{
-				if (System.IO.File.Exists(file.picture))
-				{
-					System.IO.File.Delete(file.picture);
-				}
-			}
-			_unitOfWork.PropertyGalleryRepository.RemoveRange(entity.gallery);
-			await _unitOfWork.CommitAsync();
-			List<PropertyGallery> files = new();
-			foreach (var file in src.gallery)
-			{
-				if (file.picture_file == null)
-					return BadRequest(new ResponseDto<PropertyDto>()
-					{
-						data = null,
-						message = "مقدار فایل عکس را پر کنید",
-						is_success = false,
-						response_code = 400
-					});
-				var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.picture_file.FileName);
-				var imagePath = Path.Combine(uploadPath, fileName);
-
-				// Save Image
-				using (var stream = new FileStream(imagePath, FileMode.Create))
-				{
-					await file.picture_file.CopyToAsync(stream);
-				}
-				files.Add(new PropertyGallery()
-				{
-					alt = file.alt,
-					created_at = DateTime.Now,
-					updated_at = DateTime.Now,
-					picture = imagePath,
-					property_id = entity.id,
-					slug = SlugHelper.GenerateSlug(file.alt + Guid.NewGuid().ToString()),
-				});
-			}
-			await _unitOfWork.PropertyGalleryRepository.AddRangeAsync(files);
-			await _unitOfWork.CommitAsync();
-		}
 
 		var filePath = "";
 		if (src.video_file != null)
@@ -588,6 +476,19 @@ public class PublicUserPropertyController(IUnitOfWork unitOfWork, JwtTokenServic
 		entity.video = filePath;
 		entity.video_caption = src.video_caption ?? "";
 		await _unitOfWork.CommitAsync();
+
+		foreach(var item in entity.gallery)
+		{
+			item.property_id = null;
+			_unitOfWork.PropertyGalleryRepository.Update(item);
+		}
+
+		var images = await _unitOfWork.PropertyGalleryRepository.FindList(x => src.gallery.Contains(x.id));
+		foreach (var image in images)
+		{
+			image.property_id = entity.id;
+			_unitOfWork.PropertyGalleryRepository.Update(image);
+		}
 		return Ok(new ResponseDto<PropertyDto>()
 		{
 			data = null,

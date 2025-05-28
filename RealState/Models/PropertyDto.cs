@@ -89,7 +89,9 @@ public class PropertyDto : BaseDto
 
 	[Display(Name = "گالری")]
 	[ValidateNever]
-	public ICollection<PropertyGalleryDto>? gallery { get; set; }
+	public List<long> gallery { get; set; }
+
+	public List<PropertyGalleryDto>? images { get; set; }
 
 }
 

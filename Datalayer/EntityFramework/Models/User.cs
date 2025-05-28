@@ -52,7 +52,7 @@ public class User : BaseEntity
 	public Plan plan { get; set; }
 
 	public ICollection<Property> properties { get; set; }
-
+	public ICollection<PropertyGallery> propertie_galleries { get; set; }
 
 	public DateTime expire_date { get; set; }
 	public int property_count { get; set; }
@@ -98,6 +98,11 @@ public class UserEntityConfiguration : IEntityTypeConfiguration<User>
 			.WithOne(x=>x.user)
 			.HasForeignKey(x=>x.owner_id)
 			.OnDelete(DeleteBehavior.Cascade);
+
+		builder.HasMany(x => x.propertie_galleries)
+			.WithOne(x => x.user)
+			.HasForeignKey(x => x.user_id)
+			.OnDelete(DeleteBehavior.Restrict);
 
 		builder
 			.HasOne(x=>x.plan)

@@ -6,7 +6,10 @@ public class PropertyGallery : BaseEntity
 {
 	public string picture { get; set; }
 	public string alt { get; set; }
-	public long property_id { get; set; }
+	public long? property_id { get; set; }
+
+	public long user_id { get; set; }
+	public User user { get; set; }
 	public Property property { get; set; }
 }
 

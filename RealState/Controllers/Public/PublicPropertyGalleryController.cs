@@ -56,7 +56,7 @@ public class PublicPropertyGalleryController(IUnitOfWork unitOfWork, JwtTokenSer
 
 	[HttpPost]
 	[Route("create")]
-	public async Task<IActionResult> CreateProperty([FromForm] PropertyGalleryDto src)
+	public async Task<IActionResult> Create([FromForm] PropertyGalleryDto src)
 	{
 		try
 		{

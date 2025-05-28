@@ -1,5 +1,6 @@
 ﻿using DataLayer;
 using DataLayer.Assistant.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RealState.Models;
@@ -7,6 +8,7 @@ using RealState.Models;
 namespace RealState.Controllers.Public;
 [Route("api/public/property-gallery")]
 [ApiController]
+[Authorize]
 public class PublicPropertyGalleryController(IUnitOfWork unitOfWork, JwtTokenService tokenService) : ControllerBase
 {
 	private readonly IUnitOfWork _unitOfWork = unitOfWork;

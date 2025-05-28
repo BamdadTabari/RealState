@@ -77,11 +77,11 @@ public class PublicPlanOrderController(IUnitOfWork unitOfWork, JwtTokenService t
 
 	[HttpPost]
 	[Route("payment")]
-	public async Task<IActionResult> SendReq([FromForm] long plan_id)
+	public async Task<IActionResult> SendReq([FromForm] SendReqDto src)
 	{
 		try
 		{
-			var plan = await _unitOfWork.PlanRepository.Get(plan_id);
+			var plan = await _unitOfWork.PlanRepository.Get(src.plan_id);
 			if (plan == null)
 				return NotFound(new ResponseDto<PlanDto>()
 				{

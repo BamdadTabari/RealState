@@ -1,4 +1,6 @@
-﻿namespace DataLayer;
+﻿using DataLayer.Services;
+
+namespace DataLayer;
 public interface IUnitOfWork : IDisposable
 {
 	IBlogCategoryRepository BlogCategoryRepository { get; }
@@ -22,6 +24,7 @@ public interface IUnitOfWork : IDisposable
 	IPropertyGalleryRepository PropertyGalleryRepository { get; }
 	ITicketRepository TicketRepository { get; }
 	ITicketReplyRepository TicketReplyRepository { get; }
+	IContactRepository	ContactRepository { get; }
 	Task<bool> CommitAsync();
 }
 
@@ -52,6 +55,7 @@ public class UnitOfWork : IUnitOfWork
 		PropertyGalleryRepository = new PropertyGalleryRepository(_context);
 		TicketRepository = new TicketRepository(_context);
 		TicketReplyRepository = new TicketReplyRepository(_context);
+		ContactRepository = new ContactRepository(_context);
 	}
 
 	public IBlogCategoryRepository BlogCategoryRepository { get; }
@@ -75,6 +79,7 @@ public class UnitOfWork : IUnitOfWork
 	public IPropertyGalleryRepository PropertyGalleryRepository { get; set; }
 	public ITicketRepository TicketRepository { get; set; }
 	public ITicketReplyRepository TicketReplyRepository { get; set; }
+	public IContactRepository ContactRepository { get; set; }
 	public async Task<bool> CommitAsync() => await _context.SaveChangesAsync() > 0;
 
 	// dispose and add to garbage collector

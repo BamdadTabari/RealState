@@ -30,7 +30,7 @@ public class PublicContactController(IUnitOfWork unitOfWork) : ControllerBase
 				response_code = 400
 			});
 		}
-		var slug = src.slug ?? SlugHelper.GenerateSlug(src.full_name + src.mobile + src.message);
+		var slug = SlugHelper.GenerateSlug(src.full_name + src.mobile + src.message);
 		if (await _unitOfWork.ContactRepository.ExistsAsync(x => x.slug == slug))
 		{
 			var error = "مقدار پیام تکراریست لطفا تغییر دهید.";

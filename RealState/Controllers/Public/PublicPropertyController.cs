@@ -3,6 +3,7 @@ using DataLayer.Assistant.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealState.Models;
+using System.Linq;
 
 namespace RealState.Controllers.Public;
 [Route("api/public/property")]
@@ -16,7 +17,10 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 	public async Task<IActionResult> Index(string? search_term,
 		SortByEnum sort_by = SortByEnum.CreationDate,
 		int page = 1,
-		int page_size = 10)
+		int page_size = 10
+		,long? city_id = null, long? category_id = null,
+		bool? is_rent = null,List<long>? option_list = null, 
+		decimal? meterage = null,int? floor = null )
 	{
 		var filter = new DefaultPaginationFilter(page, page_size)
 		{
@@ -25,6 +29,28 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 			BoolFilter = true
 		};
 		var data = _unitOfWork.PropertyRepository.GetPaginated(filter, null);
+
+		if (meterage != null)
+			data.Data = data.Data.Where(x => x.meterage == meterage).ToList();
+
+		if (floor != null)
+			data.Data = data.Data.Where(x => x.property_floor == floor).ToList();
+
+		if (city_id != null)
+			data.Data = data.Data.Where(x => x.city_id == city_id).ToList();
+
+		if (category_id != null)
+			data.Data = data.Data.Where(x => x.category_id == category_id).ToList();
+
+		if (is_rent != null && is_rent == true)
+			data.Data = data.Data.Where(x => x.type_enum == TypeEnum.Rental).ToList();
+
+		if (is_rent != null && is_rent == false)
+			data.Data = data.Data.Where(x => x.type_enum == TypeEnum.Sell).ToList();
+
+		if(option_list != null)
+			data.Data = data.Data.Where(x => option_list.Equals(x.property_facility_properties.Select(x => x.id).ToList())).ToList();
+
 		return Ok(new ResponseDto<PaginatedList<Property>>()
 		{
 			data = data,

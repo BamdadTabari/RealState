@@ -166,7 +166,11 @@ public class PublicTicketController(IUnitOfWork unitOfWork, JwtTokenService toke
 			{
 				await src.picture_file.CopyToAsync(stream);
 			}
-			ticket.picture = imagePath;
+
+			var baseUrl = $"{Request.Scheme}://{Request.Host}";
+			var imageUrl = $"{baseUrl}/images/{newFileName}";
+
+			ticket.picture = imageUrl;
 		}
 
 		await _unitOfWork.TicketRepository.AddAsync(ticket);
@@ -248,7 +252,11 @@ public class PublicTicketController(IUnitOfWork unitOfWork, JwtTokenService toke
 			{
 				await src.picture_file.CopyToAsync(stream);
 			}
-			reply.picture = imagePath;
+
+			var baseUrl = $"{Request.Scheme}://{Request.Host}";
+			var imageUrl = $"{baseUrl}/images/{newFileName}";
+
+			reply.picture = imageUrl;
 		}
 
 		await _unitOfWork.TicketReplyRepository.AddAsync(reply);

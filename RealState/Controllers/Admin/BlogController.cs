@@ -101,41 +101,38 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 			});
 		}
 
-        // Define the directory for uploads 
-        var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "images");
+		var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+		if (!Directory.Exists(uploadPath))
+			Directory.CreateDirectory(uploadPath);
 
-        // Create directory if not Exist
-        if (!Directory.Exists(uploadPath))
-        {
-            Directory.CreateDirectory(uploadPath);
-        }
+		var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(src.image_file.FileName);
+		var imagePath = Path.Combine(uploadPath, newFileName);
 
-        // Build file name
-        var newFileName = Guid.NewGuid().ToString() + Path.GetExtension(src.image_file.FileName);
-        var imagePath = Path.Combine(uploadPath, newFileName);
+		using (var stream = new FileStream(imagePath, FileMode.Create))
+		{
+			await src.image_file.CopyToAsync(stream);
+		}
 
-        // Save Image
-        using (var stream = new FileStream(imagePath, FileMode.Create))
-        {
-            await src.image_file.CopyToAsync(stream);
-        }
+		var baseUrl = $"{Request.Scheme}://{Request.Host}";
+		var imageUrl = $"{baseUrl}/images/{newFileName}";
 
-        await _unitOfWork.BlogRepository.AddAsync(new()
-        {
-            updated_at = DateTime.Now,
-            created_at = DateTime.Now,
-            name = src.name,
-            slug = slug,
-            blog_text = src.blog_text,
-            blog_category_id = src.blog_category_id,
-            image = imagePath,
-            image_alt = src.image_alt,
-            description = src.description,
-            show_blog = src.show_blog,
-            keywords = src.keyWords
-        });
+		await _unitOfWork.BlogRepository.AddAsync(new()
+		{
+			updated_at = DateTime.Now,
+			created_at = DateTime.Now,
+			name = src.name,
+			slug = slug,
+			blog_text = src.blog_text,
+			blog_category_id = src.blog_category_id,
+			image = imageUrl,   // ذخیره آدرس URL
+			image_alt = src.image_alt,
+			description = src.description,
+			show_blog = src.show_blog,
+			keywords = src.keyWords
+		});
 
-        await _unitOfWork.CommitAsync();
+		await _unitOfWork.CommitAsync();
+
 		return Ok(new ResponseDto<BlogDto>()
 		{
 			data = null,
@@ -236,7 +233,10 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
                 await src.image_file.CopyToAsync(stream);
             }
 
-            entity.image = image;
+			var baseUrl = $"{Request.Scheme}://{Request.Host}";
+			var imageUrl = $"{baseUrl}/images/{newFileName}";
+
+			entity.image = imageUrl;
         }
 
         var blog = await _unitOfWork.BlogRepository.Get(src.id);
@@ -295,19 +295,38 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 				message = "بلاگ با این ایدی پیدا نشد.",
 				response_code = 404
 			});
-		if (System.IO.File.Exists(entity.image))
-        {
-            System.IO.File.Delete(entity.image);
-        }
+		// مثال: https://example.com/images/abc.jpg
+		var imageUrl = entity.image;
+
+		// فقط بخش مسیر بعد از دامنه (یعنی /images/abc.jpg)
+		var relativePath = new Uri(imageUrl).AbsolutePath.TrimStart('/');
+
+		// ساخت مسیر فیزیکی کامل روی سرور
+		var fullImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativePath);
+
+		// حذف فایل در صورت وجود
+		if (System.IO.File.Exists(fullImagePath))
+		{
+			System.IO.File.Delete(fullImagePath);
+		}
+		
         var imagesToDelete = ExtractImageSources(entity.blog_text);
 
         foreach (var imgUrl in imagesToDelete)
         {
-            // فرض بر اینکه imgUrl به شکل "/uploads/blog/abc.jpg" هست
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "images", imgUrl.TrimStart('/'));
-            if (System.IO.File.Exists(filePath))
+			// فرض بر اینکه imgUrl به شکل "/uploads/blog/abc.jpg" هست
+			// مثال: https://example.com/images/abc.jpg
+			var imageUrl2 = entity.image;
+
+			// فقط بخش مسیر بعد از دامنه (یعنی /images/abc.jpg)
+			var relativePath2 = new Uri(imageUrl2).AbsolutePath.TrimStart('/');
+
+			// ساخت مسیر فیزیکی کامل روی سرور
+			var fullImagePath2 = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativePath);
+
+			if (System.IO.File.Exists(fullImagePath2))
             {
-                System.IO.File.Delete(filePath);
+                System.IO.File.Delete(fullImagePath2);
             }
         }
         _unitOfWork.BlogRepository.Remove(entity);
@@ -429,10 +448,11 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
             await file.CopyToAsync(stream);
         }
 
-        var fileUrl = Url.Content(filePath);
-        return Ok(new ResponseDto<string>()
+		var baseUrl = $"{Request.Scheme}://{Request.Host}";
+		var imageUrl = $"{baseUrl}/images/{fileName}";
+		return Ok(new ResponseDto<string>()
         {
-            data = fileUrl,
+            data = imageUrl,
             is_success = true,
             message = "" ,
             response_code = 200

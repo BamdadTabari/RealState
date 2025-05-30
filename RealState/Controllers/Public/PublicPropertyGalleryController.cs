@@ -113,13 +113,17 @@ public class PublicPropertyGalleryController(IUnitOfWork unitOfWork, JwtTokenSer
 			{
 				await src.picture_file.CopyToAsync(stream);
 			}
+
+			var baseUrl = $"{Request.Scheme}://{Request.Host}";
+			var imageUrl = $"{baseUrl}/images/{fileName}";
+
 			await _unitOfWork.PropertyGalleryRepository.AddAsync(new PropertyGallery()
 			{
 				created_at = DateTime.Now,
 				slug = slug,
 				updated_at = DateTime.Now,
 				alt = src.alt,
-				picture = imagePath,
+				picture = imageUrl,
 				user_id = user.id,
 			});
 			await _unitOfWork.CommitAsync();

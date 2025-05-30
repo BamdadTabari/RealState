@@ -208,11 +208,19 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
 
         if (src.image_file != null)
         {
-            // Delete old file
-            var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), entity.image);
-            if (System.IO.File.Exists(oldFilePath))
+			// Delete old file
+			// مثال: https://example.com/images/abc.jpg
+			var imageUrl = entity.image;
+
+			// فقط بخش مسیر بعد از دامنه (یعنی /images/abc.jpg)
+			var relativePath = new Uri(imageUrl).AbsolutePath.TrimStart('/');
+
+			// ساخت مسیر فیزیکی کامل روی سرور
+			var fullImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativePath);
+
+			if (System.IO.File.Exists(fullImagePath))
             {
-                System.IO.File.Delete(oldFilePath);
+                System.IO.File.Delete(fullImagePath);
             }
 
             // Define the directory for uploads

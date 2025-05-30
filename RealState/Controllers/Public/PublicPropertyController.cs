@@ -14,13 +14,13 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 
 	[HttpGet]
 	[Route("list")]
-	public async Task<IActionResult> Index(string? search_term,
-		SortByEnum sort_by = SortByEnum.CreationDate,
-		int page = 1,
-		int page_size = 10
-		,long? city_id = null, long? category_id = null,
-		bool? is_rent = null,List<long>? option_list = null, 
-		decimal? meterage = null,int? floor = null )
+	public async Task<IActionResult> Index([FromQuery] string? search_term,
+		[FromQuery] SortByEnum sort_by = SortByEnum.CreationDate,
+		[FromQuery] int page = 1,
+		[FromQuery] int page_size = 10,
+		[FromQuery] long? city_id = null, [FromQuery] long? category_id = null,
+		[FromQuery] bool? is_rent = null, [FromQuery] List<long>? option_list = null,
+		[FromQuery] decimal? meterage = null, [FromQuery] int? floor = null )
 	{
 		var filter = new DefaultPaginationFilter(page, page_size)
 		{

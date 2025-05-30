@@ -25,12 +25,12 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		try
 		{
 			return await _queryable.AsNoTracking()
-				.Include(x=>x.gallery)
-				.Include(x => x.property_category)
-				.Include(x => x.property_facility_properties)
-				.ThenInclude(x=> x.Select(x=>x.property_facility))
-				.Include(x => x.situation)
-				.SingleOrDefaultAsync(x => x.slug == slug);
+			.Include(x => x.gallery)
+			.Include(x => x.property_category)
+			.Include(x => x.property_facility_properties)
+				.ThenInclude(pfp => pfp.property_facility)
+			.Include(x => x.situation)
+			.SingleOrDefaultAsync(x => x.slug == slug);
 		}
 		catch
 		{
@@ -43,12 +43,12 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		try
 		{
 			return await _queryable
-				.Include(x=>x.user)
-				.Include(x => x.gallery)
-				.Include(x => x.property_category)
-				.Include(x => x.property_facility_properties)
-				.ThenInclude(x => x.Select(x => x.property_facility))
-				.Include(x => x.situation).SingleOrDefaultAsync(x => x.id == id);
+			.Include(x => x.gallery)
+			.Include(x => x.property_category)
+			.Include(x => x.property_facility_properties)
+				.ThenInclude(pfp => pfp.property_facility)
+			.Include(x => x.situation)
+			.SingleOrDefaultAsync(x => x.id == id);
 		}
 		catch
 		{
@@ -64,7 +64,7 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 				.Include(x => x.gallery)
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)
-				.ThenInclude(x => x.Select(x => x.property_facility))
+				.ThenInclude(pfp => pfp.property_facility)
 				.Include(x => x.situation).ToListAsync();
 		}
 		catch
@@ -79,7 +79,7 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 			.Include(x => x.gallery)
 			.Include(x => x.property_category)
 			.Include(x => x.property_facility_properties)
-			.ThenInclude(x => x.Select(x => x.property_facility))
+				.ThenInclude(pfp => pfp.property_facility)
 			.Include(x => x.situation)
 			.Skip(0)
 			.Take(count)
@@ -94,7 +94,7 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 				.Include(x => x.gallery)
 				.Include(x => x.property_category)
 				.Include(x => x.property_facility_properties)
-				.ThenInclude(x => x.Select(x => x.property_facility))
+				.ThenInclude(pfp => pfp.property_facility)
 				.Include(x => x.situation).Skip(0).Take(take).ToListAsync();
 		}
 		catch

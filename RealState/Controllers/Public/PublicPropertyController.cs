@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RealState.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace RealState.Controllers.Public;
 
@@ -176,7 +177,8 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 			});
 
 		var data = await unitOfWork.PropertyRepository
-			.GetSimilarProperties(take: 5, categoryId: property.category_id, cityId: property.city_id, typeEnum: property.type_enum);
+			.GetSimilarProperties(take: 5, categoryId: property.category_id, 
+				cityId: property.city_id, typeEnum: property.type_enum, propertyId: property.id );
 
 		return Ok(new ResponseDto<List<PropertyDto>>()
 		{

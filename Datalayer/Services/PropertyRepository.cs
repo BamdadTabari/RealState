@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Cryptography.X509Certificates;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataLayer;
 public interface IPropertyRepository : IRepository<Property>
@@ -9,7 +10,7 @@ public interface IPropertyRepository : IRepository<Property>
 	Task<List<Property>> GetProperties(int count);
 	Task<List<Property>> GetAll();
 	Task<List<Property>> GetLatestProperties(int take);
-	Task<List<Property>> GetSimilarProperties(int take, long categoryId, long cityId, TypeEnum typeEnum);
+	Task<List<Property>> GetSimilarProperties(int take, long categoryId, long cityId, TypeEnum typeEnum, long propertyId);
 }
 public class PropertyRepository : Repository<Property>, IPropertyRepository
 {
@@ -135,10 +136,10 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		}
 	}
 
-	public Task<List<Property>> GetSimilarProperties(int take, long categoryId, long cityId, TypeEnum typeEnum )
+	public Task<List<Property>> GetSimilarProperties(int take, long categoryId, long cityId, TypeEnum typeEnum, long propertyId)
 	{
 		return _queryable.Include(x => x.gallery)
-			.Where(x=>x.category_id == categoryId && x.city_id == cityId && x.type_enum == typeEnum)
+			.Where(x=>x.category_id == categoryId && x.city_id == cityId && x.type_enum == typeEnum && x.id != propertyId)
 			.Take(take).ToListAsync();
 	}
 }

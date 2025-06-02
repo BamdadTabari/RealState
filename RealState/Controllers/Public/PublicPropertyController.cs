@@ -20,7 +20,9 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 		[FromQuery] int page_size = 10,
 		[FromQuery] long? city_id = null, [FromQuery] long? category_id = null,
 		[FromQuery] bool? is_rent = null, [FromQuery] List<long>? option_list = null,
-		[FromQuery] decimal? meterage = null, [FromQuery] int? floor = null )
+		[FromQuery] int? floor = null,
+		[FromQuery] decimal? fromMeterage = null, [FromQuery] decimal? toMeterage = null,
+		[FromQuery] decimal? fromPrice = null, [FromQuery] decimal? toPrice = null)
 	{
 		var filter = new DefaultPaginationFilter(page, page_size)
 		{
@@ -30,8 +32,8 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 		};
 		var data = _unitOfWork.PropertyRepository.GetPaginated(filter, null);
 
-		if (meterage != null)
-			data.Data = data.Data.Where(x => x.meterage == meterage).ToList();
+		if (fromMeterage != null && toMeterage != null)
+			data.Data = data.Data.Where(x => x.meterage >= fromMeterage && x.meterage <= toMeterage).ToList();
 
 		if (floor != null)
 			data.Data = data.Data.Where(x => x.property_floor == floor).ToList();
@@ -42,11 +44,19 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 		if (category_id != null)
 			data.Data = data.Data.Where(x => x.category_id == category_id).ToList();
 
-		if (is_rent != null && is_rent == true)
+		if (is_rent is true)
+		{
 			data.Data = data.Data.Where(x => x.type_enum == TypeEnum.Rental).ToList();
+			if (fromPrice != null && toPrice != null)
+				data.Data = data.Data.Where(x => x.mortgage_price >= fromPrice && x.mortgage_price <= toPrice).ToList();
+		}
 
-		if (is_rent != null && is_rent == false)
+		if (is_rent is false)
+		{
 			data.Data = data.Data.Where(x => x.type_enum == TypeEnum.Sell).ToList();
+			if (fromPrice != null && toPrice != null)
+				data.Data = data.Data.Where(x => x.sell_price >= fromPrice && x.sell_price <= toPrice).ToList();
+		}
 
 		if(option_list != null)
 			data.Data = data.Data.Where(x => option_list.Equals(x.property_facility_properties.Select(x => x.id).ToList())).ToList();
@@ -73,40 +83,42 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 				message = "ملک با این نامک پیدا نشد",
 				response_code = 404
 			});
-		return Ok(new PropertyDto()
+		return Ok(new ResponseDto<PropertyDto>()
 		{
-			id = entity.id,
-			created_at = entity.created_at,
-			updated_at = entity.updated_at,
-			slug = slug,
-			address = entity.address,
-			bed_room_count = entity.bed_room_count,
-			category_id = entity.category_id,
-			city_id = entity.city_id,
-			code = entity.code,
-			description = entity.description,
-			city_province_full_name = entity.city_province_full_name,
-			is_for_sale = entity.is_for_sale,
-			meterage = entity.meterage,
-			mortgage_price = entity.mortgage_price,
-			name = entity.name,
-			owner_id = entity.owner_id,
-			property_age = entity.property_age,
-			property_floor = entity.property_floor,
-			rent_price = entity.rent_price,
-			sell_price = entity.sell_price,
-			situation_id = entity.situation_id,
-			state_enum = entity.state_enum,
-			type_enum = entity.type_enum,
-			property_category = new PropertyCategoryDto()
+			data = new PropertyDto()
 			{
-				id = entity.property_category.id,
-				created_at = entity.property_category.created_at,
-				updated_at = entity.property_category.updated_at,
-				slug = entity.property_category.slug,
-				name = entity.property_category.name,
-			},
-			property_facility_properties = entity.property_facility_properties == null ? new List<PropertyFacilityPropertyDto>() :
+				id = entity.id,
+				created_at = entity.created_at,
+				updated_at = entity.updated_at,
+				slug = slug,
+				address = entity.address,
+				bed_room_count = entity.bed_room_count,
+				category_id = entity.category_id,
+				city_id = entity.city_id,
+				code = entity.code,
+				description = entity.description,
+				city_province_full_name = entity.city_province_full_name,
+				is_for_sale = entity.is_for_sale,
+				meterage = entity.meterage,
+				mortgage_price = entity.mortgage_price,
+				name = entity.name,
+				owner_id = entity.owner_id,
+				property_age = entity.property_age,
+				property_floor = entity.property_floor,
+				rent_price = entity.rent_price,
+				sell_price = entity.sell_price,
+				situation_id = entity.situation_id,
+				state_enum = entity.state_enum,
+				type_enum = entity.type_enum,
+				property_category = new PropertyCategoryDto()
+				{
+					id = entity.property_category.id,
+					created_at = entity.property_category.created_at,
+					updated_at = entity.property_category.updated_at,
+					slug = entity.property_category.slug,
+					name = entity.property_category.name,
+				},
+				property_facility_properties = entity.property_facility_properties == null ? new List<PropertyFacilityPropertyDto>() :
 			entity.property_facility_properties.Select(p => new PropertyFacilityPropertyDto()
 			{
 				id = p.id,
@@ -124,7 +136,7 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 					name = p.property_facility.name,
 				}
 			}).ToList(),
-			images = entity.gallery == null ? new List<PropertyGalleryDto>() :
+				images = entity.gallery == null ? new List<PropertyGalleryDto>() :
 			entity.gallery.Select(pg => new PropertyGalleryDto()
 			{
 				id = pg.id,
@@ -135,8 +147,12 @@ public class PublicPropertyController(IUnitOfWork unitOfWork) : ControllerBase
 				alt = pg.alt,
 				property_id = pg.property_id,
 			}).ToList(),
-			video = entity.video,
-			video_caption = entity.video_caption,
+				video = entity.video,
+				video_caption = entity.video_caption,
+			},
+			is_success = true,
+			message = "ok",
+			response_code = 200
 		});
 	}
 }

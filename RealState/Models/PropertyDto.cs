@@ -93,5 +93,8 @@ public class PropertyDto : BaseDto
 
 	public List<PropertyGalleryDto>? images { get; set; }
 
+
+	public string? agency_mobile {get;set; }
+	public string? agency_phone { get; set; }
 }
 

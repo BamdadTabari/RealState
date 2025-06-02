@@ -9,6 +9,7 @@ public interface IPropertyRepository : IRepository<Property>
 	Task<List<Property>> GetProperties(int count);
 	Task<List<Property>> GetAll();
 	Task<List<Property>> GetLatestProperties(int take);
+	Task<List<Property>> GetSimilarProperties(int take, long categoryId, long cityId, TypeEnum typeEnum);
 }
 public class PropertyRepository : Repository<Property>, IPropertyRepository
 {
@@ -132,5 +133,12 @@ public class PropertyRepository : Repository<Property>, IPropertyRepository
 		{
 			return new PaginatedList<Property>([], 0, filter.Page, filter.PageSize);
 		}
+	}
+
+	public Task<List<Property>> GetSimilarProperties(int take, long categoryId, long cityId, TypeEnum typeEnum )
+	{
+		return _queryable.Include(x => x.gallery)
+			.Where(x=>x.category_id == categoryId && x.city_id == cityId && x.type_enum == typeEnum)
+			.Take(take).ToListAsync();
 	}
 }

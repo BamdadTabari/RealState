@@ -210,10 +210,10 @@ public class BlogController(IUnitOfWork unitOfWork) : ControllerBase
         {
 			// Delete old file
 			// مثال: https://example.com/images/abc.jpg
-			var imageUrl = entity.image;
+			var oldImageUrl = entity.image;
 
 			// فقط بخش مسیر بعد از دامنه (یعنی /images/abc.jpg)
-			var relativePath = new Uri(imageUrl).AbsolutePath.TrimStart('/');
+			var relativePath = new Uri(oldImageUrl).AbsolutePath.TrimStart('/');
 
 			// ساخت مسیر فیزیکی کامل روی سرور
 			var fullImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", relativePath);
